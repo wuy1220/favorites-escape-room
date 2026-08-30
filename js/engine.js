@@ -1192,9 +1192,22 @@
         return true;
       }
       inspect(n);
-      /* 平铺关卡的房间回访(2026-08-31 需求方反馈):root 即房间——点亮入口物后,
-         点击入口牌时 reveal 就绪的隐藏物随之显形(与 scenes 关卡点房间节点一致) */
-      revisitRoom();
+      /* 环视房间(2026-08-31 精确语义,需求方裁定):点节点只现形**它自己的、
+         已就绪的直接子节点**——子节点的子节点(如挂钟容器里的断钟摆)与根无关,
+         由回访所属容器显形。root 直接子节点:教程关的便签/抽屉等 */
+      const names = [];
+      const roomCard = n.id; /* root 与 compiled-level 都是入口卡:两 id 都视为房间根 */
+      state.nodes.forEach(function (m) {
+        if (m.hidden && m.revealReady && (m.parent === n.id || m.parent === 'compiled-level')) {
+          m.hidden = false;
+          m.revealed = true;
+          m.spawned = true;
+          m.justArrived = true;
+          names.push(m.name);
+        }
+      });
+      if (names.length)
+        log('环视「' + (n.name || '房间') + '」——多了些什么:' + names.join('、') + '。', 'good');
       return true;
     }
     /* 场景节点:首次点击=走进(亮出其中可直接看见的物件);之后=回看,

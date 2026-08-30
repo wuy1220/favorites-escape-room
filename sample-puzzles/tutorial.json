@@ -155,7 +155,9 @@
     "requires": [],
     "reveals": [
      "tut-note",
-     "tut-drawer"
+     "tut-drawer",
+     "tut-box",
+     "tut-lock"
     ],
     "product": "亮着的台灯"
    },

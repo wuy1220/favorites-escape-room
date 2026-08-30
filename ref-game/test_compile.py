@@ -11,9 +11,12 @@
    锁定当前输出(beats/items 数与可解性),防止该分支无声劣化。
 
 全程不调用任何 LLM 接口。"""
+import json
+import os
 from playwright.sync_api import sync_playwright
 
 CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 results = []
 
 
@@ -104,6 +107,28 @@ RUN_FIXED = """
 }
 """
 
+RUN_TUTORIAL = """
+(txt) => {
+  const pipe = window.__favoriteRoomPipeline;
+  const lvl = JSON.parse(txt).level;
+  const solve = pipe.solveLevel(lvl);
+  const beats = lvl.beats || [];
+  const del = beats.find((b) => b.action === 'deliver');
+  const reach = new Set(), stack = [String(del ? del.id : '')];
+  while (stack.length) {
+    const id = stack.pop();
+    if (!id || reach.has(id)) continue;
+    reach.add(id);
+    const bb = beats.find((x) => String(x.id) === id);
+    ((bb && bb.requires) || []).forEach((r) => stack.push(String(r)));
+  }
+  return {solvable: !!solve.solvable, beats: beats.length,
+          hidden: (lvl.items || []).filter((i) => i.hidden).length,
+          deliverReach: reach.size,
+          detail: String(solve.detail || '').slice(0, 90)};
+}
+"""
+
 RUN_REF = """
 (idx) => {
   const pipe = window.__favoriteRoomPipeline;
@@ -189,6 +214,15 @@ with sync_playwright() as p:
             r["closure"] >= 2,
         )
 
+    tut_path = os.path.join(ROOT, "sample-puzzles", "tutorial.json")
+    r_tut = page.evaluate(RUN_TUTORIAL, open(tut_path, encoding="utf-8").read())
+    check(
+        "新手教程关 求解+线性链金标准",
+        r_tut["solvable"] and r_tut["beats"] >= 4 and r_tut["deliverReach"] >= 4
+        and r_tut["hidden"] >= 4,
+        f"beats={r_tut['beats']} solvable={r_tut['solvable']} "
+        f"deliverReach={r_tut['deliverReach']} hidden={r_tut['hidden']} {r_tut['detail']}",
+    )
     refc = page.evaluate(RUN_REF, 2)
     check(
         "REF_LEVELS[2] 内容接地字段透传(digest/facts)",

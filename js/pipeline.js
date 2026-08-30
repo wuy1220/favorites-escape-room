@@ -2771,11 +2771,32 @@
           ...b,
         }));
         if (beats.length < 3) return { solvable: false, detail: 'beats 不足 3 步' };
-        const st = new Map(
-          ((level && Array.isArray(level.items) ? level.items : []) || []).map((it) => [
-            String(it.id),
-            { shown: !(it && it.hidden === true), consumed: false },
+        /* 容器可达性(2026-08-31):藏在容器里的物件,只要容器本身可见、或容器/物件
+            会被某个 beat 显形,玩家开启容器即可取得——求解器按可达处理,
+            否则『点开容器』这类无显形 beat 的交互会被误判成永久不可用 */
+        const containerById = new Map(
+          ((level && Array.isArray(level.containers) ? level.containers : []) || []).map((c) => [
+            String(c.id),
+            c,
           ]),
+        );
+        const revealedByBeat = new Set();
+        (beats || []).forEach((b) =>
+          (b.reveals || []).forEach((id) => revealedByBeat.add(String(id))),
+        );
+        const st = new Map(
+          ((level && Array.isArray(level.items) ? level.items : []) || []).map((it) => {
+            let shown = !(it && it.hidden === true);
+            const cid = it && it.container ? String(it.container) : null;
+            const c = cid ? containerById.get(cid) : null;
+            if (!shown && c) {
+              const containerVisible =
+                c.hidden !== true || revealedByBeat.has(String(c.id));
+              const itemRevealable = revealedByBeat.has(String(it.id));
+              shown = containerVisible || itemRevealable;
+            }
+            return [String(it.id), { shown, consumed: false }];
+          }),
         );
         const clues = new Set();
         const deliverTotal = beats.filter((b) => b.action === 'deliver').length;
