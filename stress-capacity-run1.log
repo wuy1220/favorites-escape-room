@@ -1,8 +1,0 @@
-
-===== 档位 N=8 =====
-[FAIL] N=8: 失败(132s)  — 设计校验: scenes 结构问题:素材 bookmark-cr7gzd-0 的 sourceFacts「域名:nandgame.com」在它的网页描述/标题/路径里找不到——sourceFacts 只能原样抄录素材文本中真实存在的内容(数字/词句逐字取自原文),不得改写或编造;素材 bookmark-1m8vw52-1 的 sourceFacts「域名:nand2tetris.org」在它的网页
-
-===== 档位 N=10 =====
-[FAIL] N=10: 失败(114s)  — 设计校验: scenes 结构问题:素材 bookmark-cr7gzd-0 的 sourceFacts「域名:nandgame.com」在它的网页描述/标题/路径里找不到——sourceFacts 只能原样抄录素材文本中真实存在的内容(数字/词句逐字取自原文),不得改写或编造;素材 bookmark-cr7gzd-0 的 sourceFacts「文件夹:开发」在它的网页描述/标题/路径里找不到—
-
-===== 档位 N=12 =====

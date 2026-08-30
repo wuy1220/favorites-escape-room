@@ -1,8 +1,0 @@
-[PASS] 导入关卡进入游戏
-[PASS] 写入测试存档
-[PASS] 列表每行含 打开/导出/删除 三按钮  — {"count": 2, "opens": 1, "exports": 1, "dels": 1, "text": "深夜书房：台风与勒索的书签链\n测试 · 进行中\n打开\n导出\n删除"}
-[PASS] 导出触发下载(.room.json)  — 深夜书房：台风与勒索的书签链.room.json
-[PASS] 删除后 save-test-1 的 levels/progress 清空  — {"levels": 1, "progress": 1, "hasLevel": false, "hasProgress": false, "rows": 1}
-[PASS] UI 导入持久化:刷新后已保存列表出现导入关卡  — rows=["深夜书房：台风与勒索的书签链", "深夜书房：台风与勒索的书签链"]
-
-===== 结果: 6/6 通过 =====

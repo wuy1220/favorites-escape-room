@@ -7,3 +7,10 @@ fixtures/_sample11_modified.html
 server/STEP_API_KEY.local
 server/GLM_API_KEY.local
 ref-game/llm_out/
+
+# 发布前清理(2026-08-31):不入公开仓库
+fixtures/user6-bookmarks.json
+ref-game/origin/
+reference/original-game/
+*.log
+server_*.log

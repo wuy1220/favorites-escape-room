@@ -4,6 +4,12 @@ A. step-advisor:本地 server /api/step(router-force,修复后 max_tokens 64000)
 B. glm-5.3-flash:bigmodel 直连,reasoning_effort low
 各自计时,返回的设计喂进 compileLevel+solveLevel 验证可解性。"""
 import json
+# 密钥由本地 server 持有(server/GLM_API_KEY.local),运行时从 /api/llm-config 拉取;
+# 不得在代码中硬编码(公开仓库安全要求,2026-08-31)。
+import urllib.request as _uq
+GLM_KEY = json.loads(_uq.urlopen("http://127.0.0.1:8128/api/llm-config").read())["apiKey"]
+
+import json
 import threading
 import time
 
@@ -59,7 +65,7 @@ def lane_glm():
         body.pop("thinking", None)
         wall, d = post("https://open.bigmodel.cn/api/paas/v4/chat/completions", body, 900,
                        {"Content-Type": "application/json",
-                        "Authorization": "Bearer dd8759f856e0f9a2d10dda34ac8377e3.sqxoEQYrfVhpGI0I"})
+                        "Authorization": "Bearer " + GLM_KEY})
         content = (d.get("choices") or [{}])[0].get("message", {}).get("content", "")
         finish = (d.get("choices") or [{}])[0].get("finish_reason")
         results["glm"] = {"wall": wall, "finish": finish, "chars": len(content),
