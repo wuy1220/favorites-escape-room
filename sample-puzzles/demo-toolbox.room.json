@@ -1,0 +1,262 @@
+{
+ "records": [],
+ "controlledIds": [
+  "rb-clip",
+  "rb-note",
+  "rb-tutorial",
+  "rb-desk",
+  "rb-installer",
+  "rb-lock2"
+ ],
+ "items": [
+  {
+   "id": "rb-clip",
+   "title": "知乎专栏剪报",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "剪报的路径印着:/p/2026071811813"
+  },
+  {
+   "id": "rb-note",
+   "title": "少数派效率卡",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "效率卡的编号印着:/post/83763——后三"
+  },
+  {
+   "id": "rb-tutorial",
+   "title": "Obsidian 教程页",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "菜鸟教程的 Obsidian 篇:基于 Mark"
+  },
+  {
+   "id": "rb-installer",
+   "title": "Obsidian 安装盘",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "银色安装盘,标签写着:Obsidian——Sha"
+  },
+  {
+   "id": "rb-lock1",
+   "title": "密码锁 · 年份",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "第一把锁:四位年份。剪报路径的开头就是答案。"
+  },
+  {
+   "id": "rb-lock2",
+   "title": "密码锁 · 编号",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "第二把锁:三位编号。少数派效率卡的编号就是答案。"
+  }
+ ],
+ "level": {
+  "id": "level-demo-toolbox",
+  "title": "春日工具箱 · 知识库建成之夜",
+  "premise": "2025 年 4 月,你决定给自己的知识建一座房子。剪报、效率卡、教程页摊在工具桌上——两把密码锁守着最后的部件:一个数字来自剪报的路径,一个来自效率卡的编号。",
+  "objective": "读剪报与效率卡拿到两组数字,打开工具桌的密码锁取出安装盘,照教程页把知识库建成,完成备份后交付。",
+  "targetMinutes": 10,
+  "selectedItemIds": [
+   "rb-clip",
+   "rb-note",
+   "rb-tutorial",
+   "rb-desk",
+   "rb-installer",
+   "rb-lock2"
+  ],
+  "containers": [
+   {
+    "id": "rb-desk",
+    "name": "工具桌",
+    "desc": "工具桌的抽屉上挂着两把密码锁,里面锁着安装盘。",
+    "hidden": false
+   }
+  ],
+  "items": [
+   {
+    "id": "rb-clip",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "知乎专栏剪报",
+    "sceneName": "知乎专栏剪报",
+    "reason": "剪报的路径印着:/p/2026071811813643264——开头的年份,就是第一把锁的密码。",
+    "hidden": false
+   },
+   {
+    "id": "rb-note",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "少数派效率卡",
+    "sceneName": "少数派效率卡",
+    "reason": "效率卡的编号印着:/post/83763——后三位 763,是第二把锁的密码。",
+    "hidden": false
+   },
+   {
+    "id": "rb-tutorial",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "Obsidian 教程页",
+    "sceneName": "Obsidian 教程页",
+    "reason": "菜鸟教程的 Obsidian 篇:基于 Markdown 的个人知识库,本地文件存储。装上它,知识就有了家。",
+    "hidden": false
+   },
+   {
+    "id": "rb-installer",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "Obsidian 安装盘",
+    "sceneName": "Obsidian 安装盘",
+    "reason": "银色安装盘,标签写着:Obsidian——Sharpen your thinking。",
+    "hidden": true,
+    "container": "rb-desk"
+   },
+   {
+    "id": "rb-lock1",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "密码锁 · 年份",
+    "sceneName": "密码锁 · 年份",
+    "reason": "第一把锁:四位年份。剪报路径的开头就是答案。",
+    "hidden": true,
+    "container": "rb-desk"
+   },
+   {
+    "id": "rb-lock2",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "密码锁 · 编号",
+    "sceneName": "密码锁 · 编号",
+    "reason": "第二把锁:三位编号。少数派效率卡的编号就是答案。",
+    "hidden": true,
+    "container": "rb-desk"
+   }
+  ],
+  "beats": [
+   {
+    "id": "b1",
+    "title": "读知乎剪报",
+    "action": "inspect",
+    "uses": [
+     "rb-clip"
+    ],
+    "requires": [],
+    "product": "细读过的剪报"
+   },
+   {
+    "id": "b2",
+    "title": "读少数派效率卡",
+    "action": "inspect",
+    "uses": [
+     "rb-note"
+    ],
+    "requires": [],
+    "product": "细读过的效率卡"
+   },
+   {
+    "id": "b3",
+    "title": "读 Obsidian 教程页",
+    "action": "inspect",
+    "uses": [
+     "rb-tutorial"
+    ],
+    "requires": [],
+    "product": "读过的教程页"
+   },
+   {
+    "id": "b4",
+    "title": "开年份锁",
+    "action": "password",
+    "uses": [
+     "rb-lock1"
+    ],
+    "requires": [
+     "b1"
+    ],
+    "expected": "2026",
+    "deriveFrom": [
+     "rb-clip"
+    ],
+    "product": "开着的年份锁",
+    "reveals": [
+     "rb-installer"
+    ]
+   },
+   {
+    "id": "b5",
+    "title": "装上 Obsidian",
+    "action": "combine",
+    "uses": [
+     "rb-installer",
+     "rb-tutorial"
+    ],
+    "requires": [
+     "b3",
+     "b4"
+    ],
+    "resultOn": "rb-installer",
+    "product": "建成的知识库"
+   },
+   {
+    "id": "b6",
+    "title": "开编号锁",
+    "action": "password",
+    "uses": [
+     "rb-lock2"
+    ],
+    "requires": [
+     "b2",
+     "b5"
+    ],
+    "expected": "763",
+    "deriveFrom": [
+     "rb-note"
+    ],
+    "product": "备份完成的档案"
+   },
+   {
+    "id": "b7",
+    "title": "备份交付",
+    "action": "deliver",
+    "uses": [
+     "result:b6"
+    ],
+    "requires": [
+     "b6"
+    ]
+   }
+  ],
+  "scenes": [],
+  "mechanics": [
+   "inspect",
+   "combine",
+   "password",
+   "deliver"
+  ],
+  "hints": [
+   "两张线索卡都在明面上:剪报和效率卡。",
+   "剪报路径以年份开头;效率卡编号是三位数。",
+   "先开年份锁,取出安装盘。",
+   "安装盘要和教程页组合,知识库才能建成。",
+   "最后把建成的档案交给出口。"
+  ],
+  "validation": {
+   "valid": true,
+   "issues": []
+  },
+  "grounding": "demo"
+ }
+}

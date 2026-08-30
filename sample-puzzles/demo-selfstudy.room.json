@@ -1,0 +1,189 @@
+{
+ "records": [],
+ "controlledIds": [
+  "rc-book",
+  "rc-manual",
+  "rc-notes",
+  "rc-safe",
+  "rc-badge"
+ ],
+ "items": [
+  {
+   "id": "rc-book",
+   "title": "图解算法书",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "【事实】翻到 3.1 数据结构分类——动画图解,"
+  },
+  {
+   "id": "rc-manual",
+   "title": "蓝皮手册",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "【事实】现代 JavaScript 教程,主课程"
+  },
+  {
+   "id": "rc-notes",
+   "title": "廖雪峰笔记",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "原创中文精品教程。笔记扉页写着:研究互联网产品和"
+  },
+  {
+   "id": "rc-safe",
+   "title": "学习保险箱",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "学习保险箱:三位密码。你早就把计划写在纸上了——"
+  },
+  {
+   "id": "rc-badge",
+   "title": "金色小徽章",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "开学仪式的金色徽章。把它带出房间,自学计划就正式"
+  }
+ ],
+ "level": {
+  "id": "level-demo-selfstudy",
+  "title": "秋末自学计划 · 312 号学习保险箱",
+  "premise": "2025 年 9 月,你决定系统自学编程。桌上摊着算法书、蓝皮手册和廖雪峰的笔记,角落立着一台学习保险箱——密码是你给自己定下的学习计划:算法书第 3.1 章,配两部分的教程。",
+  "objective": "读算法书与蓝皮手册,推出保险箱密码 312,取出金色徽章,把它带出房间完成开学仪式。",
+  "targetMinutes": 6,
+  "selectedItemIds": [
+   "rc-book",
+   "rc-manual",
+   "rc-notes",
+   "rc-safe",
+   "rc-badge"
+  ],
+  "containers": [],
+  "items": [
+   {
+    "id": "rc-book",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "图解算法书",
+    "sceneName": "图解算法书",
+    "reason": "【事实】翻到 3.1 数据结构分类——动画图解,一键运行。这一章的编号,是你给自己的第一串数字。",
+    "hidden": false
+   },
+   {
+    "id": "rc-manual",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "蓝皮手册",
+    "sceneName": "蓝皮手册",
+    "reason": "【事实】现代 JavaScript 教程,主课程包含 2 部分,涵盖 JavaScript 与浏览器。",
+    "hidden": false
+   },
+   {
+    "id": "rc-notes",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "廖雪峰笔记",
+    "sceneName": "廖雪峰笔记",
+    "reason": "原创中文精品教程。笔记扉页写着:研究互联网产品和技术。",
+    "hidden": false
+   },
+   {
+    "id": "rc-safe",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "学习保险箱",
+    "sceneName": "学习保险箱",
+    "reason": "学习保险箱:三位密码。你早就把计划写在纸上了——算法书章节号,接上教程的部分数。",
+    "hidden": false
+   },
+   {
+    "id": "rc-badge",
+    "role": "reward",
+    "roleLabel": "结果",
+    "title": "金色小徽章",
+    "sceneName": "金色小徽章",
+    "reason": "开学仪式的金色徽章。把它带出房间,自学计划就正式启动。",
+    "hidden": true
+   }
+  ],
+  "beats": [
+   {
+    "id": "c1",
+    "title": "读图解算法书",
+    "action": "inspect",
+    "uses": [
+     "rc-book"
+    ],
+    "requires": [],
+    "product": "翻过的算法书"
+   },
+   {
+    "id": "c2",
+    "title": "读蓝皮手册",
+    "action": "inspect",
+    "uses": [
+     "rc-manual"
+    ],
+    "requires": [],
+    "product": "翻过的蓝皮手册"
+   },
+   {
+    "id": "c3",
+    "title": "打开学习保险箱",
+    "action": "password",
+    "uses": [
+     "rc-safe"
+    ],
+    "requires": [
+     "c1",
+     "c2"
+    ],
+    "expected": "312",
+    "deriveFrom": [
+     "rc-book",
+     "rc-manual"
+    ],
+    "product": "打开的学习保险箱",
+    "reveals": [
+     "rc-badge"
+    ]
+   },
+   {
+    "id": "c4",
+    "title": "带徽章离开",
+    "action": "deliver",
+    "uses": [
+     "rc-badge"
+    ],
+    "requires": [
+     "c3"
+    ]
+   }
+  ],
+  "scenes": [],
+  "mechanics": [
+   "inspect",
+   "password",
+   "deliver"
+  ],
+  "hints": [
+   "两张教材摊在明面上:算法书和蓝皮手册,各藏着一段数字。",
+   "算法书翻到 3.1;蓝皮手册说主课程有 2 部分。",
+   "保险箱三位数:31 接 2。"
+  ],
+  "validation": {
+   "valid": true,
+   "issues": []
+  },
+  "grounding": "demo"
+ }
+}

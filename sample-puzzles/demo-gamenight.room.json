@@ -1,0 +1,265 @@
+{
+ "records": [],
+ "controlledIds": [
+  "ra-cabinet",
+  "ra-tape",
+  "ra-disc",
+  "ra-machine",
+  "ra-poster",
+  "ra-panel"
+ ],
+ "items": [
+  {
+   "id": "ra-cabinet",
+   "title": "怀旧游戏柜",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开它"
+  },
+  {
+   "id": "ra-tape",
+   "title": "卡带 A · Never Gonna Give You Up",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "【事实·数据条】标签印着:视频播放量 10461"
+  },
+  {
+   "id": "ra-disc",
+   "title": "MMD 光碟",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "重巡 Pola 的「Treasure」光碟,側标"
+  },
+  {
+   "id": "ra-machine",
+   "title": "老点唱机",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "老点唱机的卡带舱积着灰。把要点的卡带装进去,它才"
+  },
+  {
+   "id": "ra-poster",
+   "title": "游侠网海报",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "海报是「游侠网——坚守单机阵地」的旧宣传画,角落"
+  },
+  {
+   "id": "ra-panel",
+   "title": "频率面板",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "点播台的频率面板,四位数字转盘。调准了,整座城市"
+  }
+ ],
+ "level": {
+  "id": "level-demo-gamenight",
+  "title": "深秋游戏之夜 · 末班点播台",
+  "premise": "2024 年 11 月的深夜,你在游戏堆里过了一整晚。今晚,你想把那段 Never Gonna Give You Up 点播给整座城市的失眠者。点播台的老机器还亮着灯——它只认数据:播放量、硬币数,一个都不能错。",
+  "objective": "打开怀旧柜取出卡带与光碟,读懂卡带上的播放数据,把卡带装进点唱机,再按播放量的前四位调准频率面板,最后把光碟匣装上,完成末班点播。",
+  "targetMinutes": 10,
+  "selectedItemIds": [
+   "ra-cabinet",
+   "ra-tape",
+   "ra-disc",
+   "ra-machine",
+   "ra-poster",
+   "ra-panel"
+  ],
+  "containers": [
+   {
+    "id": "ra-cabinet",
+    "name": "怀旧游戏柜",
+    "desc": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开玻璃柜——再点一次,取出里面的东西。",
+    "hidden": false
+   }
+  ],
+  "items": [
+   {
+    "id": "ra-cabinet",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "怀旧游戏柜",
+    "sceneName": "怀旧游戏柜",
+    "reason": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开它。",
+    "hidden": false
+   },
+   {
+    "id": "ra-tape",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "卡带 A · Never Gonna Give You Up",
+    "sceneName": "卡带 A · Never Gonna Give You Up",
+    "reason": "【事实·数据条】标签印着:视频播放量 104610374、投硬币枚数 1260911。这就是点播台要的点火数据。",
+    "hidden": true,
+    "container": "ra-cabinet"
+   },
+   {
+    "id": "ra-disc",
+    "role": "reward",
+    "roleLabel": "结果",
+    "title": "MMD 光碟",
+    "sceneName": "MMD 光碟",
+    "reason": "重巡 Pola 的「Treasure」光碟,側标印着 sm29208969。台长说,末班点播非它不可。",
+    "hidden": true,
+    "container": "ra-cabinet"
+   },
+   {
+    "id": "ra-machine",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "老点唱机",
+    "sceneName": "老点唱机",
+    "reason": "老点唱机的卡带舱积着灰。把要点的卡带装进去,它才能工作。",
+    "hidden": false
+   },
+   {
+    "id": "ra-poster",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "游侠网海报",
+    "sceneName": "游侠网海报",
+    "reason": "海报是「游侠网——坚守单机阵地」的旧宣传画,角落印着一行小字:点播台的热线密码 = 播放量的前四位。",
+    "hidden": false
+   },
+   {
+    "id": "ra-panel",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "频率面板",
+    "sceneName": "频率面板",
+    "reason": "点播台的频率面板,四位数字转盘。调准了,整座城市都能听见这首老歌。",
+    "hidden": false
+   }
+  ],
+  "beats": [
+   {
+    "id": "a1",
+    "title": "打开怀旧柜",
+    "action": "inspect",
+    "uses": [
+     "ra-cabinet"
+    ],
+    "requires": [],
+    "reveals": [
+     "ra-tape",
+     "ra-disc"
+    ],
+    "product": "敞开的怀旧柜"
+   },
+   {
+    "id": "a2",
+    "title": "读卡带数据条",
+    "action": "inspect",
+    "uses": [
+     "ra-tape"
+    ],
+    "requires": [
+     "a1"
+    ],
+    "product": "读过数据的卡带 A"
+   },
+   {
+    "id": "a3",
+    "title": "读游侠网海报",
+    "action": "inspect",
+    "uses": [
+     "ra-poster"
+    ],
+    "requires": [],
+    "product": "细读过的海报"
+   },
+   {
+    "id": "a4",
+    "title": "卡带装进点唱机",
+    "action": "combine",
+    "uses": [
+     "ra-tape",
+     "ra-machine"
+    ],
+    "requires": [
+     "a2"
+    ],
+    "consume": [
+     "ra-tape"
+    ],
+    "resultOn": "ra-machine",
+    "product": "就绪的点唱机"
+   },
+   {
+    "id": "a5",
+    "title": "调准频率 1046",
+    "action": "password",
+    "uses": [
+     "ra-panel"
+    ],
+    "requires": [
+     "a3",
+     "a4"
+    ],
+    "expected": "1046",
+    "deriveFrom": [
+     "ra-tape"
+    ],
+    "product": "接通的热线"
+   },
+   {
+    "id": "a6",
+    "title": "光碟入匣",
+    "action": "combine",
+    "uses": [
+     "result:a4",
+     "ra-disc"
+    ],
+    "requires": [
+     "a4",
+     "a5"
+    ],
+    "resultOn": "ra-disc",
+    "product": "待播的光碟匣"
+   },
+   {
+    "id": "a7",
+    "title": "完成末班点播",
+    "action": "deliver",
+    "uses": [
+     "result:a6"
+    ],
+    "requires": [
+     "a6"
+    ]
+   }
+  ],
+  "scenes": [],
+  "mechanics": [
+   "inspect",
+   "combine",
+   "password",
+   "deliver"
+  ],
+  "hints": [
+   "玻璃柜里有卡带和光碟,先打开它。",
+   "点卡带 A,读它的数据条:播放量、硬币数。",
+   "游侠网海报的角落写着热线密码的规则。",
+   "把卡带装进点唱机,它才能工作。",
+   "热线密码 = 播放量的前四位;调准频率后,把光碟装进匣子。"
+  ],
+  "validation": {
+   "valid": true,
+   "issues": []
+  },
+  "grounding": "demo"
+ }
+}

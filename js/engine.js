@@ -1208,6 +1208,11 @@
       });
       if (names.length)
         log('环视「' + (n.name || '房间') + '」——多了些什么:' + names.join('、') + '。', 'good');
+      action();
+      update();
+      compiledObjective();
+      roomRender();
+      drawLinks();
       return true;
     }
     /* 场景节点:首次点击=走进(亮出其中可直接看见的物件);之后=回看,
