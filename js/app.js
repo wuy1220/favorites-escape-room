@@ -123,10 +123,13 @@
       cur.push(timed[i]);
     }
     windows.push(cur);
+    /* 东八区(2026-08-31):时间片的小时/日期分组固定按 UTC+8(+8h 读 getUTC*),
+       与机器时区无关——深夜/清晨情绪标签与谜面引用的收藏日期同源 */
+    const cstD = (t) => new Date(t + 8 * 3600 * 1000);
     return windows
       .filter((w) => w.length >= MIN_WINDOW)
       .map(function (w, wi) {
-        const hours = w.map((x) => new Date(x._t).getHours());
+        const hours = w.map((x) => cstD(x._t).getUTCHours());
         const night = hours.filter((h) => h < 6 || h >= 23).length / w.length;
         const folders = {};
         w.forEach((x) => {
@@ -136,10 +139,11 @@
           .sort((a, b) => b[1] - a[1])
           .slice(0, 2)
           .map((e) => e[0]);
-        const day = new Date(w[0]._t),
-          last = new Date(w[w.length - 1]._t);
+        const day = cstD(w[0]._t),
+          last = cstD(w[w.length - 1]._t);
         const span = w[w.length - 1]._t - w[0]._t;
-        const fmt = (d) => d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+        const fmt = (d) =>
+          d.getUTCFullYear() + '年' + (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日';
         return {
           index: wi,
           from: w[0]._t,
@@ -1243,7 +1247,9 @@
         projectId,
         cacheKey,
         name:
-          '未命名冒险 · ' + new Date().toISOString().slice(5, 16).replace('T', ' '),
+          /* 东八区(2026-08-31):关卡名时间戳按 UTC+8,不再用 UTC 串(+8h 读 ISO) */
+          '未命名冒险 · ' +
+          new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(5, 16).replace('T', ' '),
         llmTitle: draft.level.title || '',
         source: 'generate',
         theme: draft.level.theme || theme || '',
@@ -1287,7 +1293,7 @@
     if (document.getElementById('homeScreen')) return; /* 幂等:openDb 失败兜底会二次调用,重复注入会让两层卡片互相拦截点击 */
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一个或多个时间片（可多选）—— 那些时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="wb-overlay" id="wbOverlay" hidden><div class="gen-workbench wb-scene" id="genWorkbench" hidden><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-headline"><h3>你的密室正在搭建</h3><p>两位起草人正在同时起草,取先完成的那份——通常两分钟左右。<span style="white-space:nowrap">已用 <span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span></span></p></div><div class="wb-head"><div class="wb-actions"><button id="wbGameToggle" type="button">来翻几页</button><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button" class="wb-danger">取消生成</button></div></div><div class="wb-body"><div class="wb-rail"><div class="wb-phases" id="wbPhases"></div></div><div class="wb-main"><div class="wb-stage"><div class="wb-deck-side"><div class="wb-deck-bar"><span id="wbDeckCount">这间密室将用你的收藏造成——</span><button id="wbDeckFlip" type="button">翻一叠</button></div><div class="wb-deck" id="wbMaterials"></div></div><div class="wb-drafts" id="wbDrafts"></div></div><div class="wb-note" id="wbNote"></div></div></div><details class="wb-tech"><summary>工作记录(技术细节)</summary><div class="wb-lanes" id="wbLanes"></div><div class="wb-log" id="wbLog"></div></details><div class="wb-game" id="wbGame" hidden><canvas id="wbGameCanvas" height="150"></canvas><div class="wb-game-hint">空格 / 点击起跳 · 三滴墨:撞上障碍扣一滴,墨尽本局结束 · 收集纸页解锁工房手记</div></div></div></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeTutorial" type="button">新手教程</button><button id="homeFixedTest" type="button">试玩固定样本</button><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span><div class="wb-door" id="wbDoor" hidden><div class="wb-door-l"></div><div class="wb-door-r"></div><div class="wb-door-glow"></div></div>',
+      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一个或多个时间片（可多选）—— 那些时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="wb-overlay" id="wbOverlay" hidden><div class="gen-workbench wb-scene" id="genWorkbench" hidden><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-headline"><h3>你的密室正在搭建</h3><p>两位起草人正在同时起草,取先完成的那份——通常两分钟左右。<span style="white-space:nowrap">已用 <span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span></span></p></div><div class="wb-head"><div class="wb-actions"><button id="wbGameToggle" type="button">来翻几页</button><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button" class="wb-danger">取消生成</button></div></div><div class="wb-body"><div class="wb-rail"><div class="wb-phases" id="wbPhases"></div></div><div class="wb-main"><div class="wb-stage"><div class="wb-deck-side"><div class="wb-deck-bar"><span id="wbDeckCount">这间密室将用你的收藏造成——</span><button id="wbDeckFlip" type="button">翻一叠</button></div><div class="wb-deck" id="wbMaterials"></div></div><div class="wb-drafts" id="wbDrafts"></div></div><div class="wb-note" id="wbNote"></div></div></div><details class="wb-tech"><summary>工作记录(技术细节)</summary><div class="wb-lanes" id="wbLanes"></div><div class="wb-log" id="wbLog"></div></details><div class="wb-game" id="wbGame" hidden><canvas id="wbGameCanvas" height="150"></canvas><div class="wb-game-hint">空格 / 点击起跳 · 三滴墨:撞上障碍扣一滴,墨尽本局结束 · 收集纸页解锁工房手记</div></div></div></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeTutorial" type="button">新手教程</button><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span><div class="wb-door" id="wbDoor" hidden><div class="wb-door-l"></div><div class="wb-door-r"></div><div class="wb-door-glow"></div></div>',
     );
   }
   async function boot() {
@@ -1478,7 +1484,6 @@
       if (f) importLevelFile(f);
       e.target.value = '';
     };
-    $('homeFixedTest').onclick = loadSamplePuzzle;
     $('homeTutorial').onclick = loadTutorialLevel;
     $('homeClearCache').onclick = async () => {
       if (
@@ -1631,18 +1636,6 @@
         setStatus(err.message || '教程关加载失败', 'error');
       });
   }
-  function loadSamplePuzzle() {
-    setStatus('正在载入手写谜题样本……', 'busy');
-    fetch('sample-puzzles/watchman.json', { cache: 'no-store' })
-      .then(function (r) {
-        if (!r.ok) throw new Error('样本文件加载失败 HTTP ' + r.status);
-        return r.text();
-      })
-      .then(loadLevelText)
-      .catch(function (err) {
-        setStatus(err.message || '样本加载失败', 'error');
-      });
-  }
   window.__favoriteRoomHome = {
     showHome,
     showGame,
@@ -1652,7 +1645,6 @@
     exportLevelRecord,
     deleteLevel,
     importLevelFile,
-    loadSamplePuzzle,
     openNamingFlow,
     resetCurrentLevel,
   };
@@ -1700,6 +1692,13 @@
     };
     renderNameCandidates(currentLevel);
   }
+  /* 东八区日期(2026-08-31):候选标题、回执等展示面的收藏日期按 UTC+8(+8h 读 ISO) */
+  function cstDate10(iso) {
+    const d = new Date(iso);
+    return isNaN(d)
+      ? String(iso || '').slice(0, 10)
+      : new Date(d.getTime() + 8 * 3600 * 1000).toISOString().slice(0, 10);
+  }
   async function renderNameCandidates(record) {
     const box = $('nameCandidates');
     box.innerHTML = '<small class="muted-note">正在构思候选标题……</small>';
@@ -1708,7 +1707,7 @@
       .map(function (it) {
         return (
           '「' + (it.title || '') + '」(' + (it.domain || '') + ',' +
-          String(it.dateAdded || '').slice(0, 10) + ')'
+          cstDate10(it.dateAdded) + ')'
         );
       });
     const avatars = ((record.draft && record.draft.level) ? record.draft.level.items : []).map(
@@ -1819,7 +1818,7 @@
       return (
         '<div class="receipt-row"><b>' + esc(av.sceneName || av.title || '?') + '</b> ← ' +
         esc(src.title || '未知收藏') + ' <small>(' + esc(src.domain || '') + ' · ' +
-        String(src.dateAdded || '').slice(0, 10) + ')</small><br><small>谜面:' +
+        esc(cstDate10(src.dateAdded)) + ')</small><br><small>谜面:' +
         esc((av.reason || '').slice(0, 90)) + '</small></div>'
       );
     });

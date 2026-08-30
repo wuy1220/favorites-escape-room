@@ -3137,3 +3137,127 @@ h1 {
 .wb-headline p .wb-elapsed {
   white-space: nowrap;
 }
+
+/* ============================================================
+   游戏界面可读性升级(2026-08-31 需求方反馈):字号整体放大一档。
+   放在文件末尾以赢得同优先级级联;移动端断点(上文)字号沿用本块比例。
+   ============================================================ */
+body {
+  font-size: 15px;
+}
+/* 画布节点:名字继承 16px,角标/小注同步放大 */
+.node {
+  font-size: 16px;
+}
+.node .type {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+.node .hint {
+  font-size: 13px;
+}
+/* 就地详情卡 */
+.node-pop {
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.np-title {
+  font-size: 16.5px;
+}
+.np-link {
+  font-size: 13px;
+}
+/* 目标横幅(左上) */
+.objective {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: min(560px, calc(100% - 32px));
+}
+.objective span {
+  font-size: 12.5px;
+}
+/* 工作记录:日志行与左下 ticker */
+.event {
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.log-ticker {
+  font-size: 13px;
+}
+.log-ticker .log-kicker {
+  font-size: 12px;
+}
+/* 线索便签(右上浮层) */
+.hint-ask {
+  font-size: 13.5px;
+}
+.hint-btn {
+  font-size: 13px;
+}
+/* 底部工具条 */
+.game-toolbar strong {
+  font-size: 15px;
+}
+.game-toolbar button {
+  font-size: 13px;
+  padding: 7px 13px;
+}
+/* 机关面板(密码/角度/摩斯) */
+.puzzle-panel .modal-card p {
+  font-size: 14px;
+}
+.puzzle-panel .modal-actions button {
+  font-size: 13.5px;
+}
+.puzzle-panel .kp-slot b {
+  font-size: 11.5px;
+}
+
+/* ============================================================
+   标题界面小字同步放大(2026-08-31 需求方反馈):与游戏界面同一档可读性
+   ============================================================ */
+.home-kicker {
+  font-size: 12.5px;
+}
+.home-field {
+  font-size: 13.5px;
+}
+.home-check {
+  font-size: 13.5px;
+}
+.home-file::file-selector-button,
+.import-file::file-selector-button {
+  font-size: 13px;
+}
+.step-no {
+  font-size: 14px;
+}
+.home-actions .primary {
+  font-size: 15px;
+}
+.home-secondary button {
+  font-size: 13.5px;
+  padding: 6px 3px;
+}
+.home-status {
+  font-size: 13.5px;
+}
+.window-card small {
+  font-size: 12.5px;
+}
+.saved-panel p {
+  font-size: 13.5px;
+}
+.saved-row strong {
+  font-size: 15px;
+}
+.saved-row small {
+  font-size: 12.5px;
+}
+.saved-actions button {
+  font-size: 13.5px;
+  padding: 7px 12px;
+}
+.muted-note {
+  font-size: 13px;
+}

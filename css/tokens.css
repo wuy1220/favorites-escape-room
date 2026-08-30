@@ -66,13 +66,14 @@
   --mood-evening: #c9973b;
   --mood-day: #6a9c78;
 
-  /* ---- 字体:等宽只做标签/记录/数字,正文保持可读 ---- */
+  /* ---- 字体:正文/标题用衬线(纸上的墨字,2026-08-31 需求方裁定),
+       优先系统内装的中日韩宋体;等宽只做标签/记录/数字 ---- */
   --font-body:
-    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
-    'Microsoft YaHei', sans-serif;
+    'Noto Serif SC', 'Source Han Serif SC', '思源宋体', 'Source Han Serif CN',
+    'Songti SC', 'SimSun', 'Microsoft YaHei', ui-serif, serif;
   --font-display:
-    Georgia, 'Times New Roman', 'Songti SC', 'STSong', 'Noto Serif CJK SC',
-    'SimSun', serif;
+    'Noto Serif SC', 'Source Han Serif SC', '思源宋体', 'Songti SC',
+    'STZhongsong', SimSun, Georgia, 'Times New Roman', serif;
   --font-mono: 'Cascadia Mono', Consolas, 'Courier New', ui-monospace, monospace;
 
   /* ---- 间距(4px 标尺) ---- */

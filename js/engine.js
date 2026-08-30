@@ -587,25 +587,21 @@
             : '\n所有素材都是可见的。判断哪些相关、按什么顺序使用——错误组合不会破坏任何东西。'),
       },
     ];
-    /* 场景幕节点 + 场景内素材(有 scenes 时用 scene_name 化身名) */
-    /* 容器嵌套(S1/P42):hidden 道具 → 显形其的 beat 的容器物件(声明在外层,
-       锚定在 roomLayoutBoard 之后按**最终**位置统一执行) */
+    /* 容器嵌套(S1/P42):hidden 道具 → 显形其的 beat 的容器物件(两条分支通用:
+       scenes 关卡锚到源物件旁,平铺关卡的容器子件仍走容器网格)。
+       锚定在 roomLayoutBoard 之后按**最终**位置统一执行。 */
     const revealSourceAll = {};
-    if (hasScenes) {
-      /* 2026-08-29 容器嵌套(S1/P42):hidden 道具 → 显形其的 beat 的容器物件。
-         道具节点将生成在容器旁,形成「房间→容器→道具」的嵌套。
-         2026-08-30 空间感落地:显形源优先取 combine 的 resultOn——「用工具撬开抽屉」
-         这类显形步,道具应嵌在抽屉(变身容器)上而不是工具上;result: 引用或缺失时
-         回退为 uses 里的第一件实体素材。 */
-      (level.beats || []).forEach(function (b) {
-        (b.reveals || []).forEach(function (rid) {
-          if (revealSourceAll[rid]) return;
-          const ro =
-            b.resultOn && !String(b.resultOn).startsWith('result:') ? String(b.resultOn) : '';
-          const u = ro || (b.uses || []).find((x) => !String(x).startsWith('result:'));
-          if (u) revealSourceAll[String(rid)] = String(u);
-        });
+    (level.beats || []).forEach(function (b) {
+      (b.reveals || []).forEach(function (rid) {
+        if (revealSourceAll[rid]) return;
+        const ro =
+          b.resultOn && !String(b.resultOn).startsWith('result:') ? String(b.resultOn) : '';
+        const u = ro || (b.uses || []).find((x) => !String(x).startsWith('result:'));
+        if (u) revealSourceAll[String(rid)] = String(u);
       });
+    });
+    /* 场景幕节点 + 场景内素材(有 scenes 时用 scene_name 化身名) */
+    if (hasScenes) {
       level.scenes.forEach(function (sc, si) {
         const scId = 'compiled-scene-' + (sc.id || si);
         nodes.push({
@@ -758,8 +754,10 @@
     /* 容器嵌套锚定(S1,2026-08-30 重构):**必须在摆板之后**执行——roomLayoutBoard
        会把 zone 网格里的容器/源物件搬到最终位置,锚定若取摆板前的旧坐标,
        内容物就会散落在随机角落(实测:指南落到底部 42%/89%)。
-       同一容器的多个内容物按确定性槽位扇出(右下/左下/右侧/左侧/上方),不叠点。 */
-    if (hasScenes) {
+       同一容器的多个内容物按确定性槽位扇出(右下/左下/右侧/左侧/上方),不叠点。
+       2026-08-31 泛化:两条分支都执行——平铺关卡的游离隐藏物(无容器)同样锚到
+       显形源物件旁,让「再点一下源物件」的显形交互成立;容器子件跳过(网格管理)。 */
+    {
       const nodeById = {};
       nodes.forEach(function (n) {
         nodeById[n.id] = n;
@@ -774,6 +772,8 @@
       ];
       nodes.forEach(function (n) {
         if (!n.compiledHidden || !n.compiledItemId) return;
+        if (typeof n.parent === 'string' && n.parent.indexOf('compiled-container-') === 0)
+          return; /* 容器子件:位置由容器分区网格管理,不重复锚定 */
         const srcId = revealSourceAll[n.compiledItemId];
         if (!srcId) return;
         const src = nodeById['compiled-item-' + srcId];
@@ -874,9 +874,18 @@
         place = '房间里';
       }
       const opens = openBeats();
-      guide = opens.length
-        ? opens[0].title + (opens.length > 1 ? '(还有 ' + (opens.length - 1) + ' 件可以并行推进)' : '')
-        : '把最后的结果拖到关卡出口。';
+      if (opens.length === 1 && opens[0].action === 'deliver') {
+        /* 通关指引点名(2026-08-31 需求方反馈:『把木盒拖到出口讲不通』)——
+           只剩交付时,明确说出拖什么、拖到哪 */
+        const raw = String((opens[0].uses || [])[0] || '').replace('result:', '');
+        const node = state.nodes.find((n) => n.compiledItemId === raw) ||
+          state.nodes.find((n) => n.compiledResultKey === 'result:' + raw);
+        guide = '最后一步:把「' + (node ? node.name : '最终结果') + '」拖到「关卡出口」,放进凹槽交付。';
+      } else {
+        guide = opens.length
+          ? opens[0].title + (opens.length > 1 ? '(还有 ' + (opens.length - 1) + ' 件可以并行推进)' : '')
+          : '把最后的结果拖到关卡出口。';
+      }
     } else {
       place = '入口';
       guide = '点击关卡入口,开始这场未命名冒险。';
@@ -976,7 +985,15 @@
     if (found.length) {
       log('你环顾四周——多了些什么:' + found.join('、') + '。', 'good');
       toast('这里有了新变化。');
-    } else log('又看了一圈,没有新的变化。');
+    } else {
+      /* 合并入口(2026-08-31 需求方提议):环顾四周没有新发现时,顺次落下一条提示
+         ——观察力经济不变(提示仍耗格,两次提示之间要先行动) */
+      log('又看了一圈,没有新的变化。');
+      if (typeof requestHint === 'function') {
+        requestHint();
+        if (window.__showHints) window.__showHints();
+      }
+    }
     action();
     update();
     compiledObjective();
@@ -1000,9 +1017,10 @@
     btn.id = 'revisitRoom';
     btn.className = 'reset';
     btn.textContent = '环顾四周';
-    btn.title = '回头检查所有探索过的地方';
+    btn.title = '回头检查所有探索过的地方；没有新变化时,会顺着观察给你一条提示';
     btn.onclick = function () {
-      if (compiled && compiled.started) revisitRoom();
+      if (typeof observeAround === 'function') observeAround();
+      else if (compiled && compiled.started) revisitRoom();
     };
     const resetBtn = tools.querySelector('.reset');
     if (resetBtn) tools.insertBefore(btn, resetBtn);
@@ -1748,18 +1766,37 @@
 
   /* beat 完成后:reveals 列表里的隐藏物件/容器只标记"就绪",不自动出现——
      玩家必须回访包含它的空间(再点房间/容器/场景)才会发现它们。
-     这是原作 preClue 门控 + 父节点点击渲染子节点 的行为等价物。 */
+     这是原作 preClue 门控 + 父节点点击渲染子节点 的行为等价物。
+     2026-08-31 体验修复(需求方反馈"只能盲点环顾四周"):提示语指明变化位置——
+     容器嵌套的报容器名,其余报所在房间名,玩家知道该去哪点。 */
   function triggerReveals(beatId) {
     const ids = (compiled.rules.reveals || {})[beatId];
     if (!ids || !ids.length) return;
+    const places = [];
     let readied = 0;
     ids.forEach(function (id) {
       const node = levelNode('compiled-item-' + id) || levelNode('compiled-container-' + id);
       if (!node) return;
       node.revealReady = true;
       readied++;
+      let place = '';
+      if (typeof node.parent === 'string' && node.parent.indexOf('compiled-') === 0) {
+        const pc = levelNode(node.parent);
+        if (pc && pc !== node) place = '「' + (pc.name || '') + '」里';
+      }
+      if (!place && node.compiledScene) {
+        const z = levelNode(node.compiledScene);
+        if (z) place = '「' + (z.name || '') + '」里';
+      }
+      if (place && places.indexOf(place) < 0) places.push(place);
     });
-    if (readied) log('有什么东西的状态变了。也许该回头再看看。', 'good');
+    if (readied)
+      log(
+        places.length
+          ? '有什么东西的状态变了——' + places.join('、') + '似乎多了什么，点开看看。'
+          : '有什么东西的状态变了。也许该回头再看看。',
+        'good',
+      );
   }
   function finishIfDone() {
     const beats = compiled.level.beats || [];
@@ -1831,6 +1868,11 @@
   }
 
   window.__favoriteRoomRuntime = {
+    /* 统一观察入口(2026-08-31):revisitRoom 在 IIFE 内,room02 的 observeAround
+       经此公开入口调用(环顾四周与提示合并后的唯一空间回访通道) */
+    lookAround: function () {
+      revisitRoom();
+    },
     snapshot: function () {
       return compiled
         ? {

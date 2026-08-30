@@ -1241,6 +1241,18 @@ function frontier(id) {
   updateHint();
   roomObjective();
 }
+/* 统一观察入口(2026-08-31 需求方提议):环顾四周与提示合并——
+   有关卡在跑时先做空间回访(发现就绪的隐藏物);没有新变化则顺次落下一条提示。
+   HUD 的「环顾四周」与线索便签的「求一条线索」都走这里。 */
+function observeAround() {
+  const rt = window.__favoriteRoomRuntime;
+  if (rt && rt.snapshot && rt.snapshot()) {
+    /* 引擎在跑:走空间回访(revisitRoom 是引擎 IIFE 内部函数,经 lookAround 公开入口) */
+    if (typeof rt.lookAround === 'function') rt.lookAround();
+    return;
+  }
+  requestHint();
+}
 function requestHint() {
   if (state.hintBlocked && state.hintMark === state.actions) {
     toast('先让刚才的线索发生一点作用。');
@@ -1584,7 +1596,7 @@ function installCanvasTools() {
 /* ---------------- 启动 ---------------- */
 $('start').onclick = () => $('intro').classList.add('hidden');
 const hintAskBtn = document.getElementById('hintAsk');
-if (hintAskBtn) hintAskBtn.onclick = requestHint;
+if (hintAskBtn) hintAskBtn.onclick = observeAround;
 /* 11.12:#reset 是产品动作「重置本关」——优先产品层 __favoriteRoomHome.resetCurrentLevel
    (保留关卡记录、重建初始运行态、把初始态快照写回 progress),引擎运行时入口次之,
    底层 roomReset 兜底。此前直接绑 roomReset() 会把生成关卡重置成固定 Room 02

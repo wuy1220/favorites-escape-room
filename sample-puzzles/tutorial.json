@@ -5,7 +5,8 @@
   "tut-note",
   "tut-key",
   "tut-box",
-  "tut-safe"
+  "tut-lock",
+  "tut-badge"
  ],
  "items": [
   {
@@ -37,35 +38,45 @@
   },
   {
    "id": "tut-box",
-   "title": "上锁的木盒",
+   "title": "上锁的盒子",
    "domain": "新手教程",
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "上锁的木盒"
+   "description": "上锁的盒子"
   },
   {
-   "id": "tut-safe",
-   "title": "旧保险箱",
+   "id": "tut-lock",
+   "title": "房门密码锁",
    "domain": "新手教程",
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "旧保险箱"
+   "description": "房门上的密码锁"
+  },
+  {
+   "id": "tut-badge",
+   "title": "金色小徽章",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "通关用的金色小徽章"
   }
  ],
  "level": {
   "id": "level-tutorial",
   "title": "新手教程 · 书桌上的第一间密室",
-  "premise": "欢迎。这间小书房教你四件事:查看详情卡、点容器找东西、拖拽组合物件、用事实开锁交付。每一步的提示都写在物件详情卡里,跟着做就行。",
-  "objective": "学会四件事:查看详情卡、点容器找东西、拖拽组合物件、用事实开锁交付。然后把封好的包裹交给出口。",
-  "targetMinutes": 5,
+  "premise": "欢迎。这个小房间只教你几件事:点纸卡看详情、点容器找东西、拖拽组合物件、用密码开锁、交付离开。每一步怎么做,都写在详情卡里。",
+  "objective": "点台灯开始;开抽屉找钥匙;组合与开锁;最后把金色小徽章拖到关卡出口。",
+  "targetMinutes": 3,
   "selectedItemIds": [
    "tut-lamp",
    "tut-note",
    "tut-key",
    "tut-box",
-   "tut-safe"
+   "tut-lock",
+   "tut-badge"
   ],
   "containers": [
    {
@@ -82,7 +93,7 @@
     "roleLabel": "线索",
     "title": "台灯",
     "sceneName": "台灯",
-    "reason": "【教程 1·查看】点击任意纸卡,会弹出它的详情卡(你现在正在读的就是)。点画布空处收起。台灯亮了——房间里似乎多了什么,试试顶栏的「环顾四周」。",
+    "reason": "【教程 1·查看】点击任意纸卡,会弹出它的详情卡(你正在读的就是)。点画布空处收起。台灯亮了——再点一下台灯,看看多了什么。",
     "hidden": false
    },
    {
@@ -91,7 +102,7 @@
     "roleLabel": "线索",
     "title": "教程便签",
     "sceneName": "教程便签",
-    "reason": "【教程 2·线索】线索永远写在详情卡里:旧保险箱的密码是 350。面板右上角的 📌 可以把它钉住,方便去别处核对。",
+    "reason": "【教程 2·线索】线索写在详情卡里:门锁和盒子的密码都是 350。盒子打开后再点一下盒子,取出里面的徽章;密码面板的 📌 可以钉住面板。",
     "hidden": true
    },
    {
@@ -100,7 +111,7 @@
     "roleLabel": "工具",
     "title": "铜钥匙",
     "sceneName": "铜钥匙",
-    "reason": "【教程 4·拖拽】按住铜钥匙,拖到「上锁的木盒」上松手——这就是组合。",
+    "reason": "【教程 4·组合】按住铜钥匙,拖到「上锁的盒子」上松手——盒子会打开。",
     "hidden": true,
     "container": "tut-drawer"
    },
@@ -108,19 +119,28 @@
     "id": "tut-box",
     "role": "lock",
     "roleLabel": "锁",
-    "title": "上锁的木盒",
-    "sceneName": "上锁的木盒",
-    "reason": "上锁的木盒,钥匙孔里空空的。需要一把钥匙。",
+    "title": "上锁的盒子",
+    "sceneName": "上锁的盒子",
+    "reason": "上锁的盒子,钥匙孔是铜色的。",
     "hidden": false
    },
    {
-    "id": "tut-safe",
+    "id": "tut-lock",
     "role": "lock",
     "roleLabel": "锁",
-    "title": "旧保险箱",
-    "sceneName": "旧保险箱",
-    "reason": "【教程 5·开锁】点击锁具弹出密码面板;输入便签上的三位数。数字要来自线索,猜是猜不开的。",
+    "title": "房门密码锁",
+    "sceneName": "房门密码锁",
+    "reason": "【教程 5·开锁】点击房门密码锁,在面板输入便签上的 350。密码来自线索,不要瞎猜。",
     "hidden": false
+   },
+   {
+    "id": "tut-badge",
+    "role": "reward",
+    "roleLabel": "结果",
+    "title": "金色小徽章",
+    "sceneName": "金色小徽章",
+    "reason": "【教程 6·交付】最后一步:按住金色小徽章,拖到「关卡出口」上——把它放进凹槽,就通关了!",
+    "hidden": true
    }
   ],
   "beats": [
@@ -139,17 +159,7 @@
    },
    {
     "id": "t2",
-    "title": "读教程便签",
-    "action": "inspect",
-    "uses": [
-     "tut-note"
-    ],
-    "requires": [],
-    "product": "读过的便签"
-   },
-   {
-    "id": "t3",
-    "title": "钥匙开木盒",
+    "title": "钥匙开盒子",
     "action": "combine",
     "uses": [
      "tut-key",
@@ -160,48 +170,37 @@
      "tut-key"
     ],
     "resultOn": "tut-box",
-    "product": "打开的木盒"
+    "product": "打开的盒子",
+    "reveals": [
+     "tut-badge"
+    ]
    },
    {
-    "id": "t4",
-    "title": "输入保险箱密码",
+    "id": "t3",
+    "title": "输入门锁密码",
     "action": "password",
     "uses": [
-     "tut-safe"
+     "tut-lock"
     ],
     "requires": [
-     "t2"
+     "t1"
     ],
     "expected": "350",
     "deriveFrom": [
      "tut-note"
     ],
-    "product": "解锁的保险箱"
+    "product": "解锁的门锁"
    },
    {
-    "id": "t5",
-    "title": "封好包裹",
-    "action": "combine",
-    "uses": [
-     "result:t3",
-     "result:t4"
-    ],
-    "requires": [
-     "t3",
-     "t4"
-    ],
-    "resultOn": "tut-safe",
-    "product": "封好的包裹"
-   },
-   {
-    "id": "t6",
-    "title": "从出口离开",
+    "id": "t4",
+    "title": "交回徽章",
     "action": "deliver",
     "uses": [
-     "result:t5"
+     "tut-badge"
     ],
     "requires": [
-     "t5"
+     "t2",
+     "t3"
     ]
    }
   ],
@@ -214,10 +213,10 @@
   ],
   "hints": [
    "点击纸卡看详情;点画布空处收起。",
-   "台灯亮起后,点顶栏「环顾四周」——房间会多出东西。",
-   "点击书桌抽屉,里面藏着铜钥匙。",
-   "按住铜钥匙拖到木盒上,就是组合;钥匙用完会消失。",
-   "点旧保险箱,输入便签上的 350;📌 能把面板钉住。"
+   "台灯亮了之后,再点一下台灯——便签会显形。",
+   "点击书桌抽屉,里面有铜钥匙;把它拖到「上锁的盒子」上。",
+   "点房门密码锁,输入便签上的 350;📌 能钉住面板。",
+   "最后按住金色小徽章,拖到「关卡出口」。"
   ],
   "validation": {
    "valid": true,
