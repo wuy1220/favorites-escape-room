@@ -787,9 +787,13 @@ function roomRender() {
       const kindCls =
         n.compiledHidden && !n.revealed ? v.kind : v.kind.replace(' compiled-hidden-item', '');
       const webMark = v.url ? '<span class="web-mark" title="收藏网页">↗</span>' : '';
-      /* 角色角标(2026-08-29):卡片上直接标出素材身份,卡片不再只有一行名字 */
+      /* 角色角标(2026-08-29):卡片上直接标出素材身份,卡片不再只有一行名字。
+         2026-08-31 伪装(需求方反馈):干扰项印着「干扰」等于明牌——它必须
+         看似与主线相关的线索,角标与色条都按线索显示,真假由玩家自己甄别 */
       const typeHtml = n.compiledRole
-        ? '<i class="type">' + (ROOM_ROLE_LABELS[n.compiledRole] || '') + '</i>'
+        ? '<i class="type">' +
+          (ROOM_ROLE_LABELS[n.compiledRole === 'red_herring' ? 'clue' : n.compiledRole] || '') +
+          '</i>'
         : '';
       let pop = '';
       if (state.activePop === n.id) {
@@ -822,8 +826,10 @@ function roomRender() {
   const stageW = stageEl.clientWidth || 1;
   const stageH = stageEl.clientHeight || 1;
   let arriveIdx = 0;
+  let anyArrived = false;
   state.nodes.forEach((n) => {
     if (!n.justArrived) return;
+    anyArrived = true;
     const el = document.querySelector('.node[data-id="' + n.id + '"]');
     if (!el) return;
     const p = n.parent && state.nodes.find((q) => q.id === n.parent);
@@ -834,6 +840,13 @@ function roomRender() {
     el.style.setProperty('--fd', arriveIdx * 70 + 'ms');
     arriveIdx++;
   });
+  /* 新物件显形时收起线索便签浮层(2026-08-31):浮层悬在画布右上,
+     恰好盖住飞入的节点——玩家点节点实际点到浮层,点击被吞(教程关实测)。
+     显形本身也意味着提示上下文更新了,收起让位给新内容。 */
+  if (anyArrived) {
+    const hf = document.getElementById('hintFloat');
+    if (hf) hf.classList.add('hidden');
+  }
   /* 出现/变化标记延到下一帧再清(2026-08-30 修复):
      一次点击里 roomRender 常被连续调用 2~3 次(inspect() 内部一次 + 末尾再显式
      调用一次),每次都用 innerHTML 重建全部节点。此前在渲染末尾**立即**清标记,
@@ -1353,21 +1366,55 @@ function openPuzzlePanel(id) {
     if (p.id !== id && !p.dataset.pinned) p.classList.add('hidden');
   });
   panel.classList.remove('hidden');
-  const stage = $('stage').getBoundingClientRect();
-  const anchorId = window.__lastUseTarget || state.activePop;
-  const host = anchorId ? document.querySelector('.node[data-id="' + anchorId + '"]') : null;
-  if (host) {
-    const hr = host.getBoundingClientRect();
-    const pw = Math.min(340, stage.width - 24);
-    let x = hr.right + 14;
-    if (x + pw > stage.right - 8) x = Math.max(stage.left + 8, hr.left - pw - 14);
-    panel.style.left = Math.max(stage.left + 8, x) + 'px';
-    panel.style.top = Math.max(stage.top + 10, hr.top - 8) + 'px';
+  /* 定位(11.15 复审重写,2026-08-31):.modal 是 fixed——坐标基准是 viewport,
+     不是舞台;面板宽度不按 340 估算,直接读显示后卡片真实 rect。
+     四向候选(右→左→下→上)取第一个完整放进 viewport 的位置,最后兜底收夹,
+     保证确认/关闭按钮永远可见可点。 */
+  const card = panel.querySelector('.modal-card');
+  requestAnimationFrame(function () {
+    const vw = window.innerWidth,
+      vh = window.innerHeight,
+      M = 8,
+      GAP = 14;
+    const cw = card ? card.offsetWidth : Math.min(330, vw - 24);
+    const ch = card ? card.offsetHeight : 220;
+    const anchorId = window.__lastUseTarget || state.activePop;
+    const host = anchorId ? document.querySelector('.node[data-id="' + anchorId + '"]') : null;
+    let x,
+      y;
+    if (host) {
+      const hr = host.getBoundingClientRect();
+      /* 四向候选:每项给出完整放进 viewport 的坐标,放不下则 null */
+      const cand = [];
+      const rightX = hr.right + GAP;
+      if (rightX + cw + M <= vw)
+        cand.push([rightX, Math.min(Math.max(M, hr.top - 8), vh - ch - M)]);
+      const leftX = hr.left - GAP - cw;
+      if (leftX - M >= 0) cand.push([leftX, Math.min(Math.max(M, hr.top - 8), vh - ch - M)]);
+      const belowY = hr.bottom + GAP;
+      if (belowY + ch + M <= vh)
+        cand.push([Math.min(Math.max(M, hr.left + hr.width / 2 - cw / 2), vw - cw - M), belowY]);
+      const aboveY = hr.top - GAP - ch;
+      if (aboveY - M >= 0)
+        cand.push([Math.min(Math.max(M, hr.left + hr.width / 2 - cw / 2), vw - cw - M), aboveY]);
+      if (cand.length) {
+        x = cand[0][0];
+        y = cand[0][1];
+      } else {
+        /* 四向都放不下(卡片比 viewport 还大或锚点居中):兜底右贴 + 双轴收夹 */
+        x = Math.max(M, Math.min(vw - cw - M, hr.right + GAP));
+        y = Math.max(M, Math.min(vh - ch - M, hr.top - 8));
+      }
+    } else {
+      /* 无锚点:右缘悬挂(默认位),垂直也按内容收夹 */
+      x = Math.max(M, vw - cw - 18);
+      y = Math.max(M, Math.min(vh - ch - M, 84));
+    }
+    panel.style.left = Math.round(x) + 'px';
+    panel.style.top = Math.round(y) + 'px';
     panel.style.right = 'auto';
-  } else {
-    panel.style.left = 'auto';
-    panel.style.right = '18px';
-  }
+    panel.style.bottom = 'auto';
+  });
 }
 window.__openPuzzlePanel = openPuzzlePanel;
 document.querySelectorAll('.puzzle-panel .puzzle-pin').forEach((btn) => {
@@ -1571,3 +1618,47 @@ installCanvasTools();
 roomReset();
 render();
 applyView();
+
+/* ---------- 聚焦光效(2026-08-31 需求方反馈) ----------
+   跟随鼠标的暖光斑 + 边缘晕影,强化「暗房里举灯探索」的空间感。
+   纯视觉:pointer-events:none,不影响点击/拖拽;rAF 节流,只写自定义属性
+   (transform 平移在合成器层完成);触屏不激活;仅在有已挂载关卡时淡入。 */
+(function initFocusGlow() {
+  const stage = document.getElementById('stage');
+  if (!stage) return;
+  let glow = document.getElementById('focusGlow');
+  if (!glow) {
+    glow = document.createElement('div');
+    glow.id = 'focusGlow';
+    stage.appendChild(glow);
+  }
+  let raf = 0,
+    mx = 0,
+    my = 0;
+  const apply = function () {
+    raf = 0;
+    glow.style.setProperty('--mx', mx + 'px');
+    glow.style.setProperty('--my', my + 'px');
+  };
+  stage.addEventListener(
+    'pointermove',
+    function (e) {
+      if (e.pointerType === 'touch') return;
+      const r = stage.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      if (!raf) raf = requestAnimationFrame(apply);
+      /* 只在关卡已挂载时点亮(首页/工房不散光) */
+      if (
+        !glow.classList.contains('on') &&
+        window.__favoriteRoomRuntime &&
+        window.__favoriteRoomRuntime.snapshot()
+      )
+        glow.classList.add('on');
+    },
+    { passive: true },
+  );
+  stage.addEventListener('pointerleave', function () {
+    glow.classList.remove('on');
+  });
+})();

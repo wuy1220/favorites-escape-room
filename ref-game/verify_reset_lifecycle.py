@@ -176,6 +176,9 @@ with sync_playwright() as p:
         ".filter((e) => e.offsetParent !== null).length"
     )
     check("重置后同一关卡入口可用(scene 节点 %d 个亮出)" % zones, zones >= 2)
+    # 入口验证重新开始了关卡——再次重置回初始态,避免自动保存把进行中进度带进下一环节
+    page.evaluate("() => window.__favoriteRoomHome.resetCurrentLevel()")
+    page.wait_for_timeout(900)
 
     # ===== 刷新后「继续游戏」恢复的是重置后(未开始)的进度 =====
     page.reload(wait_until="domcontentloaded")

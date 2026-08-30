@@ -76,7 +76,7 @@ def valid_design(ids):
     }
 
 
-def make_handle(design_delay=0.0, hang=False):
+def make_handle(design_delay=0.0, hang=False, invalid=False):
     def handle(route):
         try:
             body = json.loads(route.request.post_data)
@@ -89,6 +89,12 @@ def make_handle(design_delay=0.0, hang=False):
                 ]
                 route.fulfill(status=200, content_type="application/json",
                               body=json.dumps({"choices": [{"message": {"content": json.dumps({"items": out})}}]}))
+                return
+            if invalid:
+                # 立即返回坏设计:两路快速烧完 3 轮,进入「10 秒后整体重试」窗口——
+                # 在该窗口内点取消,避免 sync 路由处理器的 sleep 阻塞测试主线程
+                route.fulfill(status=200, content_type="application/json",
+                              body=json.dumps({"choices": [{"message": {"content": json.dumps({"title": "坏设计"})}}]}))
                 return
             if hang:
                 time.sleep(60)  # 挂起,等取消中止
@@ -151,6 +157,17 @@ with sync_playwright() as p:
         " document.querySelector('#wbMaterials .wb-mat').getAttribute('href') || '']"
     )
     check("素材卡片就位且可跳转来源(≥6,带 href)", mat_n >= 6 and bool(mat_href), f"n={mat_n} href={mat_href[:50]}")
+    # 小游戏:手动开启即进入纸页夜奔;工房手记开场即浮现
+    page.evaluate("() => document.getElementById('wbGameToggle').click()")
+    page.wait_for_timeout(300)
+    game_on = page.evaluate(
+        "() => !document.getElementById('wbGame').hidden"
+        " && !!(window.__wbGame && window.__wbGame.isStarted())"
+    )
+    check("小游戏可手动开启(纸页夜奔)", game_on)
+    note_shown = page.evaluate("() => document.getElementById('wbNote').classList.contains('show')")
+    check("工房手记已浮现", note_shown)
+    page.evaluate("() => document.getElementById('wbGameToggle').click()")
     page.wait_for_function("() => document.querySelectorAll('#wbLanes .wb-lane').length >= 2", timeout=15000)
     check("赛马实况两路就位", True)
     page.wait_for_function(
@@ -174,7 +191,9 @@ with sync_playwright() as p:
 
     # ===== 场景 2:取消生成 =====
     page2 = b.new_page()
-    page2.route("**/api/step**", make_handle(hang=True))
+    page2.route("**/api/step**", make_handle(invalid=True))
+    # glm 路也拦成坏设计:两路同时快速烧完轮次,才能进入「整体重试」窗口
+    page2.route("**open.bigmodel.cn**", make_handle(invalid=True))
     page2.route("**/fetch-meta**", lambda route: route.fulfill(
         status=200, content_type="application/json", body=json.dumps({"results": {}})))
     page2.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
@@ -183,10 +202,12 @@ with sync_playwright() as p:
     page2.wait_for_timeout(1200)
     page2.click("#homeGenerate")
     page2.wait_for_selector("#genWorkbench:not([hidden])", timeout=10000)
-    page2.wait_for_function("() => document.querySelectorAll('#wbLanes .wb-lane').length >= 2", timeout=15000)
+    page2.wait_for_function(
+        "() => /整体重试/.test(document.getElementById('homeStatus').textContent)", timeout=30000
+    )
     page2.evaluate("() => document.getElementById('wbCancel').click()")
     page2.wait_for_function(
-        "() => /已取消/.test(document.getElementById('homeStatus').textContent)", timeout=8000
+        "() => /已取消/.test(document.getElementById('homeStatus').textContent)", timeout=15000
     )
     check("取消后状态行明确提示", True)
     btn_ok = page2.evaluate("() => !document.getElementById('homeGenerate').disabled")

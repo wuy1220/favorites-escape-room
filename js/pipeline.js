@@ -1653,8 +1653,16 @@
       return '';
     }
   }
+  /* UTC+8 显示时间(2026-08-31 需求方裁定):书签与关卡的时间戳一律按东八区呈现。
+     存储仍用 ISO UTC(排序/版本兼容);把时刻 +8h 后读 ISO,即得东八区挂钟时间,
+     与机器时区无关。设计输入(dateAdded)同样转换——谜面引用的日期必须与玩家
+     在物件卡上看到的「收藏于」一致(事实锚定铁律)。 */
+  function cstIso(v) {
+    const d = v instanceof Date ? v : new Date(v);
+    return isNaN(d) ? null : new Date(d.getTime() + 8 * 3600 * 1000).toISOString();
+  }
   function whenLabel(iso) {
-    const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(String(iso || ''));
+    const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(String(cstIso(iso) || ''));
     return m ? m[1] + ' ' + m[2] : iso ? String(iso).slice(0, 16).replace('T', ' ') : '';
   }
   function stableId(url, index) {
@@ -2947,7 +2955,8 @@
           domain: it.domain,
           urlPath: (it.urlPath || '').slice(0, 200),
           folder: it.folder || '',
-          dateAdded: it.dateAdded || '',
+          /* 东八区呈现(2026-08-31):模型引用的收藏日期与玩家看到的「收藏于」同源 */
+          dateAdded: cstIso(it.dateAdded) || it.dateAdded || '',
           desc: (it.description || '').slice(0, 300),
         };
       });

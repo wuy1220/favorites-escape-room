@@ -4,8 +4,11 @@
    错误组合有反馈,依赖未满足时检查给出线索——密室而不是任务清单。 */
 (function () {
   let compiled = null;
+  /* 东八区显示(2026-08-31):+8h 后读 ISO,与机器时区无关;存储保持 ISO UTC */
   const whenLabel = (iso) => {
-    const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(String(iso || ''));
+    const d = new Date(iso);
+    const c = isNaN(d) ? null : new Date(d.getTime() + 8 * 3600 * 1000).toISOString();
+    const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(String(c || ''));
     return m ? m[1] + ' ' + m[2] : iso ? String(iso).slice(0, 16).replace('T', ' ') : '';
   };
 
@@ -793,6 +796,9 @@
       done: false,
       rootMode: false,
       inspected: new Set(),
+      /* 分层探索(2026-08-31 需求方反馈):房间已走进状态——点根只亮房间,
+         点房间才发现其中的物件;sceneId -> true */
+      roomExplored: {},
       sequence: [],
       currentSeq: 0,
       sceneIndex: hasScenes ? 0 : -1,
@@ -892,10 +898,11 @@
     if (compiled.hasScenes) {
       if (compiled.level.parallelRooms === true) {
         /* 2026-08-29 原作式空间层次(P42):全房间同时亮出,非线性自由探索——
-           推进由线索链(requires)承担,不再顺序换幕。 */
+           推进由线索链(requires)承担,不再顺序换幕。
+           2026-08-31 分层探索:点根只亮房间,点房间才见物件(exploreRoom)。 */
         compiled.parallelRooms = true;
         revealAllRooms(true);
-        log('关卡开始。所有房间同时亮出——线索会把它们串成一条链。', 'good');
+        log('关卡开始。几间房间同时亮出——点开房间,看看里面有什么。', 'good');
       } else {
         /* 场景模式:只亮第一幕的场景节点+其物件;出口隐藏到最后一幕 */
         compiled.sceneIndex = 0;
@@ -1004,7 +1011,10 @@
 
   /* 2026-08-29 空间层次 S3(P40/P42):并行房间发现式推进——
      房间 1 挂载即亮出;后房间在 lockedBy beat 完成后亮出(发现式探索);
-     已发现房间永久保留可回访;物件可见性仍由各自 hidden/revealReady 决定。 */
+     已发现房间永久保留可回访。
+     2026-08-31 分层探索(需求方反馈):这里**只亮房间节点,不再连带亮出物件**——
+     点根节点看到的是几间房,点开房间才"走进去"发现里面的东西(见 exploreRoom);
+     藏在容器里的物件仍由谜题节奏(reveals + 环顾四周)显形。 */
   function revealAllRooms(isFirst) {
     const scenes = compiled.level.scenes || [];
     let changed = false;
@@ -1017,21 +1027,8 @@
         z.spawned = true;
         z.justArrived = true; /* 房间亮出也有出现动画 */
         changed = true;
-        state.nodes
-          .filter((n) => n.compiledItem && n.compiledScene === z.id)
-          .forEach(function (n) {
-            const was = n.hidden;
-            n.hidden = n.compiledHidden && !n.revealReady;
-            if (!n.hidden) {
-              n.spawned = true;
-              /* 11.13 #6:visible 必须同步 revealed=true,否则 compiled-hidden-item
-                 的 opacity:0/pointer-events:none 仍挂在类上,物件"显形了却看不见" */
-              if (was || !n.revealed) n.revealed = true;
-              if (was) n.justArrived = true; /* 首次亮出的物件播出现动画 */
-            }
-          });
         if (si > 0 && isFirst === false)
-          log('新的房间亮出:「' + (sc.title || '') + '」', 'good');
+          log('新的房间亮出:「' + (sc.title || '') + '」——点开看看。', 'good');
       }
     });
     /* 出口:最后一个房间发现后亮出 */
@@ -1053,6 +1050,32 @@
       roomRender();
       drawLinks();
     }
+  }
+
+  /* 走进一间房(2026-08-31 分层探索):首次点击房间节点时亮出其中可直接看见的
+     物件(hidden 的仍等 reveals);之后点击退化为回看(revealReady 的隐藏物发现)。
+     返回是否是首次走进。 */
+  function exploreRoom(z) {
+    if (!z || !compiled.hasScenes) return false;
+    if (compiled.roomExplored[z.id]) return false;
+    compiled.roomExplored[z.id] = true;
+    let any = false;
+    state.nodes
+      .filter((n) => n.compiledItem && n.compiledScene === z.id && !n.compiledResult)
+      .forEach(function (n) {
+        const was = n.hidden;
+        n.hidden = n.compiledHidden && !n.revealReady;
+        if (!n.hidden) {
+          n.spawned = true;
+          /* 11.13 #6:visible 必须同步 revealed=true,否则 compiled-hidden-item
+             的 opacity:0/pointer-events:none 仍挂在类上,物件"显形了却看不见" */
+          if (was || !n.revealed) n.revealed = true;
+          if (was) n.justArrived = true;
+          any = true;
+        }
+      });
+    log('你走进「' + (z.name || '房间') + '」——' + (any ? '打量里面的摆设。' : '里面空荡荡的。'), 'good');
+    return true;
   }
 
   /* ---------- 场景推进:亮出第 si 幕;前序幕收起 ---------- */
@@ -1144,12 +1167,16 @@
       inspect(n);
       return true;
     }
-    /* 场景节点:inspect 场景描写;回看时发现 reveal 就绪的隐藏物件 */
+    /* 场景节点:首次点击=走进(亮出其中可直接看见的物件);之后=回看,
+       发现 reveal 就绪的隐藏物件 */
     if (n.compiledScene && n.kind && n.kind.includes('zone')) {
+      const firstStep = exploreRoom(n);
       inspect(n);
       const found = [];
       state.nodes.forEach(function (m) {
-        if (m.compiledItem && m.hidden && m.revealReady && m.compiledScene === n.compiledScene) {
+        /* 2026-08-31 修复:zone 节点的 compiledScene 是布尔标记,物件的才是场景 id——
+           旧比较恒 false,beat 显形的隐藏物在「先逛房、后解谜」流程里永远不再出现 */
+        if (m.compiledItem && m.hidden && m.revealReady && m.compiledScene === n.id) {
           m.hidden = false;
           m.revealed = true;
           m.spawned = true;
@@ -1159,7 +1186,7 @@
       });
       if (found.length)
         log('回看「' + n.name + '」——多了些什么:' + found.join('、') + '。', 'good');
-      if (compiled.hasScenes) {
+      if (compiled.hasScenes && !firstStep) {
         const sc = (compiled.level.scenes || [])[n.sceneIndex];
         if (sc && n.sceneIndex === compiled.sceneIndex)
           log('你环顾「' + (sc.title || '这个场景') + '」。' + (sc.description || ''), 'good');
@@ -1423,6 +1450,39 @@
   }
 
   /* ---------- 点击:处理 inspect 与 sequence ---------- */
+  /* 2026-08-31 断电锁反馈(需求方实测 123.room.json):机关的目标身份还没被
+     变身出来时(如终端要先通电),password/angle/morse 三分支按 nodeKeys 全部
+     匹配不到,点击落空无任何反馈。这里反查机关规则的 result: 前置——若缺失的
+     产物恰好落在被点物件身上,明确告诉玩家缺哪一步、会得到什么。 */
+  function machinePendingBlocker(n) {
+    const keys = nodeKeys(n);
+    const rules = [].concat(
+      compiled.rules.passwords || [],
+      compiled.rules.angles || [],
+      compiled.rules.morses || [],
+    );
+    for (let i = 0; i < rules.length; i++) {
+      const r = rules[i];
+      if (state.clues.has(r.clue)) continue; /* 已解开 */
+      if (keys.includes(r.item)) continue; /* 已就绪(面板会正常打开) */
+      const itemStr = String(r.item || '');
+      if (itemStr.indexOf('result:') !== 0) continue;
+      const beat = (compiled.level.beats || []).find(function (b) {
+        return String(b.id) === itemStr.slice(7);
+      });
+      if (!beat) continue;
+      /* 产物落在哪件物件上:优先非 result 的 resultOn,回退 uses 里最后一个实体素材 */
+      const ro = beat.resultOn && !String(beat.resultOn).startsWith('result:') ? String(beat.resultOn) : '';
+      const target =
+        ro ||
+        (beat.uses || [])
+          .filter((u) => !String(u).startsWith('result:'))
+          .slice(-1)
+          .join('');
+      if (target && keys.includes(target)) return { title: beat.title || '', product: beat.product || '' };
+    }
+    return null;
+  }
   const baseHandle = compiledHandle;
   compiledHandle = function (n) {
     if (!compiled || !n) return baseHandle(n);
@@ -1666,6 +1726,22 @@
         roomRender();
         return true;
       }
+      /* 断电锁:机关未就绪时的可诊断反馈(取代旧的静默落空) */
+      const pending = machinePendingBlocker(n);
+      if (pending) {
+        const msg =
+          '「' +
+          n.name +
+          '」没有反应——它还没就绪:先完成「' +
+          pending.title +
+          '」' +
+          (pending.product ? '(得到「' + pending.product + '」)' : '') +
+          '。';
+        log(msg, 'warn');
+        toast(msg);
+        inspect(n); /* 仍打开详情:锁面的谜面/状态本身就是线索 */
+        return true;
+      }
     }
     return baseHandle(n);
   };
@@ -1766,6 +1842,9 @@
             clues: [...state.clues],
             /* 11.12 #4:并行房间模式进快照——恢复口径不依赖 localStorage 草稿的新旧 */
             parallelRooms: compiled.level ? compiled.level.parallelRooms === true : false,
+            /* 分层探索(2026-08-31):已走进的房间随档恢复;旧档无此字段,
+               恢复时按全部已探索处理(与旧行为一致) */
+            explored: Object.keys(compiled.roomExplored || {}),
           }
         : null;
     },
@@ -1779,7 +1858,7 @@
       root.generatedStarted = false;
       root.kind = 'zone compiled-root';
       root.name = title || compiled.level.title || '收藏关卡';
-      root.hint = '点击开始,素材全部亮出';
+      root.hint = '点击开始,房间亮出';
       root.detail = detail || compiled.level.premise || '把收藏变成一次可行动的探索。';
       root.hidden = false;
       ['shelf', 'desk', 'wall', 'exit', 'imported-room'].forEach((id) => {
@@ -1841,10 +1920,27 @@
         });
       }
       if (compiled.started) {
+        /* 分层探索恢复(2026-08-31):新档带 explored 清单——只恢复已走进房间的
+           物件可见性,未走进的房间保持「只见其门」;旧档无字段按全部已探索处理
+           (与旧行为一致,变身产物跨房间保留) */
+        const exploredList = Array.isArray(snapshot.explored) ? snapshot.explored : null;
+        if (exploredList) {
+          exploredList.forEach((id) => {
+            compiled.roomExplored[id] = true;
+          });
+        }
         state.nodes
           .filter((n) => n.compiledItem || n.compiledExit || n.compiledContainer)
           .forEach((n) => {
-            if (!(n.compiledConsumed || (n.compiledHidden && !n.revealed))) n.hidden = false;
+            if (n.compiledConsumed || (n.compiledHidden && !n.revealed)) return;
+            if (
+              exploredList &&
+              n.compiledScene &&
+              !n.compiledResult &&
+              !compiled.roomExplored[n.compiledScene]
+            )
+              return; /* 未走进的房间:物件保持藏着 */
+            n.hidden = false;
           });
         if (compiled.rootMode) {
           const lv = levelNode('compiled-level');

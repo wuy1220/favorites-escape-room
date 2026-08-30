@@ -224,7 +224,9 @@ button:disabled {
   position: relative;
   width: min(330px, calc(100vw - 36px));
   padding: 16px 18px;
-  max-height: calc(100vh - 120px);
+  /* 11.15:100dvh 优先(移动端软键盘/地址栏收放时 vh 虚高),老浏览器回退 vh */
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
   overflow-y: auto;
   overflow-wrap: anywhere;
 }
@@ -234,6 +236,31 @@ button:disabled {
 }
 .puzzle-panel .modal-card p {
   font-size: 13px;
+}
+/* 11.15:动态内容防撑宽——颜色标签/长标题/长摩斯/按钮行只收缩换行,不横向撑开卡片 */
+.puzzle-panel .modal-card h2,
+.puzzle-panel .modal-card p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.puzzle-panel .modal-actions {
+  flex-wrap: wrap;
+}
+.puzzle-panel .code {
+  height: auto;
+  min-height: 40px;
+  max-width: 100%;
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.puzzle-panel .kp-slot {
+  min-width: 0;
+}
+.puzzle-panel .kp-slot b {
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .puzzle-panel.hidden .modal-card {
   pointer-events: none;
@@ -1183,8 +1210,10 @@ h1 {
 .node.role-reward {
   box-shadow: inset 3px 0 0 var(--role-reward), var(--shadow-paper);
 }
+/* 干扰项伪装(2026-08-31 需求方反馈):色条同线索蓝墨——红鲱鱼必须看起来
+   就是一条普通线索,墨色差异等于把迷底写在纸上。--role-red 保留给清洗报告 */
 .node.role-red_herring {
-  box-shadow: inset 3px 0 0 var(--role-red), var(--shadow-paper);
+  box-shadow: inset 3px 0 0 var(--role-clue), var(--shadow-paper);
 }
 /* 拖拽组合落点反馈:火漆圈 */
 .node.drop-ok {
@@ -2432,3 +2461,679 @@ h1 {
   }
 }
 
+/* ===== 生成工作台 v2「深夜工房」(2026-08-30):等待 = 看自己的收藏被封进房间 ===== */
+.gen-workbench {
+  margin-top: 14px;
+  border: 1px solid rgba(44, 36, 22, 0.35);
+  border-radius: 4px;
+  padding: 14px 16px 10px;
+  background:
+    linear-gradient(rgba(250, 246, 235, 0.92), rgba(243, 236, 220, 0.92)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(44, 36, 22, 0.015) 3px 4px);
+  box-shadow: inset 0 0 40px rgba(44, 36, 22, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.gen-workbench.wb-flash {
+  animation: wbFlash 0.55s var(--ease);
+}
+@keyframes wbFlash {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.012); box-shadow: 0 0 0 3px rgba(178, 58, 44, 0.25); }
+  60% { transform: scale(0.998); }
+  100% { transform: scale(1); }
+}
+/* 工房剪影:随阶段亮起 */
+.wb-sil {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 96px;
+  pointer-events: none;
+  z-index: 0;
+}
+.wb-sil g {
+  fill: none;
+  stroke: rgba(44, 36, 22, 0.16);
+  stroke-width: 1.4;
+  opacity: 0.25;
+  transition: opacity 1.2s var(--ease);
+}
+.wb-sil .sil-3 {
+  stroke: rgba(178, 58, 44, 0.5);
+  opacity: 0.12;
+}
+.wb-scene[data-phase='1'] .sil-3,
+.wb-scene[data-phase='2'] .sil-3,
+.wb-scene[data-phase='3'] .sil-3,
+.wb-scene[data-phase='4'] .sil-3 {
+  opacity: 0.85;
+}
+.wb-scene[data-phase='2'] .sil-2,
+.wb-scene[data-phase='3'] .sil-2 {
+  opacity: 0.6;
+}
+.wb-scene[data-phase='4'] .sil-4 {
+  opacity: 0.9;
+}
+.wb-head,
+.wb-phases,
+.wb-deck-bar,
+.wb-deck,
+.wb-note,
+.wb-drafts,
+.wb-tech,
+.wb-game {
+  position: relative;
+  z-index: 1;
+}
+.wb-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.wb-title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.wb-title small {
+  font-weight: 400;
+  color: var(--paper-ink-mid);
+}
+.wb-actions {
+  display: flex;
+  gap: 6px;
+}
+.wb-actions button {
+  border: 1px solid rgba(44, 36, 22, 0.35);
+  background: transparent;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  color: var(--paper-ink-mid);
+  font-size: 12px;
+}
+.wb-actions button:hover {
+  border-color: var(--seal);
+  color: var(--seal-deep);
+}
+.wb-actions button.wb-danger:hover {
+  border-color: #a33333;
+  color: #a33333;
+}
+/* 阶段:五道工序 */
+.wb-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 2px;
+}
+.wb-phase {
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  color: var(--paper-ink-mid);
+  transition: all 0.4s var(--ease);
+}
+.wb-phase.active {
+  border-color: var(--seal);
+  color: var(--seal-deep);
+  background: rgba(178, 58, 44, 0.08);
+}
+.wb-phase.done {
+  opacity: 0.45;
+  text-decoration: line-through;
+  text-decoration-color: rgba(178, 58, 44, 0.6);
+}
+/* 素材发牌堆叠 */
+.wb-deck-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--paper-ink-mid);
+}
+.wb-deck-bar button {
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  background: transparent;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--paper-ink-mid);
+}
+.wb-deck-bar button:hover {
+  border-color: var(--seal);
+  color: var(--seal-deep);
+}
+.wb-deck {
+  position: relative;
+  height: 96px;
+  margin: 6px 0 2px;
+}
+.wb-deck .wb-mat {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 190px;
+  margin: -26px 0 0 -95px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(#fbf7ec, #f3ecdb);
+  box-shadow: 0 2px 6px rgba(44, 36, 22, 0.12);
+  transform: translate(140%, -30%) rotate(9deg);
+  opacity: 0;
+  transition:
+    transform 0.55s var(--ease),
+    opacity 0.45s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+.wb-deck .wb-mat.dealt {
+  transform:
+    translate(calc(-50% + var(--k, 0) * 14px), calc(-50% + var(--k, 0) * 4px))
+    rotate(calc(var(--ri, 0) * 0.7deg - var(--k, 0) * 1.6deg))
+    scale(calc(1 - var(--k, 0) * 0.045));
+  opacity: calc(1 - var(--k, 0) * 0.14);
+}
+.wb-deck .wb-mat.is-top:hover {
+  box-shadow: 0 4px 14px rgba(44, 36, 22, 0.2);
+}
+.wb-deck .wb-mat b {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wb-deck .wb-mat small {
+  font-size: 10px;
+  color: var(--paper-ink-mid);
+}
+.wb-seal {
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  border: 1px solid var(--seal);
+  color: var(--seal);
+  font-size: 10px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transform: scale(0);
+  opacity: 0;
+}
+.wb-mat.stamped .wb-seal {
+  animation: wbStamp 0.4s var(--ease) 0.15s forwards;
+}
+@keyframes wbStamp {
+  0% { transform: scale(2.4) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(0.9) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 0.88; }
+}
+/* 工作手记 */
+.wb-note {
+  min-height: 22px;
+  margin: 6px 0 2px;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(44, 36, 22, 0.78);
+  opacity: 0;
+  filter: blur(2px);
+  transition: opacity 0.9s var(--ease), filter 0.9s var(--ease);
+}
+.wb-note.show {
+  opacity: 1;
+  filter: blur(0);
+}
+.wb-note::before {
+  content: '—— ';
+  color: rgba(178, 58, 44, 0.6);
+}
+/* 两位起草人的稿纸 */
+.wb-drafts {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0 4px;
+  flex-wrap: wrap;
+}
+.wb-draft {
+  flex: 1 1 200px;
+  min-height: 58px;
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  padding: 8px 10px 8px 26px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 15px, rgba(44, 36, 22, 0.08) 15px 16px),
+    #fbf7ec;
+  position: relative;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.wb-draft::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 11px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2c2a26;
+  opacity: 0.5;
+}
+.wb-draft.ink::before {
+  animation: wbInk 1.6s ease-in-out infinite;
+}
+@keyframes wbInk {
+  0%, 100% { transform: scale(1); opacity: 0.45; }
+  50% { transform: scale(1.35); opacity: 0.8; }
+}
+.wb-draft .wb-draft-name {
+  font-size: 11px;
+  color: var(--paper-ink-mid);
+}
+.wb-draft .wb-draft-line {
+  font-size: 13px;
+  margin-top: 2px;
+}
+.wb-draft.crumple {
+  animation: wbCrumple 0.7s var(--ease);
+}
+.wb-draft.crumple .wb-draft-line {
+  color: #a33333;
+}
+@keyframes wbCrumple {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-2.5deg) scale(0.98); }
+  50% { transform: rotate(2deg) scale(0.97); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0); }
+}
+.wb-draft.done {
+  border-color: rgba(178, 58, 44, 0.55);
+}
+.wb-draft.done .wb-draft-line {
+  color: var(--seal-deep);
+  font-weight: 600;
+}
+.wb-draft.done::after {
+  content: '定稿';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -13px;
+  border: 2px solid var(--seal);
+  color: var(--seal);
+  font-size: 14px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  transform: scale(0) rotate(-10deg);
+  animation: wbStamp 0.45s var(--ease) forwards;
+}
+.wb-draft.gone {
+  opacity: 0.35;
+  transform: translateY(4px);
+}
+/* 折叠的事实记录(与氛围层视觉分离) */
+.wb-tech {
+  margin-top: 6px;
+  border-top: 1px dashed rgba(44, 36, 22, 0.25);
+  padding-top: 4px;
+  font-size: 11px;
+}
+.wb-tech summary {
+  cursor: pointer;
+  color: var(--paper-ink-mid);
+  outline: none;
+}
+.wb-lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 6px 0;
+}
+.wb-lane {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.wb-lane-label {
+  font-weight: 600;
+  min-width: 96px;
+}
+.wb-lane-status {
+  color: var(--paper-ink-mid);
+}
+.wb-lane.ok .wb-lane-status {
+  color: #2c7a3f;
+}
+.wb-lane.bad .wb-lane-status {
+  color: #a33333;
+}
+.wb-log {
+  max-height: 130px;
+  overflow: auto;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  margin: 4px 0 6px;
+}
+.wb-logline {
+  color: var(--paper-ink-mid);
+}
+.wb-logline.bad {
+  color: #a33333;
+}
+.wb-logline.ok {
+  color: #2c7a3f;
+}
+/* 纸页夜奔(等待小游戏) */
+.wb-game {
+  margin-top: 8px;
+}
+.wb-game canvas {
+  width: 100%;
+  height: 150px;
+  display: block;
+  border: 1px dashed rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  background: rgba(251, 247, 236, 0.75);
+  cursor: pointer;
+}
+.wb-game .wb-game-hint {
+  font-size: 11px;
+  color: var(--paper-ink-mid);
+  margin-top: 4px;
+}
+/* 开门转场 */
+.wb-door {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: all;
+}
+.wb-door[hidden] {
+  display: none;
+}
+.wb-door-l,
+.wb-door-r {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.2%;
+  transition: transform 0.75s cubic-bezier(0.6, 0, 0.3, 1);
+  background:
+    linear-gradient(rgba(38, 33, 26, 0.97), rgba(28, 24, 19, 0.97)),
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(250, 246, 235, 0.05) 46px 48px);
+}
+.wb-door-l {
+  left: 0;
+  box-shadow: inset -3px 0 8px rgba(0, 0, 0, 0.5);
+}
+.wb-door-r {
+  right: 0;
+  box-shadow: inset 3px 0 8px rgba(0, 0, 0, 0.5);
+}
+.wb-door.open .wb-door-l {
+  transform: translateX(-101%);
+}
+.wb-door.open .wb-door-r {
+  transform: translateX(101%);
+}
+.wb-door-glow {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(250, 240, 210, 0.9);
+  box-shadow: 0 0 24px 6px rgba(250, 240, 210, 0.55);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.wb-door.open .wb-door-glow {
+  opacity: 1;
+}
+.wb-door.fade {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb-deck .wb-mat,
+  .wb-note,
+  .wb-draft,
+  .wb-door-l,
+  .wb-door-r {
+    transition: none !important;
+    animation: none !important;
+  }
+  .wb-draft.ink::before {
+    animation: none;
+  }
+}
+
+/* ===== 工房全屏场景(2026-08-30):生成 = 走进工房,首页退到幕后 ===== */
+.wb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+  background: rgba(28, 24, 19, 0.55);
+  backdrop-filter: blur(3px);
+}
+.wb-overlay[hidden] {
+  display: none;
+}
+.wb-overlay .gen-workbench {
+  width: min(760px, 100%);
+  margin: 0;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+}
+
+/* ---------- 聚焦光效:跟随鼠标的暖光 + 边缘压暗(2026-08-31) ----------
+   强化「暗房里举灯探索」的空间感。纯视觉层:pointer-events:none,挂在 #stage 内,
+   z-index 高于画布节点(#nodes 4/拖拽 20)低于工具条(30);光斑用 transform 平移,
+   只动合成器不触发重绘。触屏不激活。 */
+#focusGlow {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease);
+}
+#focusGlow::before {
+  /* 静态晕影:四周极轻压暗,灯感来自中央亮区 */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 42%,
+    transparent 52%,
+    rgba(8, 6, 3, 0.16) 100%
+  );
+}
+#focusGlow::after {
+  /* 跟随光斑:暖色,半径约 260px,柔和衰减 */
+  content: '';
+  position: absolute;
+  left: -270px;
+  top: -270px;
+  width: 540px;
+  height: 540px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 214, 140, 0.1),
+    rgba(255, 214, 140, 0.045) 45%,
+    transparent 70%
+  );
+  transform: translate(var(--mx, 50vw), var(--my, 40vh));
+  will-change: transform;
+}
+#focusGlow.on {
+  opacity: 1;
+}
+
+/* ===== 工房舞台化(2026-08-30 v2.2):一眼定性 + 主次分明 ===== */
+.wb-headline {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 4px;
+}
+.wb-headline h3 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 0.06em;
+  color: var(--paper-ink, #2c2a26);
+}
+.wb-headline h3::after {
+  content: '';
+  display: inline-block;
+  width: 34px;
+  height: 2px;
+  margin-left: 12px;
+  vertical-align: middle;
+  background: var(--seal);
+}
+.wb-headline p {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--paper-ink-mid);
+}
+.wb-head {
+  position: relative;
+  z-index: 1;
+  justify-content: flex-end;
+  margin: 2px 0 0;
+}
+.wb-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  gap: 16px;
+  margin-top: 10px;
+}
+.wb-rail {
+  border-right: 1px dashed rgba(44, 36, 22, 0.25);
+  padding-right: 12px;
+}
+.wb-rail .wb-phases {
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 0;
+}
+.wb-rail .wb-phase {
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0 0 0 18px;
+  border-radius: 0;
+  color: var(--paper-ink-mid);
+  font-size: 12.5px;
+}
+.wb-rail .wb-phase::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(44, 36, 22, 0.4);
+  background: transparent;
+}
+.wb-rail .wb-phase.active {
+  color: var(--seal-deep);
+}
+.wb-rail .wb-phase.active::before {
+  border-color: var(--seal);
+  background: var(--seal);
+  box-shadow: 0 0 0 3px rgba(178, 58, 44, 0.15);
+}
+.wb-rail .wb-phase.done {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+.wb-rail .wb-phase.done::before {
+  border-color: rgba(44, 36, 22, 0.5);
+}
+.wb-stage {
+  display: grid;
+  grid-template-columns: 216px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.wb-deck-side .wb-deck-bar {
+  margin-top: 0;
+}
+.wb-deck-side .wb-deck {
+  height: 104px;
+}
+.wb-deck-side .wb-deck .wb-mat {
+  width: 172px;
+  margin-left: -86px;
+}
+.wb-drafts {
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+.wb-draft {
+  flex: none;
+  min-height: 72px;
+  padding: 10px 12px 10px 30px;
+}
+.wb-draft .wb-draft-line {
+  font-size: 15px;
+}
+.wb-note {
+  font-size: 14px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) {
+  .wb-body {
+    grid-template-columns: 1fr;
+  }
+  .wb-rail {
+    border-right: 0;
+    border-bottom: 1px dashed rgba(44, 36, 22, 0.25);
+    padding: 0 0 10px;
+  }
+  .wb-rail .wb-phases {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .wb-stage {
+    grid-template-columns: 1fr;
+  }
+}
+/* 舞台化微调:deck-bar 竖排防挤压;已用时长不与数字断行 */
+.wb-deck-side .wb-deck-bar {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+.wb-deck-bar button {
+  white-space: nowrap;
+}
+.wb-headline p .wb-elapsed {
+  white-space: nowrap;
+}

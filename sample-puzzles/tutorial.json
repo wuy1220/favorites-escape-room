@@ -1,0 +1,228 @@
+{
+ "records": [],
+ "controlledIds": [
+  "tut-lamp",
+  "tut-note",
+  "tut-key",
+  "tut-box",
+  "tut-safe"
+ ],
+ "items": [
+  {
+   "id": "tut-lamp",
+   "title": "台灯",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "书桌上的一盏台灯"
+  },
+  {
+   "id": "tut-note",
+   "title": "教程便签",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "写满教程提示的便签"
+  },
+  {
+   "id": "tut-key",
+   "title": "铜钥匙",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "抽屉里的铜钥匙"
+  },
+  {
+   "id": "tut-box",
+   "title": "上锁的木盒",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "上锁的木盒"
+  },
+  {
+   "id": "tut-safe",
+   "title": "旧保险箱",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "旧保险箱"
+  }
+ ],
+ "level": {
+  "id": "level-tutorial",
+  "title": "新手教程 · 书桌上的第一间密室",
+  "premise": "欢迎。这间小书房教你四件事:查看详情卡、点容器找东西、拖拽组合物件、用事实开锁交付。每一步的提示都写在物件详情卡里,跟着做就行。",
+  "objective": "学会四件事:查看详情卡、点容器找东西、拖拽组合物件、用事实开锁交付。然后把封好的包裹交给出口。",
+  "targetMinutes": 5,
+  "selectedItemIds": [
+   "tut-lamp",
+   "tut-note",
+   "tut-key",
+   "tut-box",
+   "tut-safe"
+  ],
+  "containers": [
+   {
+    "id": "tut-drawer",
+    "name": "书桌抽屉",
+    "desc": "【教程 3·容器】点击容器——里面藏着的东西会出现在旁边。这格抽屉里有一把铜钥匙。",
+    "hidden": false
+   }
+  ],
+  "items": [
+   {
+    "id": "tut-lamp",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "台灯",
+    "sceneName": "台灯",
+    "reason": "【教程 1·查看】点击任意纸卡,会弹出它的详情卡(你现在正在读的就是)。点画布空处收起。台灯亮了——房间里似乎多了什么,试试顶栏的「环顾四周」。",
+    "hidden": false
+   },
+   {
+    "id": "tut-note",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "教程便签",
+    "sceneName": "教程便签",
+    "reason": "【教程 2·线索】线索永远写在详情卡里:旧保险箱的密码是 350。面板右上角的 📌 可以把它钉住,方便去别处核对。",
+    "hidden": true
+   },
+   {
+    "id": "tut-key",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "铜钥匙",
+    "sceneName": "铜钥匙",
+    "reason": "【教程 4·拖拽】按住铜钥匙,拖到「上锁的木盒」上松手——这就是组合。",
+    "hidden": true,
+    "container": "tut-drawer"
+   },
+   {
+    "id": "tut-box",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "上锁的木盒",
+    "sceneName": "上锁的木盒",
+    "reason": "上锁的木盒,钥匙孔里空空的。需要一把钥匙。",
+    "hidden": false
+   },
+   {
+    "id": "tut-safe",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "旧保险箱",
+    "sceneName": "旧保险箱",
+    "reason": "【教程 5·开锁】点击锁具弹出密码面板;输入便签上的三位数。数字要来自线索,猜是猜不开的。",
+    "hidden": false
+   }
+  ],
+  "beats": [
+   {
+    "id": "t1",
+    "title": "点亮台灯",
+    "action": "inspect",
+    "uses": [
+     "tut-lamp"
+    ],
+    "requires": [],
+    "reveals": [
+     "tut-note"
+    ],
+    "product": "亮着的台灯"
+   },
+   {
+    "id": "t2",
+    "title": "读教程便签",
+    "action": "inspect",
+    "uses": [
+     "tut-note"
+    ],
+    "requires": [],
+    "product": "读过的便签"
+   },
+   {
+    "id": "t3",
+    "title": "钥匙开木盒",
+    "action": "combine",
+    "uses": [
+     "tut-key",
+     "tut-box"
+    ],
+    "requires": [],
+    "consume": [
+     "tut-key"
+    ],
+    "resultOn": "tut-box",
+    "product": "打开的木盒"
+   },
+   {
+    "id": "t4",
+    "title": "输入保险箱密码",
+    "action": "password",
+    "uses": [
+     "tut-safe"
+    ],
+    "requires": [
+     "t2"
+    ],
+    "expected": "350",
+    "deriveFrom": [
+     "tut-note"
+    ],
+    "product": "解锁的保险箱"
+   },
+   {
+    "id": "t5",
+    "title": "封好包裹",
+    "action": "combine",
+    "uses": [
+     "result:t3",
+     "result:t4"
+    ],
+    "requires": [
+     "t3",
+     "t4"
+    ],
+    "resultOn": "tut-safe",
+    "product": "封好的包裹"
+   },
+   {
+    "id": "t6",
+    "title": "从出口离开",
+    "action": "deliver",
+    "uses": [
+     "result:t5"
+    ],
+    "requires": [
+     "t5"
+    ]
+   }
+  ],
+  "scenes": [],
+  "mechanics": [
+   "inspect",
+   "combine",
+   "password",
+   "deliver"
+  ],
+  "hints": [
+   "点击纸卡看详情;点画布空处收起。",
+   "台灯亮起后,点顶栏「环顾四周」——房间会多出东西。",
+   "点击书桌抽屉,里面藏着铜钥匙。",
+   "按住铜钥匙拖到木盒上,就是组合;钥匙用完会消失。",
+   "点旧保险箱,输入便签上的 350;📌 能把面板钉住。"
+  ],
+  "validation": {
+   "valid": true,
+   "issues": []
+  },
+  "grounding": "tutorial"
+ }
+}

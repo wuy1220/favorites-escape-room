@@ -7,7 +7,9 @@
     currentLevel = null,
     autoTimer = null,
     pendingWindows = [],
-    selectedWindow = null,
+    /* 多选时间片(2026-08-30 需求方反馈):单个时间片素材常不足 6 条,
+       允许勾选多段合并成一个生成池;数组有序(点击顺序无关,合并按时间排序) */
+    selectedWindows = [],
     lastCleaned = null,
     /* 异步任务令牌(审查 11.2.7):换文件/换窗口时递增,旧回调检查到令牌变化即放弃写入 */
     importToken = 0;
@@ -429,20 +431,63 @@
       .slice()
       .sort((a, b) => t(a) - t(b) || String(a.title).localeCompare(String(b.title)));
   }
-  /* ===== 生成工作台(2026-08-30):把黑盒等待变成可感知的工作过程 =====
-     底线(方向文档):进度只来自真实阶段事件——不放假百分比,不展示模型思维链;
-     形成中的设计不进面板(那是管线内部状态),面板只呈现阶段/素材/赛马/日志这些事实。
-     收起为浮标时,完成不抢占屏幕,由用户点击「已生成 · 点击进入」再挂载。 */
-  const WB_PHASES = ['选出素材', '读取来源', '设计竞速', '整理回执', '进入冒险'];
+  /* ===== 生成工作台 v2「深夜工房」(2026-08-30):把黑盒等待变成一段可陪伴的时光 =====
+     底线不变(方向文档):进度只来自真实阶段事件——不放假百分比,不编造模型思考。
+     分层:氛围(手记/剪影/发牌/稿纸动效)在最前,事实(轮次/供应商/重试)折叠在「工作记录」;
+     两者是同一批事件的两套措辞,不是两套事实。收起为浮标时完成不抢占屏幕。 */
+  const WB_PHASES = ['挑选素材', '重访网页', '构思房间', '校对谜面', '开门'];
+  /* 工房手记:按阶段分组的氛围文案池(纯文学装饰,不冒充系统事件);
+     定时浮现与小游戏收集共享同一池,不重复直到取尽。 */
+  const WB_NOTES = [
+    [
+      '纸页翻动的声音,像有人把年份排成了顺序。',
+      '灯芯挑亮了些——他们在核对日期。',
+      '一枚回形针从这摞纸挪到了那摞纸。',
+      '有人把几张卡片按域名排成一列,又打乱重排。',
+      '窗外偶尔有车灯扫过,没有人抬头。',
+    ],
+    [
+      '墨水瓶拧开了,铅笔搁到了一边——今晚用墨。',
+      '你听见远处有一把锁落下。',
+      '抽屉拉开又推回,像在试什么尺寸。',
+      '火柴划亮了一下,照见半行草稿。',
+      '一张卡片被钉上墙,又取下来换了位置。',
+      '他们把两条线索摆在桌面上,中间空出一个锁的位置。',
+    ],
+    [
+      '铅笔在纸上停了很久,又划掉一行。',
+      '墨迹未干,第二张稿纸已经铺开。',
+      '有人在低声核对两个数字,念了两遍。',
+      '橡皮屑被吹开,露出改定的那一行。',
+    ],
+    [
+      '有人在低声念一道密码,念了两遍。',
+      '一枚印章落在纸面,还带着热。',
+      '有人把答案倒着算了一遍,点点头。',
+      '字迹被描深了一次——关键的那一行。',
+      '袖口沾了一点墨,没有人停下来。',
+    ],
+    [
+      '门轴上了一点油——快了。',
+      '挂钟的针脚声变得很轻。',
+      '桌上的碎纸屑被扫进簸箕。',
+      '钥匙串碰了一下,像在数自己。',
+    ],
+  ];
   const wbState = {
     running: false,
     t0: 0,
     timer: null,
+    noteTimer: null,
+    deckTimer: null,
     collapsed: false,
     cancelled: false,
     pendingRecord: null,
     laneSignals: [],
     laneRows: [],
+    notesTaken: null,
+    stamped: null,
+    phase: 0,
   };
   function wbEl(id) {
     return document.getElementById(id);
@@ -461,18 +506,29 @@
   }
   function wbPhasesRender(cur) {
     const box = wbEl('wbPhases');
-    if (!box) return;
-    box.innerHTML = WB_PHASES.map(
-      (p, i) =>
-        '<span class="wb-phase' +
-        (i < cur ? ' done' : i === cur ? ' active' : '') +
-        '">' +
-        p +
-        '</span>',
-    ).join('');
+    if (box)
+      box.innerHTML = WB_PHASES.map(
+        (p, i) =>
+          '<span class="wb-phase' +
+          (i < cur ? ' done' : i === cur ? ' active' : '') +
+          '">' +
+          p +
+          '</span>',
+      ).join('');
+    const scene = wbEl('genWorkbench');
+    if (scene) scene.setAttribute('data-phase', String(cur));
   }
   function wbPhase(i) {
+    wbState.phase = i;
     wbPhasesRender(i);
+    /* 阶段更替:小游戏画面边缘的灯闪一下,提醒玩家抬头 */
+    const scene = wbEl('genWorkbench');
+    if (scene && !scene.hidden) {
+      scene.classList.remove('wb-flash');
+      void scene.offsetWidth;
+      scene.classList.add('wb-flash');
+      setTimeout(() => scene.classList.remove('wb-flash'), 600);
+    }
   }
   function wbLog(text, kind) {
     const box = wbEl('wbLog');
@@ -483,39 +539,173 @@
     box.prepend(line);
     while (box.children.length > 50) box.removeChild(box.lastChild);
   }
-  function wbLanesInit(defs) {
-    const box = wbEl('wbLanes');
-    if (!box) return;
-    box.innerHTML = '';
-    wbState.laneRows = defs.map((d, i) => {
-      const row = document.createElement('div');
-      row.className = 'wb-lane';
-      row.innerHTML =
-        '<span class="wb-lane-label">路' + (i + 1) + '(' + esc(d.label) + ')</span>' +
-        '<span class="wb-lane-status">排队中</span>';
-      box.appendChild(row);
-      return row;
-    });
+  /* --- 工房手记 --- */
+  function wbTakeNote() {
+    const taken = wbState.notesTaken || (wbState.notesTaken = new Set());
+    let idx = [];
+    for (let p = 0; p < WB_NOTES.length; p++)
+      WB_NOTES[p].forEach((t, j) => idx.push({ p, j, t }));
+    const unusedInPhase = idx.filter((n) => !taken.has(n.p + ':' + n.j) && n.p === wbState.phase);
+    const unusedAny = idx.filter((n) => !taken.has(n.p + ':' + n.j));
+    const pool = unusedInPhase.length ? unusedInPhase : unusedAny;
+    if (!pool.length) {
+      taken.clear();
+      return wbTakeNote();
+    }
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    taken.add(pick.p + ':' + pick.j);
+    return pick.t;
   }
-  function wbLane(i, status, cls) {
-    const row = wbState.laneRows[i];
-    if (!row) return;
-    row.querySelector('.wb-lane-status').textContent = status;
-    row.className = 'wb-lane' + (cls ? ' ' + cls : '');
+  function wbNoteShow(text) {
+    const n = wbEl('wbNote');
+    if (!n || !text) return;
+    n.classList.remove('show');
+    void n.offsetWidth;
+    n.textContent = text;
+    n.classList.add('show');
+  }
+  function wbNoteTick() {
+    if (!wbState.running || wbState.collapsed || document.hidden) return;
+    wbNoteShow(wbTakeNote());
+  }
+  /* --- 素材发牌堆叠 --- */
+  function wbDeckLayout() {
+    const box = wbEl('wbMaterials');
+    if (!box) return;
+    const cards = Array.from(box.children);
+    const n = cards.length;
+    cards.forEach((c, i) => {
+      const fromTop = n - 1 - i; /* 最后一张在最上 */
+      c.classList.toggle('is-top', fromTop === 0);
+      c.style.setProperty('--k', String(fromTop));
+      if (fromTop === 0 && !wbState.stamped.has(c)) {
+        wbState.stamped.add(c);
+        c.classList.add('stamped'); /* 「入房」印:首次翻到顶时盖下 */
+      }
+    });
+    const cnt = wbEl('wbDeckCount');
+    if (cnt) cnt.textContent = '这间密室将用这 ' + n + ' 页收藏造成——';
+  }
+  function wbDeckRotate() {
+    if (wbState.collapsed || document.hidden || !wbState.running) return;
+    const box = wbEl('wbMaterials');
+    if (!box || box.children.length < 2) return;
+    box.appendChild(box.firstElementChild); /* 底卡翻到顶 */
+    wbDeckLayout();
   }
   function wbMaterials(items) {
     const box = wbEl('wbMaterials');
     if (!box) return;
+    wbState.stamped = new Set();
     box.innerHTML = items
-      .map((it) => {
+      .map((it, i) => {
         const url = String(it.canonicalUrl || it.url || '');
         return (
-          '<a class="wb-mat" href="' + esc(url) + '" target="_blank" rel="noreferrer" title="打开原网页">' +
-          '<b>' + esc(String(it.title || '').slice(0, 30)) + '</b><small>' + esc(it.domain || '') + '</small></a>'
+          '<a class="wb-mat" href="' + esc(url) + '" target="_blank" rel="noreferrer" title="打开原网页" style="--ri:' + i + '">' +
+          '<b>' + esc(String(it.title || '').slice(0, 30)) + '</b><small>' + esc(it.domain || '') + '</small>' +
+          '<span class="wb-seal">入房</span></a>'
         );
       })
       .join('');
+    Array.from(box.children).forEach((c, i) =>
+      setTimeout(() => {
+        c.classList.add('dealt');
+        if (i === 0) wbDeckLayout();
+      }, 200 + i * 150),
+    );
+    if (wbState.deckTimer) clearInterval(wbState.deckTimer);
+    wbState.deckTimer = setInterval(wbDeckRotate, 4000);
   }
+  /* --- 两位起草人:稿纸(叙事层)+ 折叠的事实行 --- */
+  function wbLanesInit(defs) {
+    const lbox = wbEl('wbLanes');
+    if (lbox) lbox.innerHTML = '';
+    const dbox = wbEl('wbDrafts');
+    if (dbox) dbox.innerHTML = '';
+    wbState.laneRows = defs.map((d, i) => {
+      let row = null;
+      if (lbox) {
+        row = document.createElement('div');
+        row.className = 'wb-lane';
+        row.innerHTML =
+          '<span class="wb-lane-label">路' + (i + 1) + '(' + esc(d.label) + ')</span>' +
+          '<span class="wb-lane-status">排队中</span>';
+        lbox.appendChild(row);
+      }
+      let draft = null;
+      if (dbox) {
+        draft = document.createElement('div');
+        draft.className = 'wb-draft';
+        draft.innerHTML =
+          '<span class="wb-draft-name">起草人 · ' + (i === 0 ? '甲' : '乙') + '</span>' +
+          '<div class="wb-draft-line">铺纸候墨</div>';
+        dbox.appendChild(draft);
+      }
+      return { row, draft };
+    });
+  }
+  function wbLane(i, status, cls) {
+    const L = wbState.laneRows[i];
+    if (!L) return;
+    if (L.row) {
+      const st = L.row.querySelector('.wb-lane-status');
+      if (st) st.textContent = status;
+      L.row.className = 'wb-lane' + (cls ? ' ' + cls : '');
+    }
+    /* 稿纸叙事:同一事件的人话版 + 一次性动效 */
+    const d = L.draft;
+    if (!d) return;
+    const line = d.querySelector('.wb-draft-line');
+    d.classList.remove('ink', 'crumple', 'done', 'gone');
+    void d.offsetWidth; /* 重触发一次性动画 */
+    if (/✓/.test(status)) {
+      d.classList.add('done');
+      if (line) line.textContent = '定稿——交由下一道工序';
+    } else if (/已中止/.test(status)) {
+      d.classList.add('gone');
+      if (line) line.textContent = '收起稿纸(他路先过)';
+    } else if (/三轮均未通过/.test(status)) {
+      d.classList.add('crumple');
+      if (line) line.textContent = '揉成一团,搁在桌角';
+    } else if (/被拒|打回|失败/.test(status)) {
+      d.classList.add('crumple');
+      if (line) line.textContent = '推翻了自己的草稿,重新来过';
+    } else if (/取消|搁笔/.test(status)) {
+      if (line) line.textContent = '搁笔';
+    } else {
+      d.classList.add('ink');
+      if (line) line.textContent = '蘸墨思考中';
+    }
+  }
+  function wbFlash() {
+    const scene = wbEl('genWorkbench');
+    if (!scene) return;
+    scene.classList.remove('wb-flash');
+    void scene.offsetWidth;
+    scene.classList.add('wb-flash');
+    setTimeout(() => scene.classList.remove('wb-flash'), 700);
+  }
+  /* --- 开门转场:门缝亮起 → 两扇门开 → 换幕 → 灯暗 --- */
+  function wbDoorReveal() {
+    return new Promise((resolve) => {
+      const d = wbEl('wbDoor');
+      if (!d || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        resolve();
+        return;
+      }
+      d.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('open')));
+      setTimeout(resolve, 800); /* 门开到能看见里面时换幕 */
+      setTimeout(() => {
+        d.classList.add('fade');
+        setTimeout(() => {
+          d.hidden = true;
+          d.classList.remove('open', 'fade');
+        }, 650);
+      }, 1400);
+    });
+  }
+  /* --- 生命周期 --- */
   function wbPillHide() {
     const p = wbEl('genPill');
     if (p) {
@@ -528,7 +718,7 @@
     if (!p) return;
     p.hidden = false;
     p.classList.add('done');
-    wbEl('genPillText').textContent = '已生成 · 点击进入';
+    wbEl('genPillText').textContent = '已生成 · 点击开门';
   }
   function wbFinish() {
     wbState.running = false;
@@ -536,8 +726,19 @@
       clearInterval(wbState.timer);
       wbState.timer = null;
     }
+    if (wbState.noteTimer) {
+      clearInterval(wbState.noteTimer);
+      wbState.noteTimer = null;
+    }
+    if (wbState.deckTimer) {
+      clearInterval(wbState.deckTimer);
+      wbState.deckTimer = null;
+    }
+    if (window.__wbGame) window.__wbGame.stop();
     const panel = wbEl('genWorkbench');
     if (panel) panel.hidden = true;
+    const ov = wbEl('wbOverlay');
+    if (ov) ov.hidden = true;
   }
   function wbCancel() {
     if (!wbState.running || wbState.cancelled) return;
@@ -547,11 +748,14 @@
         s.abort();
       } catch (_) {}
     });
-    (wbState.laneRows || []).forEach((row, i) => {
-      const st = row.querySelector('.wb-lane-status');
-      if (st && st.textContent.indexOf('✓') < 0) wbLane(i, '已取消', 'bad');
+    (wbState.laneRows || []).forEach((L, i) => {
+      if (L.row) {
+        const st = L.row.querySelector('.wb-lane-status');
+        if (st && st.textContent.indexOf('✓') < 0) wbLane(i, '已取消', 'bad');
+      } else wbLane(i, '已取消', 'bad');
     });
     wbLog('已取消生成——在途请求已中止。', 'bad');
+    wbNoteShow('工房的灯灭了。改天再请他们开工。');
     wbPillHide();
     wbFinish();
   }
@@ -562,6 +766,8 @@
     wbState.collapsed = false;
     wbState.laneRows = [];
     wbState.laneSignals = [];
+    wbState.notesTaken = new Set();
+    wbState.stamped = new Set();
     wbState.t0 = Date.now();
     const panel = wbEl('genWorkbench');
     if (panel) {
@@ -569,31 +775,69 @@
       wbEl('wbLanes').innerHTML = '';
       wbEl('wbLog').innerHTML = '';
       wbEl('wbMaterials').innerHTML = '';
-      wbEl('wbMin').textContent = '收起';
+      wbEl('wbDrafts').innerHTML = '';
+      wbEl('wbNote').classList.remove('show');
+      const g = wbEl('wbGame');
+      if (g) g.hidden = true;
+      const gt = wbEl('wbGameToggle');
+      if (gt) gt.textContent = '来翻几页';
+      const df = wbEl('wbDeckFlip');
+      if (df) df.textContent = '翻一叠';
     }
     wbPillHide();
+    const ov = wbEl('wbOverlay');
+    if (ov) ov.hidden = false;
     wbPhase(0);
+    wbNoteShow('他们收下了你的收藏,开始挑今晚的材料。');
     if (wbState.timer) clearInterval(wbState.timer);
     wbState.timer = setInterval(wbTick, 1000);
     wbTick();
+    if (wbState.noteTimer) clearInterval(wbState.noteTimer);
+    wbState.noteTimer = setInterval(wbNoteTick, 9000);
     wbEl('wbMin').onclick = function () {
       wbState.collapsed = !wbState.collapsed;
+      const ov = wbEl('wbOverlay');
+      if (ov) ov.hidden = wbState.collapsed;
       if (wbEl('genWorkbench')) wbEl('genWorkbench').hidden = wbState.collapsed;
       const pill = wbEl('genPill');
       if (pill && wbState.running) {
         pill.hidden = !wbState.collapsed;
         if (wbState.collapsed) wbEl('genPillText').textContent = '生成中 · ' + wbSecs() + 's';
       }
+      if (wbState.collapsed) {
+        if (window.__wbGame) window.__wbGame.pause();
+      } else {
+        const g = wbEl('wbGame');
+        if (g && !g.hidden && window.__wbGame && window.__wbGame.isStarted())
+          window.__wbGame.start();
+      }
     };
     wbEl('wbCancel').onclick = function () {
       wbCancel();
     };
-    wbEl('genPill').onclick = function () {
+    const gt = wbEl('wbGameToggle');
+    if (gt)
+      gt.onclick = function () {
+        const g = wbEl('wbGame');
+        if (!g) return;
+        g.hidden = !g.hidden;
+        gt.textContent = g.hidden ? '来翻几页' : '收起小游戏';
+        if (g.hidden) {
+          if (window.__wbGame) window.__wbGame.pause();
+        } else if (window.__wbGame) window.__wbGame.start();
+      };
+    const df = wbEl('wbDeckFlip');
+    if (df)
+      df.onclick = function () {
+        wbDeckRotate();
+      };
+    wbEl('genPill').onclick = async function () {
       if (wbState.pendingRecord) {
         const rec = wbState.pendingRecord;
         wbState.pendingRecord = null;
         wbPillHide();
         setStatus('进入已生成的冒险……', 'good');
+        await wbDoorReveal();
         mountLevel(rec);
         startNamingWatch(rec.id);
       } else if (wbState.running) {
@@ -601,6 +845,13 @@
       }
     };
   }
+  /* 小游戏收集纸页 → 解锁一句工房手记(与定时手记同池) */
+  window.__wbNoteReveal = function () {
+    if (!wbState.running) return false;
+    wbNoteShow(wbTakeNote());
+    return true;
+  };
+
   async function generate() {
     const file = $('homeFile')?.files?.[0];
     if (!file) return;
@@ -615,7 +866,7 @@
       if (token !== importToken) return;
       /* ===== 时间窗管线 v4:选窗 → 本地初筛 → 服务端抓取 → 设计 LLM ===== */
       const theme = themeValue(),
-        win = selectedWindow;
+        wins = selectedWindows.slice().sort((a, b) => a.from - b.from);
       const themeHint = ($('homeThemeCustom')?.value || '').replace(/\s+/g, ' ').trim();
       const materialCount = Math.max(
         6,
@@ -623,15 +874,22 @@
       );
       if (!lastCleaned) throw new Error('请先上传收藏夹完成全局清洗');
       const approved = lastCleaned.records.filter((r) => r.status === 'keep');
-      const items = win ? approved.filter((it) => win.items.includes(it.id)) : approved;
+      /* 多选时间片合并池(2026-08-30):勾选的每段素材并入同一池再抽样 */
+      const winIds = new Set(wins.flatMap((w) => w.items || []));
+      const items = wins.length ? approved.filter((it) => winIds.has(it.id)) : approved;
+      const winLabel = wins.length
+        ? wins.length === 1
+          ? wins[0].label
+          : wins.length + ' 个时间片合并'
+        : '全部收藏';
       if (items.length < 6)
-        throw new Error('这段时间片内通过清洗的素材不足 6 条，换一个时间片试试');
+        throw new Error('所选时间片内通过清洗的素材不足 6 条，再多选一段时间片试试');
       const kept = selectControlledPool(items, materialCount);
       if (kept.length < 6)
         throw new Error('清洗后只有 ' + kept.length + ' 条通过素材,固定密室需要 6 条');
-      setStatus('时间片「' + (win ? win.label : '全部收藏') + '」: 已随机选定 ' + kept.length + ' 条受控素材。', 'busy');
+      setStatus('时间片「' + winLabel + '」: 已随机选定 ' + kept.length + ' 条受控素材。', 'busy');
       wbPhase(1);
-      wbLog('已随机选定 ' + kept.length + ' 条素材(时间片「' + (win ? win.label : '全部收藏') + '」),点击卡片可查看来源。');
+      wbLog('已随机选定 ' + kept.length + ' 条素材(时间片「' + winLabel + '」),点击卡片可查看来源。');
       wbMaterials(kept);
       /* 内容层富化(2026-08-30,按需求方工作流回归生成路径):点生成后先回访这批
          随机素材的网页,取回真实 desc 再交给设计 LLM——谜面得以引用页面内容而非
@@ -656,16 +914,31 @@
         return { ...it, urlPath: path };
       });
       const duplicates = lastCleaned.duplicates || [];
-      const windowContext = win
-        ? {
-            label: win.label,
-            count: win.count,
-            spanDays: win.spanDays,
-            mood: win.moodPref,
-            nightRatio: Math.round(win.nightRatio * 100),
-            topFolders: win.topFolders,
-            themeHint,
-          }
+      /* 多选合并的窗口语境(2026-08-30):label 拼接、跨度取并集区间、
+         情绪取素材最多的一段(主导段)、夜比例按素材数加权、文件夹并集 */
+      const windowContext = wins.length
+        ? (function () {
+            const total = wins.reduce((n, w) => n + w.count, 0);
+            const dom = wins.slice().sort((a, b) => b.count - a.count)[0];
+            const night = wins.reduce((n, w) => n + w.nightRatio * w.count, 0) / (total || 1);
+            const from = Math.min.apply(null, wins.map((w) => w.from));
+            const to = Math.max.apply(null, wins.map((w) => w.to));
+            const folders = [];
+            wins.forEach((w) =>
+              (w.topFolders || []).forEach((f) => {
+                if (!folders.includes(f)) folders.push(f);
+              }),
+            );
+            return {
+              label: wins.map((w) => w.label).join(' + '),
+              count: total,
+              spanDays: Math.round((to - from) / 86400000) + 1,
+              mood: dom.moodPref,
+              nightRatio: Math.round(night * 100),
+              topFolders: folders.slice(0, 4),
+              themeHint,
+            };
+          })()
         : themeHint
         ? { themeHint }
         : null;
@@ -675,8 +948,8 @@
          同抽样复用设计(快),换抽样必走新设计(有变化)。 */
       const cacheKey = [
         'tw',
-        win ? String(win.from) : 'all',
-        win ? String(win.to) : '',
+        wins.length ? String(Math.min.apply(null, wins.map((w) => w.from))) : 'all',
+        wins.length ? String(Math.max.apply(null, wins.map((w) => w.to))) : '',
         sourceHash.slice(0, 16),
         theme,
         MODEL_VERSION,
@@ -874,6 +1147,7 @@
                       '路' + (res.laneIdx + 1) + '(' + (res.providerLabel || 'step') + ')率先通过,其余各路已中止。',
                       'ok',
                     );
+                    wbFlash();
                     resolveRace(res);
                     return;
                   }
@@ -948,8 +1222,12 @@
       } catch (pe) {
         console.warn('项目存档失败:', pe && pe.message);
       }
-      draft.level.timeWindow = win
-        ? { label: win.label, count: win.count, mood: win.moodPref }
+      draft.level.timeWindow = wins.length
+        ? {
+            label: wins.map((w) => w.label).join(' + '),
+            count: wins.reduce((n, w) => n + w.count, 0),
+            mood: windowContext ? windowContext.mood : '',
+          }
         : null;
       const levelId =
         'level-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
@@ -989,6 +1267,7 @@
       } else {
         setStatus('生成完成，正在进入游戏……', 'good');
         wbFinish();
+        await wbDoorReveal();
         mountLevel(record);
         startNamingWatch(record.id);
       }
@@ -1008,7 +1287,7 @@
     if (document.getElementById('homeScreen')) return; /* 幂等:openDb 失败兜底会二次调用,重复注入会让两层卡片互相拦截点击 */
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一段时间片 —— 那段时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="gen-workbench" id="genWorkbench" hidden data-phase="0"><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-head"><div class="wb-title">深夜工房——你的密室正在搭建</div><div class="wb-actions"><span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button">取消生成</button></div></div><div class="wb-phases" id="wbPhases"></div><div class="wb-stage"><div class="wb-deck" id="wbDeck"></div><div class="wb-drafts" id="wbLanes"></div></div><div class="wb-notes" id="wbNotes"></div><details class="wb-facts"><summary>工作记录(技术细节)</summary><div class="wb-log" id="wbLog"></div></details></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeFixedTest" type="button">试玩固定样本</button><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span></div>',
+      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一个或多个时间片（可多选）—— 那些时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="wb-overlay" id="wbOverlay" hidden><div class="gen-workbench wb-scene" id="genWorkbench" hidden><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-headline"><h3>你的密室正在搭建</h3><p>两位起草人正在同时起草,取先完成的那份——通常两分钟左右。<span style="white-space:nowrap">已用 <span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span></span></p></div><div class="wb-head"><div class="wb-actions"><button id="wbGameToggle" type="button">来翻几页</button><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button" class="wb-danger">取消生成</button></div></div><div class="wb-body"><div class="wb-rail"><div class="wb-phases" id="wbPhases"></div></div><div class="wb-main"><div class="wb-stage"><div class="wb-deck-side"><div class="wb-deck-bar"><span id="wbDeckCount">这间密室将用你的收藏造成——</span><button id="wbDeckFlip" type="button">翻一叠</button></div><div class="wb-deck" id="wbMaterials"></div></div><div class="wb-drafts" id="wbDrafts"></div></div><div class="wb-note" id="wbNote"></div></div></div><details class="wb-tech"><summary>工作记录(技术细节)</summary><div class="wb-lanes" id="wbLanes"></div><div class="wb-log" id="wbLog"></div></details><div class="wb-game" id="wbGame" hidden><canvas id="wbGameCanvas" height="150"></canvas><div class="wb-game-hint">空格 / 点击起跳 · 三滴墨:撞上障碍扣一滴,墨尽本局结束 · 收集纸页解锁工房手记</div></div></div></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeTutorial" type="button">新手教程</button><button id="homeFixedTest" type="button">试玩固定样本</button><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span><div class="wb-door" id="wbDoor" hidden><div class="wb-door-l"></div><div class="wb-door-r"></div><div class="wb-door-glow"></div></div>',
     );
   }
   async function boot() {
@@ -1043,7 +1322,7 @@
       const file = $('homeFile').files?.[0];
       $('homeGenerate').disabled = true;
       pendingWindows = [];
-      selectedWindow = null;
+      selectedWindows = [];
       const panel = $('windowPanel'),
         list = $('windowList');
       panel.style.display = 'none';
@@ -1129,11 +1408,30 @@
           list.querySelectorAll('.window-card').forEach(
             (btn) =>
               (btn.onclick = () => {
-                list.querySelectorAll('.window-card').forEach((b) => b.classList.remove('picked'));
-                btn.classList.add('picked');
-                selectedWindow = pendingWindows[Number(btn.dataset.wi)];
+                /* 多选(2026-08-30):点击在选中集里切换;至少选一段才能生成 */
+                const w = pendingWindows[Number(btn.dataset.wi)];
+                const at = selectedWindows.indexOf(w);
+                if (at >= 0) selectedWindows.splice(at, 1);
+                else selectedWindows.push(w);
+                btn.classList.toggle('picked', at < 0);
+                if (!selectedWindows.length) {
+                  $('homeGenerate').disabled = true;
+                  setStatus('已清除选择。至少选一个时间片才能生成。', '');
+                  return;
+                }
+                /* 时间片按时间断点切分,彼此不相交;Set 仅防御 */
+                const unionN = new Set(selectedWindows.flatMap((x) => x.items || [])).size;
                 $('homeGenerate').disabled = false;
-                setStatus('已选择「' + selectedWindow.label + '」这一时间片。点击生成。', 'good');
+                setStatus(
+                  selectedWindows.length === 1
+                    ? '已选择「' + selectedWindows[0].label + '」这一时间片。点击生成。'
+                    : '已选 ' +
+                        selectedWindows.length +
+                        ' 个时间片（合并 ' +
+                        unionN +
+                        ' 条素材）。点击生成。',
+                  'good',
+                );
               }),
           );
           setStatus(
@@ -1181,6 +1479,7 @@
       e.target.value = '';
     };
     $('homeFixedTest').onclick = loadSamplePuzzle;
+    $('homeTutorial').onclick = loadTutorialLevel;
     $('homeClearCache').onclick = async () => {
       if (
         !confirm('清空清洗标记与生成缓存？已保存的关卡和进度不受影响，下次导入会重新全局清洗。')
@@ -1318,6 +1617,18 @@
       .then(loadLevelText)
       .catch(function (err) {
         setStatus(err.message || '导入失败', 'error');
+      });
+  }
+  function loadTutorialLevel() {
+    setStatus('正在载入新手教程……', 'busy');
+    fetch('sample-puzzles/tutorial.json', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('教程关加载失败 HTTP ' + r.status);
+        return r.text();
+      })
+      .then(loadLevelText)
+      .catch(function (err) {
+        setStatus(err.message || '教程关加载失败', 'error');
       });
   }
   function loadSamplePuzzle() {
