@@ -28,13 +28,22 @@
    "description": "写满教程提示的便签"
   },
   {
+   "id": "tut-lock",
+   "title": "抽屉密码锁",
+   "domain": "新手教程",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "抽屉上的铜色密码锁"
+  },
+  {
    "id": "tut-key",
    "title": "铜钥匙",
    "domain": "新手教程",
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "抽屉里的铜钥匙"
+   "description": "抽屉深处的铜钥匙"
   },
   {
    "id": "tut-box",
@@ -44,15 +53,6 @@
    "url": "",
    "urlPath": "",
    "description": "上锁的盒子"
-  },
-  {
-   "id": "tut-lock",
-   "title": "房门密码锁",
-   "domain": "新手教程",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "房门上的密码锁"
   },
   {
    "id": "tut-badge",
@@ -67,8 +67,8 @@
  "level": {
   "id": "level-tutorial",
   "title": "新手教程 · 书桌上的第一间密室",
-  "premise": "欢迎。开局的房间一片漆黑,只有一盏台灯。这台密室只教几件事:点纸卡看详情、用「线索」照亮房间、点容器找东西、拖拽组合、用密码开锁、交付离开。每一步怎么做,都写在详情卡里。",
-  "objective": "点击台灯照亮房间;用「线索」找出便签、抽屉与盒子;拖铜钥匙开盒;在门锁输入便签上的 350;把金色小徽章拖到出口。",
+  "premise": "欢迎。开局的房间一片漆黑,只有一盏台灯。这台密室教你五件事:点纸卡看详情、点台灯照亮房间、点入口卡环视、拖拽组合、用密码开锁交付。每一步怎么做,都写在详情卡里。",
+  "objective": "点击台灯照亮房间;在便签上找到 350;开抽屉取钥匙;用钥匙开盒子拿徽章;把徽章拖到出口通关。",
   "targetMinutes": 3,
   "selectedItemIds": [
    "tut-lamp",
@@ -82,7 +82,7 @@
    {
     "id": "tut-drawer",
     "name": "书桌抽屉",
-    "desc": "【教程 3·容器】点击容器——里面藏着的东西会出现在旁边。抽屉里有一把铜钥匙。",
+    "desc": "书桌的抽屉,锁着一个铜色密码锁。",
     "hidden": true
    }
   ],
@@ -93,7 +93,7 @@
     "roleLabel": "线索",
     "title": "台灯",
     "sceneName": "台灯",
-    "reason": "【教程 1·照亮】点击台灯,照亮房间;然后点右上角的火漆封印「线索」,再点『求一条线索』——看看房间里多了什么。以后卡住了,也这样求提示。",
+    "reason": "【教程 1·照亮】点击台灯,照亮房间。台灯亮了——再点一下上方的入口卡(或右上角火漆封印「线索」),看看房间里多了什么。卡住了,封印也能给你提示。",
     "hidden": false
    },
    {
@@ -102,8 +102,18 @@
     "roleLabel": "线索",
     "title": "教程便签",
     "sceneName": "教程便签",
-    "reason": "【教程 2·线索】门锁的密码是 350。密码面板右上角的 📌 可以把面板钉住,去别处核对再回来输入。",
+    "reason": "【教程 2·线索】书桌抽屉的密码是 350。密码面板右上角的 📌 可以把面板钉住,去别处核对再回来输入。",
     "hidden": true
+   },
+   {
+    "id": "tut-lock",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "抽屉密码锁",
+    "sceneName": "抽屉密码锁",
+    "reason": "【教程 5·开锁】点击密码锁,在面板输入便签上的 350。解锁后再点一下密码锁,取出抽屉深处的钥匙。",
+    "hidden": true,
+    "container": "tut-drawer"
    },
    {
     "id": "tut-key",
@@ -122,15 +132,6 @@
     "title": "上锁的盒子",
     "sceneName": "上锁的盒子",
     "reason": "上锁的盒子,钥匙孔是铜色的。打开后,再点一下盒子取出里面的东西。",
-    "hidden": true
-   },
-   {
-    "id": "tut-lock",
-    "role": "lock",
-    "roleLabel": "锁",
-    "title": "房门密码锁",
-    "sceneName": "房门密码锁",
-    "reason": "【教程 5·开锁】点击门锁弹出密码面板,输入便签上的三位数。密码来自线索,不要瞎猜。",
     "hidden": true
    },
    {
@@ -154,35 +155,13 @@
     "requires": [],
     "reveals": [
      "tut-note",
-     "tut-drawer",
-     "tut-box",
-     "tut-lock"
+     "tut-drawer"
     ],
     "product": "亮着的台灯"
    },
    {
     "id": "t2",
-    "title": "钥匙开盒子",
-    "action": "combine",
-    "uses": [
-     "tut-key",
-     "tut-box"
-    ],
-    "requires": [
-     "t1"
-    ],
-    "consume": [
-     "tut-key"
-    ],
-    "resultOn": "tut-box",
-    "product": "打开的盒子",
-    "reveals": [
-     "tut-badge"
-    ]
-   },
-   {
-    "id": "t3",
-    "title": "输入门锁密码",
+    "title": "打开书桌抽屉",
     "action": "password",
     "uses": [
      "tut-lock"
@@ -194,17 +173,39 @@
     "deriveFrom": [
      "tut-note"
     ],
-    "product": "解锁的门锁"
+    "product": "解锁的抽屉",
+    "reveals": [
+     "tut-key"
+    ]
+   },
+   {
+    "id": "t3",
+    "title": "钥匙开盒子",
+    "action": "combine",
+    "uses": [
+     "tut-key",
+     "tut-box"
+    ],
+    "requires": [
+     "t2"
+    ],
+    "consume": [
+     "tut-key"
+    ],
+    "resultOn": "tut-box",
+    "product": "打开的盒子",
+    "reveals": [
+     "tut-badge"
+    ]
    },
    {
     "id": "t4",
-    "title": "交回徽章",
+    "title": "徽章交付离开",
     "action": "deliver",
     "uses": [
      "tut-badge"
     ],
     "requires": [
-     "t2",
      "t3"
     ]
    }
@@ -218,10 +219,10 @@
   ],
   "hints": [
    "开局只有一盏台灯——点击它,照亮房间。",
-   "点右上角火漆封印「线索」,再点『求一条线索』:有新东西会显形,没有就给你提示。",
-   "便签上的 350 是门锁的密码;密码面板可以用 📌 钉住。",
-   "书桌抽屉里有铜钥匙;按住它拖到「上锁的盒子」上。",
-   "最后按住金色小徽章,拖到「关卡出口」。"
+   "台灯亮了:点一下上方的入口卡(或火漆封印「线索」),房间里会多出便签和抽屉。",
+   "便签上的 350 是抽屉密码锁的密码;面板可以用 📌 钉住。",
+   "解锁的抽屉里有铜钥匙;按住它拖到「上锁的盒子」上。",
+   "盒子里有金色小徽章——按住它,拖到「关卡出口」就通关了。"
   ],
   "validation": {
    "valid": true,

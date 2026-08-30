@@ -6,7 +6,7 @@
 2. 非线性:角度线索在钟面磨损(环境),不读修钟记录也能拨指针;记录与角度两条支线互不依赖;
 3. 修钟记录只承载"配件在抽屉里"这一条环境看不到的信息,不含角度/密码;
 4. 消耗品:发条接完钟摆后消失(consume),不可再拖;
-5. 回访机制:断钟摆/发条/金钥匙须回访具体容器才出现;点根节点不触发全局回访。
+5. 回访机制:断钟摆/发条/金钥匙须回访具体容器或点入口卡才出现(入口卡=环视房间)。
 """
 import sys, time, math
 from playwright.sync_api import sync_playwright
@@ -105,7 +105,8 @@ def main():
         no_result_nodes(page, "开后盖")
         click(page, '[data-id="root"]')
         time.sleep(0.4)
-        gone(page, '[data-id="compiled-item-cw-pend"]', "点根节点不再触发回访(断钟摆仍隐藏)")
+        # 2026-08-31 教义更新(需求方裁定):点入口卡=环视房间,就绪的显形物随之现身
+        wait_visible(page, '[data-id="compiled-item-cw-pend"]', "点根节点触发回访:断钟摆显形", 5000)
         click(page, '[data-id="compiled-container-wallclock"]')
         wait_visible(page, '[data-id="compiled-item-cw-pend"]', "回访挂钟发现断钟摆")
 

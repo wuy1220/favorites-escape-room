@@ -93,7 +93,8 @@ with sync_playwright() as p:
     lv = page.evaluate(
         "() => new Promise((res) => { const r = indexedDB.open('favorites-escape-room-local');"
         " r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();"
-        " q.onsuccess = () => res(q.result[q.result.length - 1] || {}); }; })"
+        " q.onsuccess = () => res(q.result.filter((x) => x.id !== 'level-newbie-tutorial')"
+        " .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0] || {}); }; })"
     )
     check("挂载时为未命名(中性编号)", str(lv.get("name", "")).startswith("未命名冒险"),
           str(lv.get("name")))
@@ -125,7 +126,8 @@ with sync_playwright() as p:
     named = page.evaluate(
         "() => new Promise((res) => { const r = indexedDB.open('favorites-escape-room-local');"
         " r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();"
-        " q.onsuccess = () => res(q.result[q.result.length - 1].name); }; })"
+        " q.onsuccess = () => res(q.result.filter((x) => x.id !== 'level-newbie-tutorial')"
+        " .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0].name); }; })"
     )
     check("命名已持久化", named == "我的旧电脑之夜", str(named))
     gt = page.evaluate("() => document.getElementById('gameTitle').textContent")

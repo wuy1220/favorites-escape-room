@@ -72,7 +72,8 @@ with sync_playwright() as p:
         lv = page.evaluate(
             "() => new Promise((res) => { const r = indexedDB.open('favorites-escape-room-local');"
             " r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();"
-            " q.onsuccess = () => res(q.result[q.result.length - 1] || {}); }; })"
+            " q.onsuccess = () => res(q.result.filter((x) => x.id !== 'level-newbie-tutorial')"
+            " .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0] || {}); }; })"
         )
         lvl = lv.get("draft", {}).get("level", {})
         scenes = lvl.get("scenes") or []

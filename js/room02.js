@@ -1020,7 +1020,12 @@ function roomBind(el) {
       roomRender();
       return;
     }
-    if (e.target.closest('.node-pop')) return;
+    if (e.target.closest('.node-pop')) {
+      /* 入口卡例外(2026-08-31):root/compiled-level 挂载时详情卡常开且覆盖整卡,
+         点击卡内任意处都应视为点击入口(开始/环视)——否则新手在存档路径上
+         点入口卡毫无反应(实测 started 恒 false) */
+      if (n.id !== 'root' && n.id !== 'compiled-level') return;
+    }
     roomHandle(n);
   };
   el.onkeydown = (e) => {

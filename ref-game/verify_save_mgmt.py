@@ -110,6 +110,59 @@ with sync_playwright() as p:
         len(rows) >= 1,
         "rows=" + json.dumps(rows, ensure_ascii=False)[:120],
     )
+
+    # ===== 常驻新手关卡(2026-08-30 需求方裁定):固定 id、无删除按钮、删除守卫、不重复新建 =====
+    newbie = page.evaluate("""() => new Promise((res) => {
+        const r = indexedDB.open('favorites-escape-room-local');
+        r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();
+            q.onsuccess = () => res({ has: q.result.some((x) => x.id === 'level-newbie-tutorial'),
+                total: q.result.length,
+                tutorialN: q.result.filter((x) => x.projectId === 'tutorial').length }); };
+    })""")
+    check("常驻新手关卡已回填(id 固定)", newbie["has"], json.dumps(newbie))
+    row_btns = page.evaluate(
+        """() => {
+          const row = Array.from(document.querySelectorAll('.saved-row')).find((r) =>
+            r.querySelector('.saved-open') &&
+            r.querySelector('.saved-open').dataset.level === 'level-newbie-tutorial');
+          if (!row) return null;
+          return { del: row.querySelectorAll('.saved-del').length,
+                   open: row.querySelectorAll('.saved-open').length,
+                   name: (row.querySelector('strong') || {}).textContent };
+        }"""
+    )
+    check("新手关卡行无删除按钮且有打开", bool(row_btns) and row_btns["del"] == 0 and row_btns["open"] == 1,
+          json.dumps(row_btns, ensure_ascii=False))
+    page.evaluate("() => { window.confirm = () => true }")
+    page.evaluate("async () => { await window.__favoriteRoomHome.deleteLevel('level-newbie-tutorial'); return true }")
+    time.sleep(0.5)
+    still = page.evaluate("""() => new Promise((res) => {
+        const r = indexedDB.open('favorites-escape-room-local');
+        r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();
+            q.onsuccess = () => res(q.result.some((x) => x.id === 'level-newbie-tutorial')); };
+    })""")
+    check("删除守卫:新手关卡不可删除", still)
+    # 重复进入不新建:打开 → 返回 → 再打开,tutorial 记录数恒为 1
+    def open_newbie_and_back():
+        page.evaluate(
+            """() => { const b = Array.from(document.querySelectorAll('.saved-open'))
+                .find((x) => x.dataset.level === 'level-newbie-tutorial'); if (b) b.click(); }"""
+        )
+        page.wait_for_function(
+            "() => { const t = document.getElementById('gameToolbar');"
+            " return t && !t.hasAttribute('hidden'); }",
+            timeout=10000,
+        )
+        page.evaluate("() => document.getElementById('gameHome').click()")
+        page.wait_for_selector("#homeScreen", timeout=10000)
+    open_newbie_and_back()
+    open_newbie_and_back()
+    dup = page.evaluate("""() => new Promise((res) => {
+        const r = indexedDB.open('favorites-escape-room-local');
+        r.onsuccess = () => { const q = r.result.transaction('levels').objectStore('levels').getAll();
+            q.onsuccess = () => res(q.result.filter((x) => x.projectId === 'tutorial').length); };
+    })""")
+    check("重复进入不新建存档(tutorial 记录数恒 1)", dup == 1, f"tutorialN={dup}")
     passed = sum(1 for _, ok, _ in results if ok)
     print(f"\n===== 结果: {passed}/{len(results)} 通过 =====")
     b.close()
