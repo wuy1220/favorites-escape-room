@@ -1,0 +1,581 @@
+{
+  "items": [
+    {
+      "id": "bookmark-cr7gzd-0",
+      "title": "NandGame",
+      "url": "https://nandgame.com/",
+      "folder": "开发",
+      "domain": "nandgame.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://nandgame.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "NandGame是NAND门电路模拟开发工具",
+      "topics": [
+        "开发/技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发/技术"
+      ],
+      "modelIntent": "学习NAND门电路搭建与底层开发逻辑",
+      "modelReason": "NandGame是NAND门电路模拟开发工具"
+    },
+    {
+      "id": "bookmark-1m8vw52-1",
+      "title": "nand2tetris",
+      "url": "https://www.nand2tetris.org/",
+      "folder": "开发",
+      "domain": "nand2tetris.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.nand2tetris.org/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "nand2tetris是经典计算机体系结构课程",
+      "topics": [
+        "开发/技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发/技术"
+      ],
+      "modelIntent": "学习从NAND门到计算机体系的全流程",
+      "modelReason": "nand2tetris是经典计算机体系结构课程"
+    },
+    {
+      "id": "bookmark-1ky42zu-2",
+      "title": "Vue SFC Playground",
+      "url": "https://sfc.vuejs.org/",
+      "folder": "开发",
+      "domain": "sfc.vuejs.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://sfc.vuejs.org/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "Vue官方单文件组件在线调试工具",
+      "topics": [
+        "开发/技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发/技术"
+      ],
+      "modelIntent": "在线调试Vue单文件组件代码",
+      "modelReason": "Vue官方单文件组件在线调试工具"
+    },
+    {
+      "id": "bookmark-1hcoq7z-3",
+      "title": "GitHub",
+      "url": "https://github.com/",
+      "folder": "开发",
+      "domain": "github.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://github.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "全球最大代码托管与开源协作平台",
+      "topics": [
+        "开发/技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发/技术"
+      ],
+      "modelIntent": "代码托管与开源项目协作",
+      "modelReason": "全球最大代码托管与开源协作平台"
+    },
+    {
+      "id": "bookmark-i2nsmm-4",
+      "title": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/zh-CN",
+      "folder": "开发",
+      "domain": "developer.mozilla.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://developer.mozilla.org/zh-CN",
+      "signal": "high",
+      "status": "keep",
+      "reason": "Mozilla官方Web开发技术文档库",
+      "topics": [
+        "开发/技术",
+        "学习/参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发/技术",
+        "学习/参考"
+      ],
+      "modelIntent": "查询Web开发技术规范与参考",
+      "modelReason": "Mozilla官方Web开发技术文档库"
+    },
+    {
+      "id": "bookmark-1c7wd6o-5",
+      "title": "Programiz",
+      "url": "https://www.programiz.com/",
+      "folder": "学习",
+      "domain": "programiz.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.programiz.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "多编程语言入门学习交互平台",
+      "topics": [
+        "学习/参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习/参考"
+      ],
+      "modelIntent": "学习多类编程语言基础知识",
+      "modelReason": "多编程语言入门学习交互平台"
+    },
+    {
+      "id": "bookmark-1yojv5c-6",
+      "title": "Kaggle",
+      "url": "https://www.kaggle.com/",
+      "folder": "学习",
+      "domain": "kaggle.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.kaggle.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "知名数据科学竞赛与学习平台",
+      "topics": [
+        "学习/参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习/参考"
+      ],
+      "modelIntent": "参与数据科学竞赛与技能学习",
+      "modelReason": "知名数据科学竞赛与学习平台"
+    },
+    {
+      "id": "bookmark-1snkekw-7",
+      "title": "Explorable Explanations",
+      "url": "https://explorabl.es/",
+      "folder": "学习",
+      "domain": "explorabl.es",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://explorabl.es/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "交互式可探索知识解释平台",
+      "topics": [
+        "学习/参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习/参考"
+      ],
+      "modelIntent": "浏览交互式知识解释内容",
+      "modelReason": "交互式可探索知识解释平台"
+    },
+    {
+      "id": "bookmark-1shyfbj-8",
+      "title": "哔哩哔哩",
+      "url": "https://www.bilibili.com/",
+      "folder": "娱乐",
+      "domain": "bilibili.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.bilibili.com/",
+      "signal": "medium",
+      "status": "keep",
+      "reason": "国内主流视频分享与创作平台",
+      "topics": [
+        "娱乐/文化"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "娱乐/文化"
+      ],
+      "modelIntent": "观看视频与内容创作分享",
+      "modelReason": "国内主流视频分享与创作平台"
+    },
+    {
+      "id": "bookmark-16cl3tl-9",
+      "title": "网易云音乐",
+      "url": "https://music.163.com/",
+      "folder": "娱乐",
+      "domain": "music.163.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://music.163.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "国内主流音乐流媒体平台",
+      "topics": [
+        "娱乐/文化"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "娱乐/文化"
+      ],
+      "modelIntent": "收听音乐与社区互动",
+      "modelReason": "国内主流音乐流媒体平台"
+    }
+  ],
+  "controlledIds": [
+    "bookmark-cr7gzd-0",
+    "bookmark-1m8vw52-1",
+    "bookmark-1ky42zu-2",
+    "bookmark-1hcoq7z-3",
+    "bookmark-i2nsmm-4",
+    "bookmark-1c7wd6o-5",
+    "bookmark-1yojv5c-6",
+    "bookmark-1snkekw-7",
+    "bookmark-1shyfbj-8",
+    "bookmark-16cl3tl-9"
+  ],
+  "level": {
+    "id": "level-1787831005065",
+    "title": "NAND门到Web开发的复古终端之旅",
+    "premise": "你被困在一间充满80年代复古电脑设备的密室，空气中弥漫着旧电路板的微焦味，只有依次完成底层开发学习、Web规范核对、编程实践排序，才能启动服务器逃出",
+    "objective": "完成NAND门基础学习、Web开发规范组合、编程实践顺序排列，解开服务器密码锁并启动设备",
+    "targetMinutes": 10,
+    "selectedItemIds": [
+      "bookmark-cr7gzd-0",
+      "bookmark-1m8vw52-1",
+      "bookmark-1shyfbj-8",
+      "bookmark-1snkekw-7",
+      "bookmark-1ky42zu-2",
+      "bookmark-i2nsmm-4",
+      "bookmark-1hcoq7z-3",
+      "bookmark-1c7wd6o-5",
+      "bookmark-1yojv5c-6"
+    ],
+    "items": [
+      {
+        "id": "bookmark-cr7gzd-0",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "NandGame",
+        "sceneName": "贴满电路草图的3.5寸软盘",
+        "scene": "scene-scene_workbench",
+        "reason": "软盘标签手写着『入门第一步：用NandGame搭出NAND门，测试结果二进制101对应十进制5』，旁边压着的讲义扉页写着『nand2tetris是配套课程』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1m8vw52-1",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "nand2tetris",
+        "sceneName": "封皮磨损的《计算机体系结构》讲义",
+        "scene": "scene-scene_workbench",
+        "reason": "讲义扉页写着『配套工具是NandGame』，封底贴的便签写着『第一关要过NAND门逻辑』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1shyfbj-8",
+        "role": "red_herring",
+        "roleLabel": "干扰",
+        "title": "哔哩哔哩",
+        "sceneName": "印着B站应援色的卡片",
+        "scene": "scene-scene_workbench",
+        "reason": "卡片写着『B站有NAND门教学视频』，但工作台上没有能播放视频的设备",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1snkekw-7",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Explorable Explanations",
+        "sceneName": "印着Explorable Explanations logo的磁卡",
+        "scene": "scene-scene_terminal_room",
+        "reason": "磁卡背面写着『交互式解释能帮你理解Vue的响应式原理』，终端屏幕上的Vue图标旁边有个闪烁的『?』提示符",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1ky42zu-2",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Vue SFC Playground",
+        "sceneName": "贴了Vue logo的终端贴纸",
+        "scene": "scene-scene_terminal_room",
+        "reason": "贴纸写着『Vue 3 单文件组件要在sfc.vuejs.org调试』，旁边MDN手册的页边写着『组件样式规范参考developer.mozilla.org』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-i2nsmm-4",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "MDN Web Docs",
+        "sceneName": "翻到CSS章节的MDN参考手册",
+        "scene": "scene-scene_terminal_room",
+        "reason": "手册页边注写着『Vue组件样式要查这里』，旁边GitHub便签写着『仓库名要符合MDN的命名规范』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1hcoq7z-3",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "GitHub",
+        "sceneName": "贴在终端旁的GitHub协作便签",
+        "scene": "scene-scene_terminal_room",
+        "reason": "便签写着『代码提交到GitHub的MDN_Web_Doc仓库，创建于14日』，旁边MDN手册的扉页印着『命名规则：kebab-case』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1c7wd6o-5",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Programiz",
+        "sceneName": "印着Programiz logo的键盘键帽",
+        "scene": "scene-scene_terminal_room",
+        "reason": "键帽上写着『学编程基础去programiz.com』，旁边Kaggle的记事本写着『数据科学要结合编程基础』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1yojv5c-6",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Kaggle",
+        "sceneName": "印着Kaggle logo的记事本",
+        "scene": "scene-scene_terminal_room",
+        "reason": "记事本第一页写着『数据集要和编程基础匹配』，旁边Programiz的键帽印着『Python入门』",
+        "hidden": false
+      }
+    ],
+    "mechanics": [
+      "inspect",
+      "combine",
+      "sequence",
+      "deliver"
+    ],
+    "beats": [
+      {
+        "id": "scene-scene_workbench-step1",
+        "title": "查看软盘标签内容",
+        "action": "inspect",
+        "uses": [
+          "bookmark-cr7gzd-0"
+        ],
+        "requires": [],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_workbench-step2",
+        "title": "组合软盘与讲义获取入门权限",
+        "action": "combine",
+        "uses": [
+          "bookmark-cr7gzd-0",
+          "bookmark-1m8vw52-1"
+        ],
+        "requires": [
+          "scene-scene_workbench-step1"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step3",
+        "title": "查看磁卡的提示内容",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1snkekw-7"
+        ],
+        "requires": [
+          "scene-scene_workbench-step2"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step4",
+        "title": "查看Vue贴纸的调试要求",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1ky42zu-2"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step3"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step5",
+        "title": "核对MDN手册的样式规范",
+        "action": "inspect",
+        "uses": [
+          "bookmark-i2nsmm-4"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step4"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step6",
+        "title": "查看GitHub协作要求",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1hcoq7z-3"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step5"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step7",
+        "title": "查看编程学习平台的说明",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1c7wd6o-5"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step6"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step8",
+        "title": "查看数据科学平台的说明",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1yojv5c-6"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step7"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-step9",
+        "title": "按学习-实践-协作的顺序排列终端卡片",
+        "action": "sequence",
+        "uses": [
+          "bookmark-1c7wd6o-5",
+          "bookmark-1yojv5c-6",
+          "bookmark-1hcoq7z-3"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step8"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene_terminal_room-final",
+        "title": "把最终结果交给出口",
+        "action": "deliver",
+        "uses": [
+          "result:scene-scene_terminal_room-step9"
+        ],
+        "requires": [
+          "scene-scene_terminal_room-step9"
+        ],
+        "reveals": []
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-scene_workbench",
+        "title": "布满静电的工作台",
+        "description": "头顶的白炽灯管嗡嗡作响，投下昏黄的光晕，空气里飘着旧电路板和灰尘混合的微焦味，指尖碰到工作台边缘能蹭到一层薄灰，耳边只有老式散热风扇的持续嗡鸣",
+        "focus": "工作台中央的老式CRT终端机，开机键亮着微弱的绿光",
+        "itemIds": [
+          "bookmark-cr7gzd-0",
+          "bookmark-1m8vw52-1",
+          "bookmark-1shyfbj-8"
+        ],
+        "beatIds": [
+          "scene-scene_workbench-step1",
+          "scene-scene_workbench-step2"
+        ]
+      },
+      {
+        "id": "scene-scene_terminal_room",
+        "title": "闪烁的终端机房",
+        "description": "机房里摆着三台复古终端，屏幕都闪着绿色的光标，空气里有消毒水和旧硬盘的味道，脚下是防静电地板的轻微弹力，耳边是服务器散热风的呼啸声",
+        "focus": "中央的Web开发终端，屏幕上的Vue、GitHub、MDN图标交替闪烁",
+        "itemIds": [
+          "bookmark-1snkekw-7",
+          "bookmark-1ky42zu-2",
+          "bookmark-i2nsmm-4",
+          "bookmark-1hcoq7z-3",
+          "bookmark-1c7wd6o-5",
+          "bookmark-1yojv5c-6"
+        ],
+        "beatIds": [
+          "scene-scene_terminal_room-step3",
+          "scene-scene_terminal_room-step4",
+          "scene-scene_terminal_room-step5",
+          "scene-scene_terminal_room-step6",
+          "scene-scene_terminal_room-step7",
+          "scene-scene_terminal_room-step8",
+          "scene-scene_terminal_room-step9"
+        ]
+      }
+    ],
+    "hints": [
+      "工作台的软盘和讲义都提到了NAND门，看看两者的描述有没有交叉关联？",
+      "终端机房的Vue贴纸和MDN手册都涉及Web开发规范，试试将两者组合查看？",
+      "编程键帽、Kaggle记事本和GitHub便签分别对应学习、实践、协作三个环节，按这个逻辑排序试试？",
+      "密码锁提示里提到了NAND门真值表，先回忆NAND门输入组合中输出为1的情况有多少种？",
+      "三个关键数字分别来自NAND门测试结果、Vue版本号和GitHub仓库创建日，找找它们分别藏在哪些物件里？",
+      "把三个数字相加后，乘以NAND门真值表输出为1的输入组合数，得到的就是密码锁的密码。",
+      "解开密码锁后，之前发现的磁卡就是启动服务器的关键，试试用它交付。"
+    ],
+    "validation": {
+      "valid": true,
+      "issues": [],
+      "designSource": "step-scenes"
+    },
+    "cleaningProvider": "step",
+    "theme": "复古电脑密室",
+    "model": "step-3.7-flash",
+    "designModel": "step-3.7-flash"
+  }
+}

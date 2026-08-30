@@ -1,0 +1,13 @@
+
+===== 档位 N=8 =====
+[FAIL] N=8: 失败(129s)  — 设计校验: scenes 结构问题:没有回访物件——至少 1 件素材要被 ≥2 个步骤使用(先观察/改造,之后回访再用,像参考A的电报机:装电池变身→最后拿它按指纹锁)
+
+===== 档位 N=10 =====
+[FAIL] N=10: 失败(131s)  — 设计校验: scenes 结构问题:素材 bookmark-1snkekw-8 不在本次素材表(无收藏背景的机关道具 id 必须以 prop- 开头);必须为全部 10 条素材各写化身并分配房间(仅 9 条)
+
+===== 档位 N=12 =====
+Traceback (most recent call last):
+  File "C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\ref-game\stress_design_capacity.py", line 161, in <module>
+    check(f"N={tier}: 失败({out['wall']:.0f}s)", False, out["error"][:200])
+                            ~~~^^^^^^^^
+KeyError: 'wall'

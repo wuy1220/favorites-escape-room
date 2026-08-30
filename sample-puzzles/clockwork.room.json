@@ -1,0 +1,388 @@
+{
+  "records": [
+    {
+      "id": "cw-clock",
+      "title": "停摆的挂钟",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "墙上停摆的老挂钟"
+    },
+    {
+      "id": "cw-manual",
+      "title": "修钟记录",
+      "domain": "工作台",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "工作台上的修钟记录"
+    },
+    {
+      "id": "cw-spring",
+      "title": "生锈的发条",
+      "domain": "工作台",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "抽屉里生锈的发条"
+    },
+    {
+      "id": "cw-pend",
+      "title": "断掉的钟摆",
+      "domain": "地面",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从挂钟里掉出的断钟摆"
+    },
+    {
+      "id": "cw-lock",
+      "title": "密码锁",
+      "domain": "展柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "玻璃展柜上的密码锁"
+    },
+    {
+      "id": "cw-gkey",
+      "title": "金钥匙",
+      "domain": "展柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "展柜里的金钥匙"
+    },
+    {
+      "id": "cw-door",
+      "title": "店门",
+      "domain": "门",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁着的店门"
+    }
+  ],
+  "controlledIds": [
+    "cw-clock",
+    "cw-manual",
+    "cw-spring",
+    "cw-pend",
+    "cw-lock",
+    "cw-gkey",
+    "cw-door"
+  ],
+  "items": [
+    {
+      "id": "cw-clock",
+      "title": "停摆的挂钟",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "墙上停摆的老挂钟"
+    },
+    {
+      "id": "cw-manual",
+      "title": "修钟记录",
+      "domain": "工作台",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "工作台上的修钟记录"
+    },
+    {
+      "id": "cw-spring",
+      "title": "生锈的发条",
+      "domain": "工作台",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "抽屉里生锈的发条"
+    },
+    {
+      "id": "cw-pend",
+      "title": "断掉的钟摆",
+      "domain": "地面",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从挂钟里掉出的断钟摆"
+    },
+    {
+      "id": "cw-lock",
+      "title": "密码锁",
+      "domain": "展柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "玻璃展柜上的密码锁"
+    },
+    {
+      "id": "cw-gkey",
+      "title": "金钥匙",
+      "domain": "展柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "展柜里的金钥匙"
+    },
+    {
+      "id": "cw-door",
+      "title": "店门",
+      "domain": "门",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁着的店门"
+    }
+  ],
+  "level": {
+    "id": "clockwork",
+    "title": "钟表铺（原创设计）",
+    "premise": "你在一家打烊的钟表铺里醒来，店门反锁。墙上停摆的挂钟、一张老木工作台、一个上锁的玻璃展柜——柜里躺着一把金钥匙。工作台上摊着修钟记录。把挂钟修好，它会告诉你展柜的密码。",
+    "objective": "拨动指针弹开后盖，取出断钟摆；按修钟记录找到发条，接好钟摆装回去，让挂钟走起来；从钟面读出展柜密码，拿到金钥匙开门逃出。",
+    "targetMinutes": 12,
+    "selectedItemIds": [
+      "cw-clock",
+      "cw-manual",
+      "cw-spring",
+      "cw-pend",
+      "cw-lock",
+      "cw-gkey",
+      "cw-door"
+    ],
+    "containers": [
+      {
+        "id": "wallclock",
+        "name": "挂钟",
+        "desc": "墙上的老式挂钟，钟摆停住不动，表面蒙尘，刻度有些模糊。",
+        "hidden": false
+      },
+      {
+        "id": "workbench",
+        "name": "工作台",
+        "desc": "一张老木工作台，抽屉半开着，台面上摊着说明书。",
+        "hidden": false
+      },
+      {
+        "id": "showcase",
+        "name": "玻璃展柜",
+        "desc": "上锁的玻璃展柜，里面躺着一把金钥匙，柜门是一把三位密码锁。",
+        "hidden": false
+      }
+    ],
+    "items": [
+      {
+        "id": "cw-clock",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "停摆的挂钟",
+        "sceneName": "停摆的挂钟",
+        "reason": "挂钟的表壳，指针卡住不动。钟面蒙尘，只有『3』和『6』两个数字的位置格外干净，像被反复触碰过。后盖周围有四个调校旋钮，能拨动时针和分针。",
+        "container": "wallclock",
+        "hidden": false
+      },
+      {
+        "id": "cw-manual",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "修钟记录",
+        "sceneName": "修钟记录",
+        "reason": "修钟记录上写着：『4 月 3 日，钟摆断裂，新配件收在工作台抽屉里。』",
+        "container": "workbench",
+        "hidden": false
+      },
+      {
+        "id": "cw-spring",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "生锈的发条",
+        "sceneName": "生锈的发条",
+        "reason": "工作台抽屉里的发条，虽然生锈，但还能接上断掉的钟摆。",
+        "container": "workbench",
+        "hidden": true
+      },
+      {
+        "id": "cw-pend",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "断掉的钟摆",
+        "sceneName": "断掉的钟摆",
+        "reason": "卡在挂钟机芯里的半截钟摆，断口正好能插进发条。",
+        "container": "wallclock",
+        "hidden": true
+      },
+      {
+        "id": "cw-lock",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "密码锁",
+        "sceneName": "密码锁",
+        "reason": "玻璃展柜上的三位密码锁，转盘下刻着一行小字：『答案就在走动的挂钟上。』",
+        "container": "showcase",
+        "hidden": false
+      },
+      {
+        "id": "cw-gkey",
+        "role": "reward",
+        "roleLabel": "结果",
+        "title": "金钥匙",
+        "sceneName": "金钥匙",
+        "reason": "展柜里的金钥匙，齿形很新，应该能打开店门。",
+        "container": "showcase",
+        "hidden": true
+      },
+      {
+        "id": "cw-door",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "店门",
+        "sceneName": "店门",
+        "reason": "反锁的店门，老式挂锁还挂在门把上，需要一把钥匙。",
+        "hidden": false
+      }
+    ],
+    "beats": [
+      {
+        "id": "b-read",
+        "title": "读修钟记录",
+        "action": "inspect",
+        "uses": [
+          "cw-manual"
+        ],
+        "requires": [],
+        "reveals": [
+          "cw-spring"
+        ]
+      },
+      {
+        "id": "b-angle",
+        "title": "拨开挂钟后盖",
+        "action": "angle",
+        "uses": [
+          "cw-clock"
+        ],
+        "angles": [
+          90,
+          180
+        ],
+        "precision": 30,
+        "requires": [],
+        "reveals": [
+          "cw-pend"
+        ],
+        "product": "打开后盖的挂钟"
+      },
+      {
+        "id": "b-fix",
+        "title": "接好断钟摆",
+        "action": "combine",
+        "uses": [
+          "cw-spring",
+          "cw-pend"
+        ],
+        "resultOn": "cw-pend",
+        "requires": [
+          "b-angle"
+        ],
+        "consume": [
+          "cw-spring"
+        ],
+        "product": "修好的钟摆"
+      },
+      {
+        "id": "b-install",
+        "title": "装回钟摆，钟面停在 4:35",
+        "action": "combine",
+        "uses": [
+          "result:b-fix",
+          "cw-clock"
+        ],
+        "resultOn": "cw-clock",
+        "requires": [
+          "b-fix"
+        ],
+        "product": "走动的挂钟"
+      },
+      {
+        "id": "b-open",
+        "title": "打开玻璃展柜",
+        "action": "password",
+        "uses": [
+          "cw-lock"
+        ],
+        "expected": "435",
+        "requires": [
+          "b-install"
+        ],
+        "reveals": [
+          "cw-gkey"
+        ],
+        "product": "打开的密码锁"
+      },
+      {
+        "id": "b-door",
+        "title": "用金钥匙开门",
+        "action": "combine",
+        "uses": [
+          "cw-gkey",
+          "cw-door"
+        ],
+        "resultOn": "cw-door",
+        "requires": [
+          "b-open"
+        ],
+        "product": "打开的门"
+      },
+      {
+        "id": "b-escape",
+        "title": "从店门离开",
+        "action": "deliver",
+        "uses": [
+          "result:b-door"
+        ],
+        "requires": [
+          "b-door"
+        ]
+      }
+    ],
+    "scenes": [],
+    "timeline": "1. 观察钟面磨损，拨动指针弹开后盖\n2. 修钟记录说配件在抽屉里；取发条，回挂钟取断钟摆\n3. 发条接好钟摆装回 → 钟走起来，看钟面\n4. 钟面数字 → 展柜密码 → 金钥匙 → 开门 → 出口",
+    "mechanics": [
+      "inspect",
+      "angle",
+      "combine",
+      "password",
+      "deliver"
+    ],
+    "hints": [
+      "工作台上摊着修钟记录。",
+      "看看钟面上哪里最干净——那两处就是要拨到的位置。",
+      "后盖弹开后，再点一次挂钟——半截钟摆还卡在机芯里。",
+      "修钟记录说配件在抽屉里；发条+断钟摆=修好的钟摆，拖到挂钟上。",
+      "点开走动的挂钟，看看钟面停在哪——那就是展柜密码。",
+      "打开展柜后，再开一次柜子拿金钥匙。",
+      "金钥匙 + 店门 → 打开的门 → 拖到出口。"
+    ],
+    "validation": {
+      "valid": true,
+      "issues": [],
+      "designSource": "original-design-clockworkshop"
+    },
+    "grounding": {
+      "controlledIds": [
+        "cw-clock",
+        "cw-manual",
+        "cw-spring",
+        "cw-pend",
+        "cw-lock",
+        "cw-gkey",
+        "cw-door"
+      ],
+      "theme": "原创·钟表铺密室",
+      "source": "original"
+    }
+  }
+}

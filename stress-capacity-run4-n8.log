@@ -1,0 +1,7 @@
+
+===== 档位 N=8 =====
+[PASS] N=8: 全链通过 96s | 房间 3(门房车间|档案室|机房里间) | 步数 11 | hidden 3(每房 1/1/1) | reveals 3 | 回访 1 | 收束 2 房 | 可解 True  — mechanics=inspect,combine,password,deliver theme=深夜拼装机房——铁柜、抽屉、待机终端与散落的逻辑组件
+
+===== 压力测试汇总 =====
+N=8: PASS — 96s, rooms=3, beats=11, hidden=3(1/1/1), reveals=3, revisit=1, solvable=True
+可用档位: [8]

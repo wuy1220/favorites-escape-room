@@ -1,0 +1,78 @@
+{
+  "records": [
+    {"id":"pr-dial","title":"转盘锁","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"工具箱上的转盘锁"},
+    {"id":"pr-saw","title":"锯子","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"一把锯子"},
+    {"id":"pr-pipe","title":"排水管","domain":"墙","dateAdded":"","url":"","urlPath":"","description":"墙上的排水管"},
+    {"id":"pr-key","title":"墙上的钥匙","domain":"墙","dateAdded":"","url":"","urlPath":"","description":"墙高处的钥匙"},
+    {"id":"pr-shackle","title":"镣铐","domain":"地面","dateAdded":"","url":"","urlPath":"","description":"锁住你的镣铐"},
+    {"id":"pr-battery","title":"电池","domain":"时钟","dateAdded":"","url":"","urlPath":"","description":"时钟里的电池"},
+    {"id":"pr-telegraph","title":"电报机","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"没有电池的电报机"},
+    {"id":"pr-note","title":"笔记","domain":"书架","dateAdded":"","url":"","urlPath":"","description":"摩斯密码对照表"},
+    {"id":"pr-diary","title":"日记本","domain":"书架","dateAdded":"","url":"","urlPath":"","description":"写着生日的日记"},
+    {"id":"pr-chest","title":"密码锁","domain":"大铁箱","dateAdded":"","url":"","urlPath":"","description":"大铁箱上的密码锁"},
+    {"id":"pr-finger","title":"手指","domain":"大铁箱","dateAdded":"","url":"","urlPath":"","description":"尸体上取下的手指"},
+    {"id":"pr-fp-lock","title":"指纹锁","domain":"门","dateAdded":"","url":"","urlPath":"","description":"门上的指纹锁"}
+  ],
+  "controlledIds": ["pr-dial","pr-saw","pr-pipe","pr-key","pr-shackle","pr-battery","pr-telegraph","pr-note","pr-diary","pr-chest","pr-finger","pr-fp-lock"],
+  "items": [
+    {"id":"pr-dial","title":"转盘锁","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"工具箱上的转盘锁"},
+    {"id":"pr-saw","title":"锯子","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"一把锯子"},
+    {"id":"pr-pipe","title":"排水管","domain":"墙","dateAdded":"","url":"","urlPath":"","description":"墙上的排水管"},
+    {"id":"pr-key","title":"墙上的钥匙","domain":"墙","dateAdded":"","url":"","urlPath":"","description":"墙高处的钥匙"},
+    {"id":"pr-shackle","title":"镣铐","domain":"地面","dateAdded":"","url":"","urlPath":"","description":"锁住你的镣铐"},
+    {"id":"pr-battery","title":"电池","domain":"时钟","dateAdded":"","url":"","urlPath":"","description":"时钟里的电池"},
+    {"id":"pr-telegraph","title":"电报机","domain":"柜子","dateAdded":"","url":"","urlPath":"","description":"没有电池的电报机"},
+    {"id":"pr-note","title":"笔记","domain":"书架","dateAdded":"","url":"","urlPath":"","description":"摩斯密码对照表"},
+    {"id":"pr-diary","title":"日记本","domain":"书架","dateAdded":"","url":"","urlPath":"","description":"写着生日的日记"},
+    {"id":"pr-chest","title":"密码锁","domain":"大铁箱","dateAdded":"","url":"","urlPath":"","description":"大铁箱上的密码锁"},
+    {"id":"pr-finger","title":"手指","domain":"大铁箱","dateAdded":"","url":"","urlPath":"","description":"尸体上取下的手指"},
+    {"id":"pr-fp-lock","title":"指纹锁","domain":"门","dateAdded":"","url":"","urlPath":"","description":"门上的指纹锁"}
+  ],
+  "level": {
+    "id": "prison",
+    "title": "监狱（原作第二关复刻）",
+    "premise": "你在一间破破烂烂的房间里醒来，脚被镣铐锁在地上。房间里散落着镣铐、墙上的钥匙和排水管，还有几个可以打开的地方：柜子、时钟、书架、大铁箱和一扇锁着的门。一件一件解开，逃出这间牢房。",
+    "objective": "打开柜子里的转盘锁拿到锯子，锯断排水管做成棍子，勾下钥匙解开镣铐，从时钟取出电池点亮电报机，输入摩斯码，用密码打开大铁箱，最后用指纹锁开门。",
+    "targetMinutes": 15,
+    "selectedItemIds": ["pr-dial","pr-saw","pr-pipe","pr-key","pr-shackle","pr-battery","pr-telegraph","pr-note","pr-diary","pr-chest","pr-finger","pr-fp-lock"],
+    "containers": [
+      {"id":"cabinet","name":"柜子","desc":"一个柜子，里面放着工具箱和一台电报机。","hidden":false},
+      {"id":"clock","name":"时钟","desc":"对面墙上的时钟，停在了三点半。","hidden":false},
+      {"id":"shelf","name":"书架","desc":"一个书架，上面有几本笔记和日记。","hidden":true},
+      {"id":"chest","name":"大铁箱","desc":"角落里的大铁箱，上了密码锁，箱缝里透出怪味。","hidden":true},
+      {"id":"door","name":"门","desc":"锁着的门，门把旁是一个指纹锁。","hidden":true}
+    ],
+    "items": [
+      {"id":"pr-dial","role":"lock","roleLabel":"锁","title":"转盘锁","sceneName":"转盘锁","reason":"工具箱上的转盘锁，有两个旋钮。锁面刻着一行小字：时针指向三点，分针指向六点。","container":"cabinet","hidden":false},
+      {"id":"pr-saw","role":"tool","roleLabel":"工具","title":"锯子","sceneName":"锯子","reason":"一把锯子，锯齿还锋利。既能锯断硬物，也能割下别的东西。","container":"cabinet","hidden":true},
+      {"id":"pr-telegraph","role":"transform","roleLabel":"转化","title":"电报机","sceneName":"电报机","reason":"一台没有电池的电报机，电池槽空着，无法工作。","container":"cabinet","hidden":false},
+      {"id":"pr-battery","role":"reward","roleLabel":"结果","title":"电池","sceneName":"电池","reason":"从时钟里取出的电池。","container":"clock","hidden":true},
+      {"id":"pr-note","role":"clue","roleLabel":"线索","title":"笔记","sceneName":"笔记","reason":"一张摩斯密码对照表，上面记着：3 是 ...--，7 是 --...，1 是 .----。","container":"shelf","hidden":true},
+      {"id":"pr-diary","role":"clue","roleLabel":"线索","title":"日记本","sceneName":"日记本","reason":"日记的最后一页写着：我的生日是 3 月 14 日。","container":"shelf","hidden":true},
+      {"id":"pr-chest","role":"lock","roleLabel":"锁","title":"密码锁","sceneName":"密码锁","reason":"大铁箱上的密码锁，三个转盘。箱面刻着：把电报机的数字和日记里的生日加在一起。","container":"chest","hidden":false},
+      {"id":"pr-finger","role":"reward","roleLabel":"结果","title":"手指","sceneName":"手指","reason":"从箱中尸体上取下的一根手指，指纹还完整。","container":"chest","hidden":true},
+      {"id":"pr-fp-lock","role":"lock","roleLabel":"锁","title":"指纹锁","sceneName":"指纹锁","reason":"门上的指纹锁，凹槽里需要按上一枚手指。","container":"door","hidden":false},
+      {"id":"pr-pipe","role":"tool","roleLabel":"工具","title":"排水管","sceneName":"排水管","reason":"墙上伸出一截金属排水管，用工具应该能锯断。","hidden":false},
+      {"id":"pr-key","role":"lock","roleLabel":"锁","title":"墙上的钥匙","sceneName":"墙上的钥匙","reason":"墙高处挂着一把钥匙，徒手够不到，需要一根长棍把它勾下来。","hidden":false},
+      {"id":"pr-shackle","role":"lock","roleLabel":"锁","title":"镣铐","sceneName":"镣铐","reason":"你的脚被一副镣铐锁在地上，动不了。需要一把钥匙。","hidden":false}
+    ],
+    "beats": [
+      {"id":"b-angle","title":"打开转盘锁","action":"angle","uses":["pr-dial"],"angles":[90,180],"precision":30,"requires":[],"reveals":["pr-saw"],"product":"打开的转盘锁"},
+      {"id":"b-saw-pipe","title":"锯断排水管","action":"combine","uses":["pr-saw","pr-pipe"],"requires":["b-angle"],"product":"棍子"},
+      {"id":"b-get-key","title":"勾下墙上的钥匙","action":"combine","uses":["result:b-saw-pipe","pr-key"],"requires":["b-saw-pipe"],"product":"钥匙"},
+      {"id":"b-unlock-shackle","title":"解开镣铐","action":"combine","uses":["result:b-get-key","pr-shackle"],"requires":["b-get-key"],"reveals":["pr-battery","pr-note","pr-diary","shelf","chest","door"],"product":"解开的镣铐"},
+      {"id":"b-power","title":"给电报机装电池","action":"combine","uses":["pr-battery","pr-telegraph"],"requires":["b-unlock-shackle"],"product":"通电的电报机"},
+      {"id":"b-read","title":"读笔记和日记","action":"inspect","uses":["pr-note","pr-diary"],"requires":["b-unlock-shackle"]},
+      {"id":"b-morse","title":"输入摩斯码","action":"morse","uses":["result:b-power"],"code":"...--/--.../.----","requires":["b-power","b-read"],"product":"记下密码的电报机"},
+      {"id":"b-password","title":"打开大铁箱","action":"password","uses":["pr-chest"],"expected":"685","requires":["b-morse","b-read"],"reveals":["pr-finger"],"product":"打开的密码锁"},
+      {"id":"b-fingerprint","title":"按指纹锁","action":"combine","uses":["pr-finger","pr-fp-lock"],"requires":["b-password"],"product":"解锁的指纹锁"},
+      {"id":"b-escape","title":"从出口离开","action":"deliver","uses":["result:b-fingerprint"],"requires":["b-fingerprint"]}
+    ],
+    "scenes": [],
+    "timeline": "1. 转盘锁：三点半 → 90° 和 180°\n2. 锯子+排水管 → 棍子 → 钥匙 → 镣铐\n3. 电池 → 电报机，摩斯 371\n4. 生日 314，密码 371+314=685\n5. 手指 → 指纹锁 → 出口",
+    "mechanics": ["angle","combine","morse","inspect","password","deliver"],
+    "hints": ["转盘锁上刻着「时针三点、分针六点」，换算成角度。","转盘解开后，再开一次柜子看看工具箱。","锯子能锯断排水管；用棍子勾下墙上的钥匙，再解开镣铐。","解开镣铐后，重新看看整个房间——时钟里和新的角落里有东西。","笔记是摩斯对照，日记是生日，电报机输入摩斯数字。","大铁箱密码 = 摩斯数字 + 生日。","打开铁箱后，再开一次箱子；拿到手指后，按指纹锁开门。"],
+    "validation": {"valid": true, "issues": [], "designSource": "ported-from-original-mission2"},
+    "grounding": {"controlledIds": ["pr-dial","pr-saw","pr-pipe","pr-key","pr-shackle","pr-battery","pr-telegraph","pr-note","pr-diary","pr-chest","pr-finger","pr-fp-lock"], "theme": "文字密室逃脱·第二关·监狱", "source": "https://assets.easygame.tw/site_media/games/5769/"}
+  }
+}

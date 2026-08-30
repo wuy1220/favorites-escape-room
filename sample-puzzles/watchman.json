@@ -1,0 +1,57 @@
+{
+  "records": [
+    {"id":"watch-chen","title":"值班证 · CN-201","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"陈建国的值班证，20:00 到岗"},
+    {"id":"watch-wang","title":"值班证 · CN-202","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"王铁柱的值班证，02:00 到岗"},
+    {"id":"watch-lock","title":"九宫格电子锁","domain":"出口","dateAdded":"","url":"","urlPath":"","description":"出口旁的电子密码锁"},
+    {"id":"watch-box","title":"钥匙收纳盒","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"门房墙上的钥匙收纳盒，紧锁着"},
+    {"id":"watch-photo","title":"半张旧合影","domain":"值班室","dateAdded":"","url":"","urlPath":"","description":"褪色的半张合影，背面写着「最后一班」"},
+    {"id":"watch-vault","title":"保险柜","domain":"墙角","dateAdded":"","url":"","urlPath":"","description":"墙角的保险柜，门缝透出一丝光"}
+  ],
+  "controlledIds": ["watch-chen", "watch-wang", "watch-lock", "watch-box", "watch-photo", "watch-vault"],
+  "items": [
+    {"id":"watch-chen","title":"值班证 · CN-201","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"陈建国的值班证，20:00 到岗"},
+    {"id":"watch-wang","title":"值班证 · CN-202","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"王铁柱的值班证，02:00 到岗"},
+    {"id":"watch-lock","title":"九宫格电子锁","domain":"出口","dateAdded":"","url":"","urlPath":"","description":"出口旁的电子密码锁"},
+    {"id":"watch-box","title":"钥匙收纳盒","domain":"门房","dateAdded":"","url":"","urlPath":"","description":"门房墙上的钥匙收纳盒，紧锁着"},
+    {"id":"watch-photo","title":"半张旧合影","domain":"值班室","dateAdded":"","url":"","urlPath":"","description":"褪色的半张合影，背面写着「最后一班」"},
+    {"id":"watch-vault","title":"保险柜","domain":"墙角","dateAdded":"","url":"","urlPath":"","description":"墙角的保险柜，门缝透出一丝光"}
+  ],
+  "level": {
+    "id": "puzzle-watchman",
+    "title": "守夜人的最后交接",
+    "premise": "凌晨三点，你在值班室醒来。今晚的交接记录散落各处，出口被电子锁锁死。陈建国和王铁柱值过班，但谁是先到的那一个？拼出交接的顺序，才能从门房拿到出口钥匙。",
+    "objective": "辨认两张值班证，核对交接名单，按正确的先后顺序输入密码，打开保险柜拿到出口钥匙。",
+    "targetMinutes": 10,
+    "selectedItemIds": ["watch-chen", "watch-wang", "watch-lock", "watch-box", "watch-photo", "watch-vault"],
+    "items": [
+      {"id":"watch-chen","role":"clue","roleLabel":"线索","title":"值班证 · CN-201","sceneName":"陈建国的值班证","reason":"证件背面印着「20:00 到岗」，最下方有行刚写上去的铅笔字：『接我班的人，他的证在墙上登记簿的夹层里』。","scene":"fixed-scene-1","hidden":false},
+      {"id":"watch-wang","role":"clue","roleLabel":"线索","title":"值班证 · CN-202","sceneName":"王铁柱的值班证","reason":"证件背面印着「02:00 到岗」，还夹着一张便条：『我接的是陈建国的班』。两张证一对——陈建国先到，王铁柱后到。","scene":"fixed-scene-1","hidden":false},
+      {"id":"watch-lock","role":"lock","roleLabel":"锁","title":"九宫格电子锁","sceneName":"出口旁的九宫格电子锁","reason":"锁屏下方贴着褪色提示：『按今晚交接的先后顺序，先碰最早到岗的人，再碰他之后的人』。最早到岗的人是谁，值班证背面写得清楚。","scene":"fixed-scene-1","hidden":false},
+      {"id":"watch-box","role":"tool","roleLabel":"工具","title":"钥匙收纳盒","sceneName":"门房的钥匙收纳盒","reason":"收纳盒紧锁着，盒面刻着一行字：『交接名单核对无误后，把核对结果交给我，换出口钥匙』。","scene":"fixed-scene-2","hidden":false},
+      {"id":"watch-photo","role":"red_herring","roleLabel":"干扰","title":"半张旧合影","sceneName":"褪色的半张旧合影","reason":"照片上是两个勾肩搭背的人，背面写着「最后一班」。乍看像今晚的交接留念，但照片里墙上的挂历翻到了下个月——这是上个月的旧物，与今晚无关。","scene":"fixed-scene-1","hidden":false},
+      {"id":"watch-vault","role":"transform","roleLabel":"转化","title":"保险柜","sceneName":"墙角的保险柜","reason":"保险柜门缝透出一丝光，柜面刻着：『当正确的人按正确的顺序被记起，我会自己打开，交出那把真正的出口钥匙』。","scene":"fixed-scene-3","hidden":true}
+    ],
+    "beats": [
+      {"id":"fixed-inspect-a","title":"辨认陈建国的值班证","action":"inspect","uses":["watch-chen"],"requires":[]},
+      {"id":"fixed-inspect-b","title":"辨认王铁柱的值班证","action":"inspect","uses":["watch-wang"],"requires":[]},
+      {"id":"fixed-inspect-d","title":"读出口电子锁上的提示","action":"inspect","uses":["watch-lock"],"requires":[]},
+      {"id":"fixed-combine-core","title":"核对今晚的交接名单","action":"combine","uses":["watch-chen","watch-wang"],"requires":["fixed-inspect-a","fixed-inspect-b"],"product":"核对过的名单"},
+      {"id":"fixed-sequence","title":"按正确的交接顺序输入密码","action":"sequence","uses":["watch-chen","watch-wang"],"requires":["fixed-inspect-d","fixed-combine-core"],"product":"已输入的交接顺序"},
+      {"id":"fixed-inspect-c","title":"检查门房的钥匙收纳盒","action":"revisit","uses":["watch-box"],"requires":["fixed-sequence"]},
+      {"id":"fixed-combine-clue","title":"把核对结果交给门房","action":"combine","uses":["result:fixed-combine-core","watch-box"],"requires":["fixed-inspect-c","fixed-sequence"],"product":"门房钥匙"},
+      {"id":"fixed-combine-final","title":"打开墙角的保险柜","action":"combine","uses":["result:fixed-sequence","result:fixed-combine-clue"],"requires":["fixed-combine-clue"],"reveals":["watch-vault"],"product":"出口钥匙"},
+      {"id":"fixed-inspect-e","title":"取出保险柜里的出口钥匙","action":"revisit","uses":["watch-vault"],"requires":["fixed-combine-final"]},
+      {"id":"fixed-deliver","title":"把出口钥匙交给出口","action":"deliver","uses":["result:fixed-combine-final"],"requires":["fixed-inspect-e"]}
+    ],
+    "scenes": [
+      {"id":"fixed-scene-1","title":"值班台","description":"两张值班证并排摊在桌上，旁边是出口的电子锁。角落里还有半张褪色的合影。","focus":"值班台","itemIds":["watch-chen","watch-wang","watch-lock","watch-photo"],"beatIds":["fixed-inspect-a","fixed-inspect-b","fixed-inspect-d","fixed-combine-core","fixed-sequence"]},
+      {"id":"fixed-scene-2","title":"门房","description":"交接名单把你带到门房。墙上的钥匙收纳盒紧锁着。","focus":"门房","itemIds":["watch-box"],"beatIds":["fixed-inspect-c","fixed-combine-clue"]},
+      {"id":"fixed-scene-3","title":"墙角","description":"正确顺序打开了墙角的一个暗处。保险柜从阴影里显露出来。","focus":"墙角与出口","itemIds":["watch-vault"],"beatIds":["fixed-combine-final","fixed-inspect-e","fixed-deliver"]}
+    ],
+    "timeline": "1. 陈建国 20:00 到岗\n2. 王铁柱 02:00 接班",
+    "mechanics": ["inspect","combine","revisit","sequence","deliver"],
+    "hints": ["先辨认两张值班证，看背面写了什么。","两张证互相印证谁先谁后。","门房的收纳盒要核对结果才开。","墙角的保险柜藏得比想象中深。"],
+    "validation": {"valid": true, "issues": [], "designSource": "handwritten"},
+    "grounding": {"controlledIds": ["watch-chen","watch-wang","watch-lock","watch-box","watch-photo","watch-vault"], "redHerring": "watch-photo", "theme": "守夜人值班室"}
+  }
+}

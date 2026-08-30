@@ -1,0 +1,375 @@
+{
+  "records": [
+    {
+      "id": "bk-nand",
+      "title": "NandGame",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://nandgame.com/",
+      "urlPath": "",
+      "description": "从零搭建一台电脑"
+    },
+    {
+      "id": "bk-991",
+      "title": "fx-991CNX 计算器",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://www.jianshu.com/p/3505c3ced23a",
+      "urlPath": "",
+      "description": "在计算器上编程"
+    },
+    {
+      "id": "bk-kana",
+      "title": "日语/假名",
+      "domain": "日语学习",
+      "dateAdded": "",
+      "url": "https://zh.wikibooks.org/wiki/日语/假名",
+      "urlPath": "",
+      "description": "假名认读练习"
+    },
+    {
+      "id": "bk-login",
+      "title": "登录界面",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "电脑的登录界面"
+    },
+    {
+      "id": "bk-key",
+      "title": "钥匙",
+      "domain": "收藏夹",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从登录界面滑出的钥匙"
+    },
+    {
+      "id": "bk-bar",
+      "title": "地址栏",
+      "domain": "收藏夹",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁住的浏览器地址栏"
+    },
+    {
+      "id": "bk-wiring",
+      "title": "红石电路",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://zh.minecraft.wiki/w/%E7%BA%A2%E7%9F%B3%E7%94%B5%E8%B7%AF",
+      "urlPath": "",
+      "description": "Minecraft 红石电路说明"
+    }
+  ],
+  "controlledIds": [
+    "bk-nand",
+    "bk-991",
+    "bk-kana",
+    "bk-login",
+    "bk-key",
+    "bk-bar",
+    "bk-wiring"
+  ],
+  "items": [
+    {
+      "id": "bk-nand",
+      "title": "NandGame",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://nandgame.com/",
+      "urlPath": "",
+      "description": "从零搭建一台电脑"
+    },
+    {
+      "id": "bk-991",
+      "title": "fx-991CNX 计算器",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://www.jianshu.com/p/3505c3ced23a",
+      "urlPath": "",
+      "description": "在计算器上编程"
+    },
+    {
+      "id": "bk-kana",
+      "title": "日语/假名",
+      "domain": "日语学习",
+      "dateAdded": "",
+      "url": "https://zh.wikibooks.org/wiki/日语/假名",
+      "urlPath": "",
+      "description": "假名认读练习"
+    },
+    {
+      "id": "bk-login",
+      "title": "登录界面",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "电脑的登录界面"
+    },
+    {
+      "id": "bk-key",
+      "title": "钥匙",
+      "domain": "收藏夹",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从登录界面滑出的钥匙"
+    },
+    {
+      "id": "bk-bar",
+      "title": "地址栏",
+      "domain": "收藏夹",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁住的浏览器地址栏"
+    },
+    {
+      "id": "bk-wiring",
+      "title": "红石电路",
+      "domain": "开发/技术",
+      "dateAdded": "",
+      "url": "https://zh.minecraft.wiki/w/%E7%BA%A2%E7%9F%B3%E7%94%B5%E8%B7%AF",
+      "urlPath": "",
+      "description": "Minecraft 红石电路说明"
+    }
+  ],
+  "level": {
+    "id": "bookmark-room",
+    "title": "书签之屋（你的收藏夹）",
+    "premise": "你的浏览器收藏夹活了——你被困在收藏夹里，文件夹变成了房间，每一条书签都变成了房间里的物件。要离开，必须顺着你自己收藏东西的习惯解开谜题：读《红石电路》笔记接好 NandGame，读对计算器屏幕上的数字，最后用钥匙打开地址栏。",
+    "objective": "读红石电路笔记弄清三根线的角度，接好 NandGame 让电脑供电；看计算器屏幕记住数字，按日语假名表的读法转换；登录电脑拿到钥匙，用钥匙打开地址栏逃出收藏夹。",
+    "targetMinutes": 12,
+    "selectedItemIds": [
+      "bk-nand",
+      "bk-991",
+      "bk-kana",
+      "bk-login",
+      "bk-key",
+      "bk-bar",
+      "bk-wiring"
+    ],
+    "containers": [
+      {
+        "id": "fold-dev",
+        "name": "开发/技术",
+        "desc": "一个装着开发书签的文件夹：主机和计算器。",
+        "hidden": false
+      },
+      {
+        "id": "fold-jp",
+        "name": "日语学习",
+        "desc": "一个装着日语学习书签的文件夹。",
+        "hidden": false
+      }
+    ],
+    "items": [
+      {
+        "id": "bk-nand",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "NandGame",
+        "sceneName": "NandGame",
+        "reason": "一台还没接线的 NandGame 主机，机箱后露出三根线：红、黄、蓝。插孔旁的度数刻度被油污盖住，看不清了。旁边放着一本《红石电路》笔记。",
+        "container": "fold-dev",
+        "hidden": false
+      },
+      {
+        "id": "bk-991",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "fx-991CNX 计算器",
+        "sceneName": "fx-991CNX 计算器",
+        "reason": "计算器屏幕停在一串数字上：4 8 6。屏幕下角一行小字：『主人把开机密码按假名表的读法记着。』",
+        "container": "fold-dev",
+        "hidden": false
+      },
+      {
+        "id": "bk-kana",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "日语/假名",
+        "sceneName": "日语/假名",
+        "reason": "假名表的页脚有一行铅笔小字：『数字要按假名表翻页的方向读——从右往左。』",
+        "container": "fold-jp",
+        "hidden": true
+      },
+      {
+        "id": "bk-login",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "登录界面",
+        "sceneName": "登录界面",
+        "reason": "NandGame 供电后的登录界面，需要输入三位密码。",
+        "container": "fold-dev",
+        "hidden": true
+      },
+      {
+        "id": "bk-key",
+        "role": "reward",
+        "roleLabel": "结果",
+        "title": "钥匙",
+        "sceneName": "钥匙",
+        "reason": "从登录界面里滑出来的一把钥匙，齿形和地址栏的锁孔刚好吻合。",
+        "container": "fold-dev",
+        "hidden": true
+      },
+      {
+        "id": "bk-bar",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "地址栏",
+        "sceneName": "地址栏",
+        "reason": "浏览器地址栏锁住了，输不了网址。锁孔需要一把钥匙。",
+        "hidden": false
+      },
+      {
+        "id": "bk-wiring",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "红石电路",
+        "sceneName": "红石电路",
+        "reason": "一本翻旧的红石电路笔记，最后一页画着三根线怎么接：『红线 300°、黄线 240°、蓝线 180°，插孔才会咬合。』",
+        "container": "fold-dev",
+        "hidden": false
+      }
+    ],
+    "beats": [
+      {
+        "id": "b-peek",
+        "title": "看计算器屏幕",
+        "action": "inspect",
+        "uses": [
+          "bk-991"
+        ],
+        "requires": [],
+        "reveals": [
+          "bk-kana"
+        ]
+      },
+      {
+        "id": "b-wiring",
+        "title": "读红石电路笔记",
+        "action": "inspect",
+        "uses": [
+          "bk-wiring"
+        ],
+        "requires": []
+      },
+      {
+        "id": "b-kana",
+        "title": "读假名表",
+        "action": "inspect",
+        "uses": [
+          "bk-kana"
+        ],
+        "requires": []
+      },
+      {
+        "id": "b-wire",
+        "title": "接好 NandGame 的线",
+        "action": "angle",
+        "uses": [
+          "bk-nand"
+        ],
+        "angles": [
+          300,
+          240,
+          180
+        ],
+        "precision": 30,
+        "requires": [],
+        "reveals": [
+          "bk-login"
+        ],
+        "product": "接好线的电脑",
+        "labels": [
+          "红线",
+          "黄线",
+          "蓝线"
+        ]
+      },
+      {
+        "id": "b-login",
+        "title": "登录电脑",
+        "action": "password",
+        "uses": [
+          "bk-login"
+        ],
+        "expected": "684",
+        "requires": [],
+        "reveals": [
+          "bk-key"
+        ],
+        "product": "登录成功的电脑"
+      },
+      {
+        "id": "b-door",
+        "title": "用钥匙开地址栏",
+        "action": "combine",
+        "uses": [
+          "bk-key",
+          "bk-bar"
+        ],
+        "resultOn": "bk-bar",
+        "requires": [
+          "b-login"
+        ],
+        "consume": [
+          "bk-key"
+        ],
+        "product": "打开的地址栏"
+      },
+      {
+        "id": "b-escape",
+        "title": "离开收藏夹",
+        "action": "deliver",
+        "uses": [
+          "result:b-door"
+        ],
+        "requires": [
+          "b-door"
+        ]
+      }
+    ],
+    "scenes": [],
+    "timeline": "1. 读《红石电路》笔记:红线 300°、黄线 240°、蓝线 180° → 接好 NandGame 供电\n2. 计算器屏幕 4 8 6;假名表提示从右往左读 → 684\n3. 登录界面输 684 → 钥匙\n4. 钥匙开地址栏 → 拖到出口",
+    "mechanics": [
+      "inspect",
+      "angle",
+      "password",
+      "combine",
+      "deliver"
+    ],
+    "hints": [
+      "「开发/技术」文件夹里有机箱、计算器，还有一本《红石电路》笔记。",
+      "三根线的角度写在红石电路笔记最后一页。",
+      "机箱后面三根线:红、黄、蓝。",
+      "计算器屏幕上是 4 8 6。",
+      "「日语学习」文件夹里还有东西——假名表上有读法提示。",
+      "密码是从右往左读的。",
+      "登录后钥匙滑出来;用钥匙开地址栏,把打开的地址栏拖到出口。"
+    ],
+    "validation": {
+      "valid": true,
+      "issues": [],
+      "designSource": "original-bookmarks-based"
+    },
+    "grounding": {
+      "controlledIds": [
+        "bk-nand",
+        "bk-991",
+        "bk-kana",
+        "bk-login",
+        "bk-key",
+        "bk-bar"
+      ],
+      "theme": "原创·书签之屋(真实收藏夹素材)",
+      "source": "user-bookmarks-2026-08-22"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "records": [
+    {"id":"bd-bear","title":"与熊论道/熊曰加密","domain":"安全/工具","dateAdded":"","url":"http://hi.pcmoe.net/index.html","urlPath":"","description":"熊曰加密工具"},
+    {"id":"bd-note","title":"加密便签","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"被擦花的便签"},
+    {"id":"bd-pencil","title":"铅笔","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"一支铅笔"},
+    {"id":"bd-term","title":"解密终端","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"解密终端"},
+    {"id":"bd-key","title":"钥匙","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"解出情报后滑出的钥匙"},
+    {"id":"bd-door","title":"地址栏","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁住的地址栏"}
+  ],
+  "controlledIds": ["bd-bear","bd-note","bd-pencil","bd-term","bd-key","bd-door"],
+  "items": [
+    {"id":"bd-bear","title":"与熊论道/熊曰加密","domain":"安全/工具","dateAdded":"","url":"http://hi.pcmoe.net/index.html","urlPath":"","description":"熊曰加密工具"},
+    {"id":"bd-note","title":"加密便签","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"被擦花的便签"},
+    {"id":"bd-pencil","title":"铅笔","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"一支铅笔"},
+    {"id":"bd-term","title":"解密终端","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"解密终端"},
+    {"id":"bd-key","title":"钥匙","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"解出情报后滑出的钥匙"},
+    {"id":"bd-door","title":"地址栏","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁住的地址栏"}
+  ],
+  "level": {
+    "id": "bear-code",
+    "title": "深夜情报 · 熊曰",
+    "premise": "你醒在一张堆满书签的桌子前，什么都不记得了——只有手边一张被擦花的便签，开头勉强能认出『呋』字。它像是你自己用收藏夹里那套『熊曰加密』写下的情报。涂出字迹，翻出字典，倒过来读，你就能想起来。",
+    "objective": "用铅笔擦出便签上的熊字密文；读『与熊论道』工具说明学会解密规则（倒序 + 熊字表换数字）；在解密终端输入解出的密码，拿回钥匙打开地址栏。",
+    "targetMinutes": 12,
+    "selectedItemIds": ["bd-bear","bd-note","bd-pencil","bd-term","bd-key","bd-door"],
+    "containers": [
+      {"id":"fold-sec","name":"安全/工具","desc":"装着安全工具的文件夹。","hidden":false}
+    ],
+    "items": [
+      {"id":"bd-bear","role":"clue","roleLabel":"线索","title":"与熊论道/熊曰加密","sceneName":"与熊论道/熊曰加密","reason":"熊曰加密工具说明：文本经 UTF-8 编码 → Deflate 压缩 → Base91 编码 → 替换成 91 个汉字 → 整体倒序 → 加标头『呋』。解密时去掉『呋』、整体倒序读，再按字典把熊字换回数字。字典节选：食0 性1 很2 雜3 既4 溫5 和6 會7 誘8 捕9 動10 物11 家12 住13 山14 洞15 沒16 有17 冬18 眠19 …","container":"fold-sec","hidden":false},
+      {"id":"bd-note","role":"clue","roleLabel":"线索","title":"加密便签","sceneName":"加密便签","reason":"一张被擦花的便签，开头勉强认出『呋』字——这是熊曰密文的标头。你隐约记起：这是你自己写的情报，用铅笔涂一涂，字迹会现出来。","hidden":false},
+      {"id":"bd-pencil","role":"tool","roleLabel":"工具","title":"铅笔","sceneName":"铅笔","reason":"一支普通的铅笔。涂在擦花的地方，能让写过的字现形。","container":"fold-sec","hidden":false},
+      {"id":"bd-term","role":"lock","roleLabel":"锁","title":"解密终端","sceneName":"解密终端","reason":"解密终端，需要输入三位数字。屏幕提示：『倒过来读，再按熊字表换成数字。』","container":"fold-sec","hidden":true},
+      {"id":"bd-key","role":"reward","roleLabel":"结果","title":"钥匙","sceneName":"钥匙","reason":"情报解出后，终端里滑出一把钥匙，齿形和地址栏的锁孔吻合。","container":"fold-sec","hidden":true},
+      {"id":"bd-door","role":"lock","roleLabel":"锁","title":"地址栏","sceneName":"地址栏","reason":"浏览器地址栏锁住了，输不了网址。锁孔需要一把钥匙。","hidden":false}
+    ],
+    "beats": [
+      {"id":"b-note","title":"读加密便签","action":"inspect","uses":["bd-note"],"requires":[],"reveals":["bd-term"]},
+      {"id":"b-bear","title":"读熊曰工具说明","action":"inspect","uses":["bd-bear"],"requires":[]},
+      {"id":"b-reveal","title":"铅笔擦出字迹，情报正文：『和既很』","action":"combine","uses":["bd-pencil","bd-note"],"resultOn":"bd-note","requires":[],"product":"显出字迹的情报"},
+      {"id":"b-term","title":"输入解出的密码","action":"password","uses":["bd-term"],"expected":"246","requires":[],"reveals":["bd-key"],"product":"解密的情报"},
+      {"id":"b-door","title":"用钥匙开地址栏","action":"combine","uses":["bd-key","bd-door"],"resultOn":"bd-door","requires":["b-term"],"consume":["bd-key"],"product":"打开的地址栏"},
+      {"id":"b-escape","title":"离开收藏夹","action":"deliver","uses":["result:b-door"],"requires":["b-door"]}
+    ],
+    "scenes": [],
+    "timeline": "1. 便签:铅笔擦出熊字密文『和既很』\n2. 读熊曰工具说明:整体倒序 + 熊字表换数字\n3. 『和既很』倒序为『很既和』→ 很2 既4 和6 → 密码 246\n4. 解密终端输 246 → 钥匙 → 开地址栏 → 出口",
+    "mechanics": ["inspect","combine","password","deliver"],
+    "hints": ["便签和铅笔:铅笔涂在便签上,字迹会现形。","熊字密文的规则在『与熊论道/熊曰加密』工具说明里——重点看『倒序』。","密文要先倒过来读,再按熊字表换数字。","字典节选:很2 既4 和6。","解密终端在读完便签后出现,回访『安全/工具』文件夹。","钥匙 + 地址栏 → 打开的地址栏 → 拖到出口。"],
+    "validation": {"valid": true, "issues": [], "designSource": "original-bear-code"},
+    "grounding": {"controlledIds": ["bd-bear","bd-note","bd-pencil","bd-term","bd-key","bd-door"], "theme": "原创·熊曰加密情报(真实算法+真实书签)", "source": "user-bookmarks-2026-08-22 + 熊曰加密真实规则(搜索)"}
+  }
+}

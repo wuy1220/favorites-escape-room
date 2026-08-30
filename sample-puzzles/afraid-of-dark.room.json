@@ -1,0 +1,373 @@
+{
+  "records": [
+    {
+      "id": "aod-match",
+      "title": "一盒火柴",
+      "domain": "地板",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "盒面写着：『点燃该点燃的东西』"
+    },
+    {
+      "id": "aod-lamp",
+      "title": "未点燃的油灯",
+      "domain": "破屋",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "油灯能照亮房间，但现在还没点燃"
+    },
+    {
+      "id": "aod-paint-blue",
+      "title": "画作 · 蓝",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一片蔚蓝的天空，画框上刻着「2」"
+    },
+    {
+      "id": "aod-paint-red",
+      "title": "画作 · 红",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一座喷发的火山，画框上刻着「7」"
+    },
+    {
+      "id": "aod-paint-green",
+      "title": "画作 · 绿",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一望无际的草原，画框上刻着「4」"
+    },
+    {
+      "id": "aod-box",
+      "title": "密码箱",
+      "domain": "衣柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁盘上有蓝、红、绿三个颜色的转盘"
+    },
+    {
+      "id": "aod-key",
+      "title": "一把钥匙",
+      "domain": "密码箱",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从密码箱里掉出来的钥匙"
+    },
+    {
+      "id": "aod-door",
+      "title": "锁着的门",
+      "domain": "出口",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "门上有一把锁，需要钥匙才能打开"
+    }
+  ],
+  "controlledIds": [
+    "aod-match",
+    "aod-lamp",
+    "aod-paint-blue",
+    "aod-paint-red",
+    "aod-paint-green",
+    "aod-box",
+    "aod-key",
+    "aod-door"
+  ],
+  "items": [
+    {
+      "id": "aod-match",
+      "title": "一盒火柴",
+      "domain": "地板",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "盒面写着：『点燃该点燃的东西』"
+    },
+    {
+      "id": "aod-lamp",
+      "title": "未点燃的油灯",
+      "domain": "破屋",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "油灯能照亮房间，但现在还没点燃"
+    },
+    {
+      "id": "aod-paint-blue",
+      "title": "画作 · 蓝",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一片蔚蓝的天空，画框上刻着「2」"
+    },
+    {
+      "id": "aod-paint-red",
+      "title": "画作 · 红",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一座喷发的火山，画框上刻着「7」"
+    },
+    {
+      "id": "aod-paint-green",
+      "title": "画作 · 绿",
+      "domain": "墙",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一望无际的草原，画框上刻着「4」"
+    },
+    {
+      "id": "aod-box",
+      "title": "密码箱",
+      "domain": "衣柜",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "锁盘上有蓝、红、绿三个颜色的转盘"
+    },
+    {
+      "id": "aod-key",
+      "title": "一把钥匙",
+      "domain": "密码箱",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "从密码箱里掉出来的钥匙"
+    },
+    {
+      "id": "aod-door",
+      "title": "锁着的门",
+      "domain": "出口",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "门上有一把锁，需要钥匙才能打开"
+    }
+  ],
+  "level": {
+    "id": "afraid-of-dark",
+    "title": "怕黑吗（原作第一关复刻）",
+    "premise": "你在一间漆黑的破屋里醒来。四周一片黑暗，只摸得到一盒火柴、一盏未点燃的油灯，和一扇紧锁的门。先找到光，再看清这个房间。",
+    "objective": "点燃油灯照亮房间，读懂墙上画作的颜色与数字，打开密码箱拿到钥匙，开门离开。",
+    "targetMinutes": 8,
+    "selectedItemIds": [
+      "aod-match",
+      "aod-lamp",
+      "aod-paint-blue",
+      "aod-paint-red",
+      "aod-paint-green",
+      "aod-box",
+      "aod-key",
+      "aod-door"
+    ],
+    "items": [
+      {
+        "id": "aod-match",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "一盒火柴",
+        "sceneName": "一盒火柴",
+        "reason": "盒面写着：『点燃该点燃的东西』。",
+        "hidden": false
+      },
+      {
+        "id": "aod-lamp",
+        "role": "transform",
+        "roleLabel": "转化",
+        "title": "未点燃的油灯",
+        "sceneName": "未点燃的油灯",
+        "reason": "油灯能照亮房间，但现在还没点燃。它需要一个火源。",
+        "hidden": false
+      },
+      {
+        "id": "aod-paint-blue",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "画作 · 蓝",
+        "sceneName": "一幅画作",
+        "reason": "一片蔚蓝的天空，画框上刻着「2」。",
+        "hidden": true
+      },
+      {
+        "id": "aod-paint-red",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "画作 · 红",
+        "sceneName": "一幅画作",
+        "reason": "一座正在喷发的火山，画框上刻着「7」。",
+        "hidden": true
+      },
+      {
+        "id": "aod-paint-green",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "画作 · 绿",
+        "sceneName": "一幅画作",
+        "reason": "一望无际的草原，画框上刻着「4」。",
+        "hidden": true
+      },
+      {
+        "id": "aod-box",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "密码箱",
+        "sceneName": "衣柜里的密码箱",
+        "reason": "锁盘上有蓝、红、绿三个颜色的转盘，各自对准一个数字。墙上的画会告诉你答案。",
+        "hidden": true
+      },
+      {
+        "id": "aod-key",
+        "role": "reward",
+        "roleLabel": "结果",
+        "title": "一把钥匙",
+        "sceneName": "一把钥匙",
+        "reason": "从密码箱里掉出来的钥匙。门上的锁正等着它。",
+        "hidden": true
+      },
+      {
+        "id": "aod-door",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "锁着的门",
+        "sceneName": "锁着的门",
+        "reason": "门上有一把锁，需要钥匙才能打开。",
+        "hidden": false
+      }
+    ],
+    "beats": [
+      {
+        "id": "b-light",
+        "title": "点燃油灯",
+        "action": "combine",
+        "uses": [
+          "aod-match",
+          "aod-lamp"
+        ],
+        "requires": [],
+        "reveals": [
+          "aod-paint-blue",
+          "aod-paint-red",
+          "aod-paint-green",
+          "aod-box"
+        ],
+        "product": "点燃的油灯"
+      },
+      {
+        "id": "b-see-paintings",
+        "title": "读懂墙上的画",
+        "action": "inspect",
+        "uses": [
+          "aod-paint-blue",
+          "aod-paint-red",
+          "aod-paint-green"
+        ],
+        "requires": [
+          "b-light"
+        ]
+      },
+      {
+        "id": "b-password",
+        "title": "输入颜色密码",
+        "action": "password",
+        "uses": [
+          "aod-box"
+        ],
+        "expected": "274",
+        "colors": [
+          "蓝",
+          "红",
+          "绿"
+        ],
+        "requires": [
+          "b-see-paintings"
+        ],
+        "reveals": [
+          "aod-key"
+        ],
+        "product": "打开的密码箱"
+      },
+      {
+        "id": "b-take-key",
+        "title": "捡起钥匙",
+        "action": "inspect",
+        "uses": [
+          "aod-key"
+        ],
+        "requires": [
+          "b-password"
+        ]
+      },
+      {
+        "id": "b-unlock",
+        "title": "用钥匙开门",
+        "action": "combine",
+        "uses": [
+          "aod-key",
+          "aod-door"
+        ],
+        "requires": [
+          "b-take-key"
+        ],
+        "product": "打开的门"
+      },
+      {
+        "id": "b-escape",
+        "title": "从出口离开",
+        "action": "deliver",
+        "uses": [
+          "result:b-unlock"
+        ],
+        "requires": [
+          "b-unlock"
+        ]
+      }
+    ],
+    "scenes": [],
+    "timeline": "1. 火柴点燃油灯\n2. 蓝天=2、火山=7、草原=4\n3. 颜色密码 274",
+    "mechanics": [
+      "inspect",
+      "combine",
+      "password",
+      "deliver"
+    ],
+    "hints": [
+      "先找到能点燃油灯的东西。",
+      "墙上的三幅画对应密码箱的三个颜色转盘。",
+      "蓝=2、红=7、绿=4，按蓝红绿的顺序输入。",
+      "拿到钥匙后，去开门。",
+      "把打开的门交给出口。"
+    ],
+    "validation": {
+      "valid": true,
+      "issues": [],
+      "designSource": "ported-from-original-mission1"
+    },
+    "grounding": {
+      "controlledIds": [
+        "aod-match",
+        "aod-lamp",
+        "aod-paint-blue",
+        "aod-paint-red",
+        "aod-paint-green",
+        "aod-box",
+        "aod-key",
+        "aod-door"
+      ],
+      "theme": "文字密室逃脱·第一关·怕黑吗",
+      "source": "https://assets.easygame.tw/site_media/games/5769/"
+    }
+  }
+}

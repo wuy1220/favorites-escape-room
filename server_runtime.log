@@ -1,0 +1,4 @@
+  File "C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\server\favorites_room_server.py", line 95
+    ""“响应层检测”:advice-form 反问 或 全程没有 Advisor 块 → 视为 flash 直接作答。"""
+      ^
+SyntaxError: invalid character '“' (U+201C)

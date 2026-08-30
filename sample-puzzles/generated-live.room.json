@@ -1,0 +1,636 @@
+{
+  "items": [
+    {
+      "id": "bookmark-cr7gzd-0",
+      "title": "NandGame",
+      "url": "https://nandgame.com/",
+      "folder": "开发",
+      "domain": "nandgame.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://nandgame.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "开发 / 技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发 / 技术"
+      ],
+      "modelIntent": "学习计算机底层原理",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1m8vw52-1",
+      "title": "nand2tetris",
+      "url": "https://www.nand2tetris.org/",
+      "folder": "开发",
+      "domain": "nand2tetris.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.nand2tetris.org/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "开发 / 技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发 / 技术"
+      ],
+      "modelIntent": "学习计算机体系结构",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1ky42zu-2",
+      "title": "Vue SFC Playground",
+      "url": "https://sfc.vuejs.org/",
+      "folder": "开发",
+      "domain": "sfc.vuejs.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://sfc.vuejs.org/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "开发 / 技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发 / 技术"
+      ],
+      "modelIntent": "前端开发实践",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1hcoq7z-3",
+      "title": "GitHub",
+      "url": "https://github.com/",
+      "folder": "开发",
+      "domain": "github.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://github.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "开发 / 技术"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发 / 技术"
+      ],
+      "modelIntent": "代码托管与协作",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-i2nsmm-4",
+      "title": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/zh-CN",
+      "folder": "开发",
+      "domain": "developer.mozilla.org",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://developer.mozilla.org/zh-CN",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "开发 / 技术",
+        "学习 / 参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "开发 / 技术",
+        "学习 / 参考"
+      ],
+      "modelIntent": "Web技术参考",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1c7wd6o-5",
+      "title": "Programiz",
+      "url": "https://www.programiz.com/",
+      "folder": "学习",
+      "domain": "programiz.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.programiz.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "学习 / 参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习 / 参考"
+      ],
+      "modelIntent": "编程语言学习",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1yojv5c-6",
+      "title": "Kaggle",
+      "url": "https://www.kaggle.com/",
+      "folder": "学习",
+      "domain": "kaggle.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.kaggle.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "学习 / 参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习 / 参考"
+      ],
+      "modelIntent": "数据科学学习",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1snkekw-7",
+      "title": "Explorable Explanations",
+      "url": "https://explorabl.es/",
+      "folder": "学习",
+      "domain": "explorabl.es",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://explorabl.es/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "学习 / 参考"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "学习 / 参考"
+      ],
+      "modelIntent": "交互式学习",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-1shyfbj-8",
+      "title": "哔哩哔哩",
+      "url": "https://www.bilibili.com/",
+      "folder": "娱乐",
+      "domain": "bilibili.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://www.bilibili.com/",
+      "signal": "medium",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "娱乐 / 文化"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "娱乐 / 文化"
+      ],
+      "modelIntent": "视频娱乐",
+      "modelReason": "基于标题和域名推断"
+    },
+    {
+      "id": "bookmark-16cl3tl-9",
+      "title": "网易云音乐",
+      "url": "https://music.163.com/",
+      "folder": "娱乐",
+      "domain": "music.163.com",
+      "description": "",
+      "dateAdded": "",
+      "source": "chrome",
+      "canonicalUrl": "https://music.163.com/",
+      "signal": "high",
+      "status": "keep",
+      "reason": "基于标题和域名推断",
+      "topics": [
+        "娱乐 / 文化"
+      ],
+      "modelStatus": "keep",
+      "modelTopics": [
+        "娱乐 / 文化"
+      ],
+      "modelIntent": "音乐娱乐",
+      "modelReason": "基于标题和域名推断"
+    }
+  ],
+  "controlledIds": [
+    "bookmark-cr7gzd-0",
+    "bookmark-1m8vw52-1",
+    "bookmark-1ky42zu-2",
+    "bookmark-1hcoq7z-3",
+    "bookmark-i2nsmm-4",
+    "bookmark-1c7wd6o-5",
+    "bookmark-1yojv5c-6",
+    "bookmark-1snkekw-7",
+    "bookmark-1shyfbj-8",
+    "bookmark-16cl3tl-9"
+  ],
+  "level": {
+    "id": "level-1787822127192",
+    "title": "逻辑之门：复古终端密室",
+    "premise": "你被困在一间充满复古电脑设备的密室里。墙上贴着的书签分类标签已经泛黄，但似乎隐藏着逃出的线索。你需要按照『底层逻辑→前端构建→学习终端→服务器重启』的顺序，解开每个场景的谜题，最终重启服务器逃出密室。",
+    "objective": "解开三个场景中的谜题，找到密码并重启服务器，获得最终奖励",
+    "targetMinutes": 12,
+    "selectedItemIds": [
+      "bookmark-cr7gzd-0",
+      "bookmark-1m8vw52-1",
+      "bookmark-1ky42zu-2",
+      "bookmark-1hcoq7z-3",
+      "bookmark-i2nsmm-4",
+      "bookmark-1c7wd6o-5",
+      "bookmark-1yojv5c-6",
+      "bookmark-1shyfbj-8",
+      "bookmark-1snkekw-7"
+    ],
+    "items": [
+      {
+        "id": "bookmark-cr7gzd-0",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "NandGame",
+        "sceneName": "NandGame 硬件模拟卡",
+        "scene": "scene-scene-1",
+        "reason": "卡片边缘刻着『从NAND到计算机』，背面写着：『先搭出与门、或门、非门，才能组装我的七层结构。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1m8vw52-1",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "nand2tetris",
+        "sceneName": "nand2tetris 项目手册",
+        "scene": "scene-scene-1",
+        "reason": "封面标题旁有一行小字：『本项目共七章，对应硬件抽象七层。』卡片背面写着：『第一层从NAND门开始，最后一层是操作系统。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1ky42zu-2",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "Vue SFC Playground",
+        "sceneName": "Vue 软盘组件",
+        "scene": "scene-scene-1",
+        "reason": "屏幕上显示一个未完成的Vue单文件组件，底部提示：『需要先有代码仓库才能保存。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1hcoq7z-3",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "GitHub",
+        "sceneName": "GitHub 同步磁盘",
+        "scene": "scene-scene-1",
+        "reason": "页面中央有一个醒目的『Sync』按钮，按钮下方注释：『将本地组件同步到远程仓库。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-i2nsmm-4",
+        "role": "red_herring",
+        "roleLabel": "干扰",
+        "title": "MDN Web Docs",
+        "sceneName": "MDN 参考手册",
+        "scene": "scene-scene-1",
+        "reason": "卡片上写着『Web技术的权威参考手册』，但除此之外没有任何其他线索。",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1c7wd6o-5",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Programiz",
+        "sceneName": "Programiz 语法卡片",
+        "scene": "scene-scene-2",
+        "reason": "卡片正面印着『Python』三个字，背面写着：『第一步：语法。所有编程语言的学习都分三阶段：语法、数据结构、项目实战。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1yojv5c-6",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "Kaggle",
+        "sceneName": "Kaggle 数据集封面",
+        "scene": "scene-scene-2",
+        "reason": "封面是一张表格，标题写着『891个训练样本』。卡片背面注释：『第二步：数据。前两位数字是特征工程的关键。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1shyfbj-8",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "哔哩哔哩",
+        "sceneName": "哔哩哔哩 视频光盘",
+        "scene": "scene-scene-2",
+        "reason": "视频标题是《30天入门数据科学》，播放量旁边有个启动盘图标。卡片背面写着：『第三步：项目。视频里提到的数据集就在旁边启动盘的铭牌上。』",
+        "hidden": false
+      },
+      {
+        "id": "bookmark-1snkekw-7",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "Explorable Explanations",
+        "sceneName": "Explorable Explanations 密钥盘",
+        "scene": "scene-scene-2",
+        "reason": "密钥盘正面刻着密码锁，锁面刻着：『密码 = 阶段数 × 样本数前两位』。盘体边缘有凹槽，似乎可以插入某台终端。",
+        "hidden": false
+      }
+    ],
+    "mechanics": [
+      "inspect",
+      "sequence",
+      "combine",
+      "deliver"
+    ],
+    "beats": [
+      {
+        "id": "scene-scene-1-step-1",
+        "title": "检查硬件模拟卡",
+        "action": "inspect",
+        "uses": [
+          "bookmark-cr7gzd-0"
+        ],
+        "requires": [],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-1-step-2",
+        "title": "阅读项目手册",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1m8vw52-1"
+        ],
+        "requires": [
+          "scene-scene-1-step-1"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-1-step-3",
+        "title": "按顺序排列硬件卡片",
+        "action": "sequence",
+        "uses": [
+          "bookmark-cr7gzd-0",
+          "bookmark-1m8vw52-1"
+        ],
+        "requires": [
+          "scene-scene-1-step-2"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-1-step-4",
+        "title": "查看前端组件",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1ky42zu-2"
+        ],
+        "requires": [
+          "scene-scene-1-step-3"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-1-step-5",
+        "title": "检查同步磁盘",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1hcoq7z-3"
+        ],
+        "requires": [
+          "scene-scene-1-step-4"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-1-step-6",
+        "title": "组合前端组件与同步磁盘",
+        "action": "combine",
+        "uses": [
+          "bookmark-1ky42zu-2",
+          "bookmark-1hcoq7z-3"
+        ],
+        "requires": [
+          "scene-scene-1-step-5"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-7",
+        "title": "阅读语法卡片",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1c7wd6o-5"
+        ],
+        "requires": [
+          "scene-scene-1-step-6"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-8",
+        "title": "查看数据集封面",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1yojv5c-6"
+        ],
+        "requires": [
+          "scene-scene-2-step-7"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-9",
+        "title": "播放视频光盘",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1shyfbj-8"
+        ],
+        "requires": [
+          "scene-scene-2-step-8"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-10",
+        "title": "按学习顺序排列三张卡片",
+        "action": "sequence",
+        "uses": [
+          "bookmark-1c7wd6o-5",
+          "bookmark-1yojv5c-6",
+          "bookmark-1shyfbj-8"
+        ],
+        "requires": [
+          "scene-scene-2-step-9"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-11",
+        "title": "检查密钥盘",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1snkekw-7"
+        ],
+        "requires": [
+          "scene-scene-2-step-10"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-step-12",
+        "title": "输入密码解锁密钥盘",
+        "action": "inspect",
+        "uses": [
+          "bookmark-1snkekw-7"
+        ],
+        "requires": [
+          "scene-scene-2-step-11"
+        ],
+        "reveals": [],
+        "expected": "",
+        "angles": [],
+        "precision": 30,
+        "code": ""
+      },
+      {
+        "id": "scene-scene-2-final",
+        "title": "把最终结果交给出口",
+        "action": "deliver",
+        "uses": [
+          "result:scene-scene-2-step-10"
+        ],
+        "requires": [
+          "scene-scene-2-step-12"
+        ],
+        "reveals": []
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-scene-1",
+        "title": "积灰的资料室",
+        "description": "房间里弥漫着旧纸张和电路板的味道。一盏绿色的CRT显示器在黑暗中发出微光，旁边是一台老式检索机，键盘上落满了灰尘。空气中能听到硬盘马达的嗡嗡声。",
+        "focus": "一台贴满标签的老式检索机",
+        "itemIds": [
+          "bookmark-cr7gzd-0",
+          "bookmark-1m8vw52-1",
+          "bookmark-1ky42zu-2",
+          "bookmark-1hcoq7z-3",
+          "bookmark-i2nsmm-4"
+        ],
+        "beatIds": [
+          "scene-scene-1-step-1",
+          "scene-scene-1-step-2",
+          "scene-scene-1-step-3",
+          "scene-scene-1-step-4",
+          "scene-scene-1-step-5",
+          "scene-scene-1-step-6"
+        ]
+      },
+      {
+        "id": "scene-scene-2",
+        "title": "闪烁的工作台",
+        "description": "工作台上散落着编程书籍和数据表格。一台笔记本电脑屏幕闪烁不定，旁边放着一个启动盘和一台老式投影仪。空气中弥漫着咖啡和臭氧的味道。",
+        "focus": "一台闪烁着命令行的笔记本电脑",
+        "itemIds": [
+          "bookmark-1c7wd6o-5",
+          "bookmark-1yojv5c-6",
+          "bookmark-1shyfbj-8",
+          "bookmark-1snkekw-7"
+        ],
+        "beatIds": [
+          "scene-scene-2-step-7",
+          "scene-scene-2-step-8",
+          "scene-scene-2-step-9",
+          "scene-scene-2-step-10",
+          "scene-scene-2-step-11",
+          "scene-scene-2-step-12"
+        ]
+      }
+    ],
+    "hints": [
+      "观察资料室里的两张硬件卡片，注意它们提到的『七层』概念。",
+      "工作台上的学习卡片似乎按某种顺序排列，注意卡片上的数字标记。",
+      "前端工具和代码托管平台可以组合使用，想想Vue组件需要在哪里保存。",
+      "密码锁的规则涉及『阶段数』和『样本数』，找到提供这两个数字的卡片。",
+      "学习顺序是语法→数据→项目，按照这个顺序排列三张学习卡片。",
+      "将密钥盘插入服务器终端，这是重启系统的最后一步。",
+      "密码锁的铭牌上写着乘法规则，确保你找到了正确的两个数字。",
+      "有些卡片是干扰项，MDN手册虽然权威但与当前谜题无关。"
+    ],
+    "validation": {
+      "valid": true,
+      "issues": [
+        "密码锁「输入密码解锁密钥盘」缺少合法 expected,已降级为检查"
+      ],
+      "designSource": "step-scenes"
+    },
+    "cleaningProvider": "step",
+    "theme": "复古电脑密室",
+    "model": "step-3.7-flash",
+    "designModel": "step-3.7-flash"
+  }
+}

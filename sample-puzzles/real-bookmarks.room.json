@@ -1,0 +1,60 @@
+{
+  "records": [
+    {"id":"rb-furina","title":"芙宁娜·德·枫丹","domain":"ACG/二次元","dateAdded":"","url":"https://zh.moegirl.org.cn/芙宁娜·德·枫丹","urlPath":"","description":"萌娘百科词条"},
+    {"id":"rb-firework","title":"烟花火箭","domain":"Minecraft","dateAdded":"","url":"https://zh.minecraft.wiki/w/烟花火箭","urlPath":"","description":"Minecraft Wiki 词条"},
+    {"id":"rb-login","title":"登录界面","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"收藏夹的登录界面"},
+    {"id":"rb-case","title":"展柜","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁着的展柜"},
+    {"id":"rb-halfa","title":"芙宁娜之钥 · 半","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"半把钥匙"},
+    {"id":"rb-halfb","title":"烟花之钥 · 半","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"半把钥匙"},
+    {"id":"rb-key","title":"完整的钥匙","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"合成出的完整钥匙"},
+    {"id":"rb-door","title":"地址栏","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁住的地址栏"}
+  ],
+  "controlledIds": ["rb-furina","rb-firework","rb-login","rb-case","rb-halfa","rb-halfb","rb-key","rb-door"],
+  "items": [
+    {"id":"rb-furina","title":"芙宁娜·德·枫丹","domain":"ACG/二次元","dateAdded":"","url":"https://zh.moegirl.org.cn/芙宁娜·德·枫丹","urlPath":"","description":"萌娘百科词条"},
+    {"id":"rb-firework","title":"烟花火箭","domain":"Minecraft","dateAdded":"","url":"https://zh.minecraft.wiki/w/烟花火箭","urlPath":"","description":"Minecraft Wiki 词条"},
+    {"id":"rb-login","title":"登录界面","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"收藏夹的登录界面"},
+    {"id":"rb-case","title":"展柜","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁着的展柜"},
+    {"id":"rb-halfa","title":"芙宁娜之钥 · 半","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"半把钥匙"},
+    {"id":"rb-halfb","title":"烟花之钥 · 半","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"半把钥匙"},
+    {"id":"rb-key","title":"完整的钥匙","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"合成出的完整钥匙"},
+    {"id":"rb-door","title":"地址栏","domain":"收藏夹","dateAdded":"","url":"","urlPath":"","description":"锁住的地址栏"}
+  ],
+  "level": {
+    "id": "real-bookmarks",
+    "title": "收藏夹 · 真实线索",
+    "premise": "你又被困进了收藏夹。这一次，每一件东西背后都链着真实的网页——点开词条，读里面的文字，答案就藏在真实的内容里。水神的生日是什么时候？烟花有多少种颜色？读出来，你就能离开。",
+    "objective": "阅读两个真实词条：从萌娘百科的芙宁娜词条找到水神的生日，从 Minecraft Wiki 的烟花词条数出颜色种类；用两个答案打开登录界面和展柜，把两半钥匙合成完整钥匙，打开地址栏逃出。",
+    "targetMinutes": 12,
+    "selectedItemIds": ["rb-furina","rb-firework","rb-login","rb-case","rb-halfa","rb-halfb","rb-key","rb-door"],
+    "containers": [
+      {"id":"fold-acg","name":"ACG/二次元","desc":"装着萌娘百科词条的文件夹。","hidden":false},
+      {"id":"fold-mc","name":"Minecraft","desc":"装着 Minecraft Wiki 词条的文件夹。","hidden":false}
+    ],
+    "items": [
+      {"id":"rb-furina","role":"clue","roleLabel":"线索","title":"芙宁娜·德·枫丹","sceneName":"芙宁娜·德·枫丹","reason":"萌娘百科词条摘要：芙宁娜·德·枫丹，水元素，蓝色系，命之座司颂座。生日 10 月 13 日。元素能量 60，元素战技冷却 20 秒，孤心沙龙持续 30 秒，召唤 3 位沙龙成员。","container":"fold-acg","hidden":false},
+      {"id":"rb-firework","role":"clue","roleLabel":"线索","title":"烟花火箭","sceneName":"烟花火箭","reason":"Minecraft Wiki 词条摘要：烟花火箭配方 1 纸 + 1-3 火药 → 3 个；烟火之星共 16 种颜色（红、橙、黄、绿、青、蓝、紫、粉…）；一次最多加入 7 个烟火之星；最大堆叠 64。","container":"fold-mc","hidden":false},
+      {"id":"rb-login","role":"lock","roleLabel":"锁","title":"登录界面","sceneName":"登录界面","reason":"收藏夹的登录界面，提示语：『输入水神的生日。』","container":"fold-acg","hidden":true},
+      {"id":"rb-case","role":"lock","roleLabel":"锁","title":"展柜","sceneName":"展柜","reason":"锁着的展柜，柜门标签：『烟花有多少种颜色？』","container":"fold-mc","hidden":true},
+      {"id":"rb-halfa","role":"tool","roleLabel":"工具","title":"芙宁娜之钥 · 半","sceneName":"芙宁娜之钥 · 半","reason":"登录后滑出的半把钥匙，断面是波浪形。","container":"fold-acg","hidden":true},
+      {"id":"rb-halfb","role":"tool","roleLabel":"工具","title":"烟花之钥 · 半","sceneName":"烟花之钥 · 半","reason":"展柜里的半把钥匙，断面是火花形。","container":"fold-mc","hidden":true},
+      {"id":"rb-key","role":"reward","roleLabel":"结果","title":"完整的钥匙","sceneName":"完整的钥匙","reason":"两半钥匙拼成的完整钥匙，齿形和地址栏的锁孔吻合。","hidden":true},
+      {"id":"rb-door","role":"lock","roleLabel":"锁","title":"地址栏","sceneName":"地址栏","reason":"浏览器地址栏锁住了，输不了网址。锁孔需要一把完整的钥匙。","hidden":false}
+    ],
+    "beats": [
+      {"id":"b-furina","title":"读芙宁娜词条","action":"inspect","uses":["rb-furina"],"requires":[],"reveals":["rb-login"]},
+      {"id":"b-firework","title":"读烟花词条","action":"inspect","uses":["rb-firework"],"requires":[],"reveals":["rb-case"]},
+      {"id":"b-login","title":"输入水神的生日","action":"password","uses":["rb-login"],"expected":"1013","requires":[],"reveals":["rb-halfa"],"product":"登录成功的界面"},
+      {"id":"b-case","title":"数出烟花的颜色","action":"password","uses":["rb-case"],"expected":"16","requires":[],"reveals":["rb-halfb"],"product":"打开的展柜"},
+      {"id":"b-key","title":"拼合两半钥匙","action":"combine","uses":["rb-halfa","rb-halfb"],"resultOn":"rb-halfb","requires":["b-login","b-case"],"consume":["rb-halfa"],"product":"完整的钥匙"},
+      {"id":"b-door","title":"用钥匙开地址栏","action":"combine","uses":["result:b-key","rb-door"],"resultOn":"rb-door","requires":["b-key"],"product":"打开的地址栏"},
+      {"id":"b-escape","title":"离开收藏夹","action":"deliver","uses":["result:b-door"],"requires":["b-door"]}
+    ],
+    "scenes": [],
+    "timeline": "1. 读芙宁娜词条:水神生日 10 月 13 日 → 登录界面密码 1013\n2. 读烟花词条:烟火之星 16 种颜色 → 展柜密码 16\n3. 两半钥匙拼合成完整钥匙\n4. 钥匙开地址栏 → 拖到出口",
+    "mechanics": ["inspect","password","combine","deliver"],
+    "hints": ["两个文件夹里各有一个词条，点开它们，读里面的真实内容。","水神就是芙宁娜——她的生日写在词条里。","烟花词条里写着烟火之星有几种颜色。","登录界面输生日，展柜输颜色数。","两半钥匙拖到一起拼成完整的钥匙。","钥匙 + 地址栏 → 打开的地址栏 → 拖到出口。"],
+    "validation": {"valid": true, "issues": [], "designSource": "original-real-content-clues"},
+    "grounding": {"controlledIds": ["rb-furina","rb-firework","rb-login","rb-case","rb-halfa","rb-halfb","rb-key","rb-door"], "theme": "原创·真实网页内容做线索", "source": "user-bookmarks-2026-08-22 + 真实页面抓取(萌娘百科/Minecraft Wiki)"}
+  }
+}
