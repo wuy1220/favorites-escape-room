@@ -1,5 +1,7 @@
 # 收藏夹密室（favorites-escape-room）
 
+> 🏆 黑客松评委请看：[PITCH.md —— 一页项目简介](PITCH.md)
+
 读取 Chrome 收藏夹导出（HTML/JSON），经本地清洗与 LLM 设计管线（范例模仿设计师 →
 编译 → 求解器验证 → 自修复回路）生成一个按 beat 执行的节点式密室。
 不依赖 LLM 的部分（Room 02 固定房间、关卡导入试玩）可独立运行。
