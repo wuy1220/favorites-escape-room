@@ -67,6 +67,10 @@
           need: beat.id,
           clue: 'beat-' + beat.id,
           title: beat.title || '观察 ' + (index + 1),
+          /* 检视产物(2026-08-31):inspect 的 product 让物件原位变身并广播更名,
+             与组合的变身反馈对齐(『台灯』变成了『亮着的台灯』) */
+          resultOn: ids[0],
+          product: String(beat.product || ''),
         });
       } else if (beat.action === 'password' && ids.length >= 1) {
         /* 密码盘:uses[0] 是被点击的密码盘物件;expected 为正确密码;colors 给每位上色标签(如颜色密码) */
@@ -597,7 +601,10 @@
         const ro =
           b.resultOn && !String(b.resultOn).startsWith('result:') ? String(b.resultOn) : '';
         const u = ro || (b.uses || []).find((x) => !String(x).startsWith('result:'));
-        if (u) revealSourceAll[String(rid)] = String(u);
+        if (!u) return;
+        /* via=resultOn:显形物嵌在变身容器上(S1 容器嵌叠);
+           via=use:显形物落在自己的房间槽位,仅以源物件作为飞入动画起点 */
+        revealSourceAll[String(rid)] = { src: String(u), via: ro ? 'resultOn' : 'use' };
       });
     });
     /* 场景幕节点 + 场景内素材(有 scenes 时用 scene_name 化身名) */
@@ -774,10 +781,12 @@
         if (!n.compiledHidden || !n.compiledItemId) return;
         if (typeof n.parent === 'string' && n.parent.indexOf('compiled-container-') === 0)
           return; /* 容器子件:位置由容器分区网格管理,不重复锚定 */
-        const srcId = revealSourceAll[n.compiledItemId];
-        if (!srcId) return;
-        const src = nodeById['compiled-item-' + srcId];
+        const rs = revealSourceAll[n.compiledItemId];
+        if (!rs) return;
+        const src = nodeById[rs.src] || nodeById['compiled-item-' + rs.src];
         if (!src || src.id === n.id) return;
+        n.revealFromId = src.id; /* 飞入动画起点(照亮/显形时从源物件飞向槽位) */
+        if (rs.via !== 'resultOn') return; /* use 来源:物件落在自己的房间槽位,不挂到源物件上 */
         const k = sibCount[src.id] || 0;
         sibCount[src.id] = k + 1;
         const slot = spawnSlots[k % spawnSlots.length];
@@ -1252,7 +1261,8 @@
        不再依赖全局「环顾四周」才能看到容器里有什么 */
     const opened = [];
     state.nodes.forEach(function (m) {
-      if (m.hidden && m.revealReady && m.compiledHidden && m.parent === n.id) {
+      /* revealFromId:use 来源的显形物不挂 在源物件下,但同样由『再点一下源物件』显形 */
+      if (m.hidden && m.revealReady && m.compiledHidden && (m.parent === n.id || m.revealFromId === n.id)) {
         m.hidden = false;
         m.revealed = true;
         m.spawned = true;
@@ -1733,6 +1743,15 @@
         ) {
           state.clues.add(openInspect.clue);
           compiled.inspected = new Set();
+          /* 检视产物落地(2026-08-31):product 存在时物件原位变身,并像组合那样
+             广播更名——否则玩家看不到『台灯』变成了『亮着的台灯』 */
+          if (openInspect.product) {
+            const target = levelNode('compiled-item-' + openInspect.resultOn) || n;
+            const before = target.name;
+            morphNode(target, openInspect);
+            if (target.name !== before)
+              log('「' + before + '」变成了「' + target.name + '」。', 'good');
+          }
           inspect(n); /* 身份层刚解锁,立即刷新面板:真名/域名/收藏时刻 */
           log('完成:' + (openInspect.title || '观察完成。') + '', 'good');
           triggerReveals(openInspect.need);

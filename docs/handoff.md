@@ -7,6 +7,17 @@
 
 # 第一部分 · v7 架构(2026-08-27 深夜,当前生效)
 
+## 最新:2026-08-31 移除「试玩固定样本」,只留新手教程
+
+- 主页 `homeFixedTest` 按钮、`loadSamplePuzzle` 函数及其 `__favoriteRoomHome` 导出全部
+  移除;教程入口为并行会话新增的 `homeTutorial`(新手教程,加载 sample-puzzles/
+  tutorial.json「新手教程 · 书桌上的第一间密室」)。
+- watchman.json 文件保留(verify_regression_watchman 等直接经 #homeImportFile 导入,
+  不经按钮);ref-game/verify_puzzle_panel.py 改为直接导入 watchman(4/4 过);
+  ref-game/ui_shots.py 两处改点 #homeTutorial。全仓已无 homeFixedTest/loadSamplePuzzle
+  残留引用。
+
+
 ## 最新:2026-08-31 深夜 环顾四周与提示合并(统一观察入口)
 
 需求方提议:把「环顾四周」和「提示」合并成一个动作。
@@ -43,6 +54,15 @@
 Noto Serif SC;标题界面 kicker 12.5/字段 13.5/状态 13.5/存档说明 13.5;截图目视
 (ui-font-upgrade.png / home-font-upgrade.png)。回归:lock_feedback 7/7、
 prison 42/42、smoke 通过,控制台零错误。
+
+### 附:已保存关卡面板打磨(同日,需求方截图反馈)
+
+三个按钮横排吞掉一半宽度、行高 150px+,一屏仅 5 关。改造(app.js refreshSaved +
+styles.css 追加块):**操作钮改竖排窄列**(「打开」火漆实心主钮,导出/删除紧凑小钮,
+按钮列 47px);行改纸卡(边框/纸影/hover 抬升);**新增真实进度条**(snapshot.clues
+中 beat-* 计数 / beats 总数,已完成满格);元信息行追加「存于 <东八区日期>」并
+两行截断——行高 150→132px 且信息列全宽,一屏 7+ 关;空状态改虚线占位卡。
+回归:verify_save_mgmt 6/6(新行文本「进行中 0/10 · 存于 2026-08-31」)、smoke 通过。
 
 ## 最新:2026-08-31 深夜 显形提示指明位置(为什么点根不出新物件的解答+修复)
 
@@ -224,7 +244,27 @@ continue→restore 全程 started=false,无回归。)
 ## 最新:2026-08-30 生成工作台 v2「深夜工房」+ 纸页夜奔小游戏
 
 ### v3 修订(同日,需求方实测反馈:「速度过快,碰任何障碍物都没有失败判定」)
-### v2.1 工房升为全屏场景(同日,需求方反馈:工作台附在开始按钮下影响美观)
+### v2.2 工房舞台化 + 游戏回归加固(同日,需求方反馈:全屏后像主次不分的信息面板,且第一眼认不出是等待页)
+
+1. **舞台化构图**:顶部大字标题「你的密室正在搭建」+ 副题(两位起草人同时起草,
+   取先完成的那份——通常两分钟左右 · 已用 Ns)——第一眼定性;工序改为左侧
+   **竖向轨道**(圆点+删除线完成态);中央**稿纸为主角**(起草人甲/乙大卡,
+   蘸墨/推翻/定稿动效),素材堆叠降为左侧 216px 边桌;手记为台词语;line 下
+   折叠技术记录;窄屏单列回退。
+2. **修父会话模板混排遗留**:stage 重排时曾丢失 wbOverlay 收口 div(首屏截图
+   证实卡片被挤到左上、背景失去压暗),已补;CSS 灯光选择器沿用 sil-2/3/4。
+3. **游戏回归加固(verify_wait_game 9/9,连跑三遍稳定)**:
+   - ② 跳跃场景改为直接置跳态(绕过 running 守卫)——守卫吞起跳会造成
+     「跳了仍扣墨」的偶发误报;逐帧轨迹探针证实抛物线在危险窗口(y≈26-38,
+     障碍顶 103)稳定越过;
+   - ①②③ 增加前置断言(局面存活/已置跳态),杜绝 lives=0 时的空过;
+   - 设计桩 sleep 10s→90s:生成完成触发 wbFinish→game.stop,会在场景中途
+     污染游戏状态(曾致 ②开局即 gameOver + while 空转挂死,guard 上限 200
+     兜底);场景间隙 rAF 实时运行,开场即冻结自然生成(nextObsD/nextColD=1e9)。
+
+回归:workbench 16/16、race 9/9、reset 13/13、naming 10/10、save 6/6、
+prison 42/42、bear 30/30、wait_game 9/9 ×3。
+
 
 生成开始 = 「走进工房」:genWorkbench 包进 `#wbOverlay` 全屏场景(纸幕压暗+
 backdrop blur,卡片居中 min(760px,100%)),首页退到幕后;收起仍是浮标,

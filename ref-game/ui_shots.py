@@ -58,7 +58,7 @@ with sync_playwright() as p:
         " document.getElementById('homeScreen').classList.remove('hidden'); }"
     )
     time.sleep(0.4)
-    page.click("#homeFixedTest")
+    page.click("#homeTutorial")
     try:
         page.wait_for_selector("#gameToolbar:not([hidden])", timeout=20000)
     except Exception:
@@ -131,7 +131,7 @@ with sync_playwright() as p:
     m.wait_for_selector("#homeScreen", timeout=15000)
     time.sleep(0.8)
     snap(m, "16-mobile-home")
-    m.click("#homeFixedTest")
+    m.click("#homeTutorial")
     m.wait_for_selector("#gameToolbar:not([hidden])", timeout=20000)
     time.sleep(1.0)
     box = m.locator("[data-id='root']").first.bounding_box()

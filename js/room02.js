@@ -832,10 +832,12 @@ function roomRender() {
     anyArrived = true;
     const el = document.querySelector('.node[data-id="' + n.id + '"]');
     if (!el) return;
-    const p = n.parent && state.nodes.find((q) => q.id === n.parent);
-    if (p) {
-      el.style.setProperty('--fx', ((p.x - n.x) / 100) * stageW + 'px');
-      el.style.setProperty('--fy', ((p.y - n.y) / 100) * stageH + 'px');
+    /* 飞入起点 = 显形源物件(2026-08-31):照亮时从台灯飞向自己的槽位;
+       无源物件时原地浮现 */
+    const srcNode = (n.revealFromId || n.parent) && state.nodes.find((q) => q.id === (n.revealFromId || n.parent));
+    if (srcNode) {
+      el.style.setProperty('--fx', ((srcNode.x - n.x) / 100) * stageW + 'px');
+      el.style.setProperty('--fy', ((srcNode.y - n.y) / 100) * stageH + 'px');
     }
     el.style.setProperty('--fd', arriveIdx * 70 + 'ms');
     arriveIdx++;

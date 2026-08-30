@@ -88,7 +88,7 @@ def handle(route):
             route.fulfill(status=200, content_type="application/json",
                           body=json.dumps({"choices": [{"message": {"content": json.dumps({"items": out})}}]}))
             return
-        time.sleep(8)  # 给游戏模拟留出工作台时间
+        time.sleep(90)  # 比全部游戏场景更久:防止 wbFinish 在场景中途停掉游戏
         user_part = body["messages"][1]["content"].split("\n\n【参考关卡A")[0]
         ids = [i for i in dict.fromkeys(re.findall(r'"id"\s*:\s*"([^"]+)"', user_part))
                if not i.startswith("result:")][:6]
@@ -135,21 +135,26 @@ with sync_playwright() as p:
           return { lives0, ...D.state() };
         }"""
     )
+    check("① 前置:局面存活", st["lives0"] == 3 and not st["gameOver"], json.dumps(st))
     check("① 撞上障碍扣墨(%d→%d)" % (st["lives0"], st["lives"]), st["lives"] < st["lives0"], json.dumps(st))
 
     # ===== ② 跳跃可越过障碍:等无敌帧结束,障碍放 70px 前方,起跳后 140 步不扣墨 =====
     st = page.evaluate(
         """() => {
           const D = window.__wbGame.__debug, S = D.S;
-          while (S.inv > 0 || S.runner.dead > 0) D.logicStep();
+          let guard = 0;
+          while ((S.inv > 0 || S.runner.dead > 0) && guard++ < 200) D.logicStep();
           S.obs.length = 0; S.cols.length = 0; S.nextObsD = 1e9; S.nextColD = 1e9;
           D.spawnObstacle(); S.obs[0].k = 'ink'; S.obs[0].x = S.runner.x + 70;
           const lives0 = S.lives;
-          window.__wbGame.jump();
+          /* 直接置跳态:本场景验证抛物线几何能否越过障碍,不经 running 守卫 */
+          S.runner.vy = -7.8;
+          S.runner.onGround = false;
           D.run(140);
-          return { lives0, ...D.state(), airborneSteps: 'jump@0' };
+          return { lives0, ...D.state(), guard };
         }"""
     )
+    check("② 前置:局面存活且已置跳态", st["lives0"] > 0 and not st["gameOver"] and st["guard"] < 200, json.dumps(st))
     check("② 跳跃越过障碍不扣墨(墨量保持 %d)" % st["lives0"], st["lives"] == st["lives0"], json.dumps(st))
 
     # ===== ③ 收集纸页:纸页放在脚下,30 步内收集并解锁手记 =====
@@ -163,6 +168,7 @@ with sync_playwright() as p:
           return { pages0, ...D.state() };
         }"""
     )
+    check("③ 前置:局面存活", not st["gameOver"], json.dumps(st))
     check("③ 收集纸页生效(%d→%d)" % (st["pages0"], st["pages"]), st["pages"] > st["pages0"], json.dumps(st))
 
     # ===== ④ 墨尽本局结束:只剩一滴墨时命中 → gameOver =====

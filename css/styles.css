@@ -3261,3 +3261,99 @@ body {
 .muted-note {
   font-size: 13px;
 }
+
+/* ============================================================
+   已保存关卡面板打磨(2026-08-31 需求方反馈):按钮竖排窄列不再横吞
+   一半宽度;行改纸卡 + 真实进度条;空状态改占位卡
+   ============================================================ */
+.saved-panel {
+  padding-left: 24px;
+}
+.saved-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 12px 13px;
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  background: var(--paper-warm);
+  box-shadow: var(--shadow-paper);
+  transition:
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+.saved-row:hover {
+  border-color: var(--seal);
+  box-shadow: var(--shadow-paper-lift);
+  transform: translateY(-1px) rotate(-0.2deg);
+}
+.saved-info {
+  flex: 1;
+  min-width: 0;
+}
+.saved-row strong {
+  line-height: 1.35;
+}
+.saved-progress {
+  margin-top: 9px;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(44, 36, 22, 0.14);
+  overflow: hidden;
+}
+.saved-progress i {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--seal);
+  transition: width var(--t-slow) var(--ease);
+}
+.saved-actions {
+  display: grid;
+  gap: 5px;
+  flex: none;
+}
+.saved-actions button {
+  padding: 5px 10px;
+  font-size: 12.5px;
+  text-align: center;
+  border: 1px solid rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--paper-ink-mid);
+}
+.saved-actions .saved-open {
+  background: var(--seal);
+  border-color: var(--seal-deep);
+  color: #f6efe3;
+}
+.saved-actions .saved-open:hover {
+  background: var(--seal-deep);
+  color: #f6efe3;
+}
+.saved-actions .saved-del:hover {
+  border-color: var(--seal);
+  color: var(--seal);
+}
+.saved-empty {
+  padding: 26px 18px;
+  border: 1px dashed rgba(44, 36, 22, 0.3);
+  border-radius: 3px;
+  background: rgba(255, 250, 240, 0.45);
+  color: var(--paper-ink-lo);
+  text-align: center;
+}
+.saved-empty small {
+  display: block;
+  margin-top: 6px;
+}
+
+/* 主题长句两行截断:行高稳定在 ~90px,一屏 7+ 个存档 */
+.saved-row small {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

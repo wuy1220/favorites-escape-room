@@ -62,7 +62,7 @@ with sync_playwright() as p:
     page.on("pageerror", lambda e: print("[pageerror]", str(e)[:160], flush=True))
     page.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
     page.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
-    page.click("#homeFixedTest")
+    page.set_input_files("#homeImportFile", "sample-puzzles/watchman.json")
     time.sleep(2)
     page.click('[data-id="root"]')
     time.sleep(1.2)

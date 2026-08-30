@@ -350,15 +350,34 @@
         ? levels
             .map((level) => {
               const p = pm.get(level.id),
-                pct = p?.snapshot?.done ? '已完成' : p?.snapshot?.started ? '进行中' : '未开始';
+                beats = (((level.draft || {}).level || {}).beats || []),
+                done =
+                  p && p.snapshot && Array.isArray(p.snapshot.clues)
+                    ? p.snapshot.clues.filter((c) => String(c).indexOf('beat-') === 0).length
+                    : 0,
+                finished = !!(p && p.snapshot && p.snapshot.done),
+                ratio = finished
+                  ? 100
+                  : beats.length
+                    ? Math.min(100, Math.round((done / beats.length) * 100))
+                    : 0,
+                stateTxt = finished
+                  ? '已完成'
+                  : p && p.snapshot && p.snapshot.started
+                    ? '进行中 ' + done + '/' + beats.length
+                    : '未开始',
+                stamp = level.updatedAt || level.createdAt || '';
               return (
-                '<div class="saved-row"><div><strong>' +
+                '<div class="saved-row"><div class="saved-info"><strong>' +
                 esc(level.name || level.draft?.level?.title || '未命名关卡') +
                 '</strong><small>' +
                 esc(level.theme || '未指定风格') +
                 ' · ' +
-                pct +
-                '</small></div><div class="saved-actions"><button class="saved-open" data-level="' +
+                stateTxt +
+                (stamp ? ' · 存于 ' + esc(cstDate10(stamp)) : '') +
+                '</small><div class="saved-progress"><i style="width:' +
+                ratio +
+                '%"></i></div></div><div class="saved-actions"><button class="saved-open" data-level="' +
                 esc(level.id) +
                 '">打开</button><button class="saved-export" data-level="' +
                 esc(level.id) +
@@ -368,7 +387,7 @@
               );
             })
             .join('')
-        : '<div class="saved-empty">还没有保存的关卡。</div>';
+        : '<div class="saved-empty">还没有保存的关卡。<small>生成一次冒险后,它会像一份档案躺在这里。</small></div>';
       list.querySelectorAll('.saved-open').forEach(
         (btn) =>
           (btn.onclick = async () => {
