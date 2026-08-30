@@ -26,7 +26,7 @@ step（router-force advisor）与 GLM 两路并行设计，最先产出可解谜
 ## 现场演示路线（约 3 分钟）
 
 1. `python server/favorites_room_server.py` → 打开 `127.0.0.1:8128`
-2. 上传书签导出文件 → 全局清洗（本地规则 + LLM 增量，标记持久化，增量导入秒级就绪）
+2. 上传书签导出文件（或先运行 `python tools/export_bookmarks.py` 一键导出本机 Chrome/Edge 收藏）→ 全局清洗（本地规则 + LLM 增量，标记持久化，增量导入秒级就绪）
 3. 点击「生成一次未命名冒险」→ 状态栏可见双路赛马与校验反馈流 → 进入密室
 4. 点容器找内容物、拖拽组合物件、按谜面推导输密码 → 通关 → **玩家先命名**，再展示候选标题与冒险回执
 5. 导出 `.room.json`：scenes/beats/deriveFrom/sourceFacts 全部结构化可读

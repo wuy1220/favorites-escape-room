@@ -18,6 +18,7 @@
 | `js/app.js` | 产品壳：IndexedDB 存档、导入导出、上传生成流程，对外接口 `window.__favoriteRoomHome` |
 | `css/tokens.css` | 设计令牌:暗室+纸质档案双材质(深褐底色纵深/纸张系/火漆印强调/墨水语义色/mono 标签字体/间距/阴影/动效/纸纤维噪点) |
 | `css/styles.css` | 全部组件样式(只引用令牌):基础/通用组件/主页/游戏壳/舞台/纸索引卡节点/情境抽屉/弹窗族 |
+| `tools/export_bookmarks.py` | 一键导出 Chrome/Edge 收藏为可导入 JSON(列出全部档案与书签数,无需手动导出) |
 | `server/favorites_room_server.py` | 本地服务器：静态托管 + `/api/step` LLM 代理（step-router-force，127.0.0.1:8128） |
 | `fixtures/` `sample-puzzles/` | 测试收藏夹样本 / 已验证关卡 JSON（回归用例） |
 | `ref-game/` | 验证工具链（playwright 真实 DOM 通关、求解器单测、批量生成门禁） |

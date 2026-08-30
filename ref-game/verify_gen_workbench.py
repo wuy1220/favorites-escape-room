@@ -120,19 +120,31 @@ def boot(page):
 with sync_playwright() as p:
     b = p.chromium.launch(headless=True, executable_path=CHROME)
 
-    # ===== 场景 1:正常生成,工作台全程可见 =====
+    # ===== 场景 1:正常生成,工作台全程可见(设计延迟 2.5s 让计时器可见跳动) =====
     page = b.new_page()
     page.on("pageerror", lambda e: print("[pageerror]", str(e)[:160]))
-    boot(page)
+    page.route("**/api/step**", make_handle(design_delay=2.5))
+    page.route("**/fetch-meta**", lambda route: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps({"results": {}})))
+    page.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
+    page.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    page.set_input_files("#homeFile", FIXTURE)
+    page.wait_for_timeout(1200)
+    # 已用时间跳动:页面内 200ms 采样器(页面时间独立于测试线程,不受 stub 阻塞影响)
+    page.evaluate(
+        """() => {
+          window.__wbElapsedSeen = new Set();
+          window.__wbSampTimer = setInterval(() => {
+            const e = document.getElementById('wbElapsed');
+            if (e) window.__wbElapsedSeen.add(e.textContent);
+          }, 200);
+        }"""
+    )
     page.click("#homeGenerate")
     page.wait_for_selector("#genWorkbench:not([hidden])", timeout=10000)
     check("工作台在生成开始时出现", True)
     phases = page.evaluate("() => document.querySelectorAll('#wbPhases .wb-phase').length")
     check("阶段 stepper 渲染(5 段)", phases == 5, f"phases={phases}")
-    t0 = page.evaluate("() => document.getElementById('wbElapsed').textContent")
-    page.wait_for_timeout(1600)
-    t1 = page.evaluate("() => document.getElementById('wbElapsed').textContent")
-    check("已用时间在跳动", t0 != t1, f"{t0} → {t1}")
     page.wait_for_function("() => document.querySelectorAll('#wbMaterials .wb-mat').length >= 6", timeout=15000)
     mat_n, mat_href = page.evaluate(
         "() => [document.querySelectorAll('#wbMaterials .wb-mat').length,"
@@ -154,6 +166,10 @@ with sync_playwright() as p:
     )
     wb_hidden = page.evaluate("() => document.getElementById('genWorkbench').hidden")
     check("完成后挂载进游戏,工作台收起", wb_hidden)
+    seen = page.evaluate(
+        "() => { clearInterval(window.__wbSampTimer); return [...window.__wbElapsedSeen]; }"
+    )
+    check("已用时间在跳动(采样到 ≥2 个值)", len(seen) >= 2, ",".join(sorted(seen)))
     page.close()
 
     # ===== 场景 2:取消生成 =====
@@ -168,7 +184,7 @@ with sync_playwright() as p:
     page2.click("#homeGenerate")
     page2.wait_for_selector("#genWorkbench:not([hidden])", timeout=10000)
     page2.wait_for_function("() => document.querySelectorAll('#wbLanes .wb-lane').length >= 2", timeout=15000)
-    page2.click("#wbCancel")
+    page2.evaluate("() => document.getElementById('wbCancel').click()")
     page2.wait_for_function(
         "() => /已取消/.test(document.getElementById('homeStatus').textContent)", timeout=8000
     )
@@ -195,7 +211,7 @@ with sync_playwright() as p:
     page3.wait_for_timeout(1200)
     page3.click("#homeGenerate")
     page3.wait_for_selector("#genWorkbench:not([hidden])", timeout=10000)
-    page3.click("#wbMin")
+    page3.evaluate("() => document.getElementById('wbMin').click()")
     pill_up = page3.evaluate(
         "() => !document.getElementById('genPill').hidden"
         " && /生成中/.test(document.getElementById('genPillText').textContent)"
@@ -210,7 +226,7 @@ with sync_playwright() as p:
     check("完成时收起状态不抢占屏幕(仍在标题页)", still_home3)
     pill_text = page3.evaluate("() => document.getElementById('genPillText').textContent")
     check("浮标亮起「已生成 · 点击进入」", "已生成" in pill_text, pill_text)
-    page3.click("#genPill")
+    page3.evaluate("() => document.getElementById('genPill').click()")
     page3.wait_for_function(
         "() => { const t = document.getElementById('gameToolbar');"
         " return t && !t.hasAttribute('hidden'); }",
