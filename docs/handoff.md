@@ -247,7 +247,32 @@ continue→restore 全程 started=false,无回归。)
 ## 最新:2026-08-30 生成工作台 v2「深夜工房」+ 纸页夜奔小游戏
 
 ### v3 修订(同日,需求方实测反馈:「速度过快,碰任何障碍物都没有失败判定」)
-### 常驻新手关卡(2026-08-30,需求方裁定:「去掉主页的关卡入口,直接把新手关卡变成常驻、不可删除的存档」)
+### 赛马配置化:供应商与路数解耦(2026-08-30,需求方裁定:「不能假设所有人都用 step 和 glm……供应商、赛马线程数量都应当能够自定义(最多 5 个),从管线到 UI 都不能出岔子」)
+
+1. **配置层**:localStorage `fav-room-race-v1` = {lanes:1-5, providers:[{label,
+   endpoint,model,apiKey,reasoningEffort}]};`buildLaneDefs()` 按路数**循环取供应商表**,
+   端点留空的行 = 默认供应商(本地代理/清洗配置,overrides=null);任意 OpenAI
+   兼容端点可用(designWindow overrides 本就通用)。自动模式(未自定义)行为不变:
+   有 glm 双路并行,无 glm 单路 step。
+2. **UI**:home-secondary 增「赛马配置」→ raceModal(路数 1-5 + 5 行供应商表:
+   名称/端点/模型/Key/推理档);恢复自动一键清除;自定义密钥只存本机浏览器。
+   空行忽略,≤5 供应商,校验后落 localStorage。
+3. **工作台泛化**:起草人甲/乙 → 甲乙丙丁戊(DRAFT_NAMES);标题副行改为动态
+   (#wbHeadCrew:「共 N 位起草人同时起草…」/「单路起草,失败自动重试」);
+   designWindow 报文去 step 化(「该供应商未提供 API Key…」/「设计请求失败…」)。
+4. **顺手修**:死变量 laneCount(designLanes 注释与实现不符)移除;GLM 密钥
+   轮换(server/GLM_API_KEY.local 新 key;旧 key 曾硬编码于
+   compare_design_providers.py 并随 557dfa6 进入已推送历史——新 key 已换上,
+   旧 key 应在 bigmodel 控制台作废)。
+5. **回归**:verify_design_race 扩至 **13/13**——新增单供应商场景(空 llm-config:
+   1 路稿纸、清洗不计入设计调用数、3轮×2次=6 次后兜底模板挂载)与自定义供应商
+   场景(localStorage 预置 3 路×两家供应商:3 张稿纸、两家端点都被调用、正常
+   挂载);workbench 16/16、reset 13/13、naming 10/10、save 10/10、wait_game
+   9/9、prison 42/42、bear 30/30。
+
+已知边界:清洗(整理器)仍固定走默认供应商——glm-only 用户无法完成模型清洗;
+赛马 UI 的同供应商并发排队风险已在弹窗说明。
+
 
 旧 `loadTutorialLevel` 经 `loadLevelText` 每次进入都新建 `import-*` 存档。落地:
 

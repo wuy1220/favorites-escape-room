@@ -194,7 +194,8 @@ new_sec = '<div class="home-secondary"><button id="homeImport" type="button">导
 assert old_sec in s, 'home-secondary missing'
 s = s.replace(old_sec, new_sec)
 
-old_pill = '<div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span></div>'
+old_pill = '<div class="gen-pill" id="genPill" hidden>'
+assert s.count(old_pill) == 1, s.count(old_pill)
 race_modal = ('<div class="modal hidden" id="raceModal"><div class="modal-card">'
               '<div class="kicker">赛马配置(可选)</div><h2>设计竞速的供应商与路数</h2>'
               '<p class="race-note">路数 1-5,各路按顺序循环使用下方供应商;端点留空 = 默认(本地代理 / 清洗配置)。'
@@ -204,8 +205,7 @@ race_modal = ('<div class="modal hidden" id="raceModal"><div class="modal-card">
               '<div class="modal-actions"><button class="reset" id="raceReset" type="button">恢复自动</button>'
               '<button class="primary" id="raceSave" type="button">保存配置</button></div>'
               '</div></div>')
-assert old_pill in s, 'pill missing'
-s = s.replace(old_pill, old_pill + race_modal)
+s = s.replace(old_pill, race_modal + old_pill)
 
 # ===== 5) boot 绑定 =====
 old_bootb = "    $('logTicker').onclick = () => {"

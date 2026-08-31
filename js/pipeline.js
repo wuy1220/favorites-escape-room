@@ -356,15 +356,33 @@
     }
     return parseModelJson(parts.join(''));
   }
+  /* 清洗供应商可配(2026-08-30):赛马配置里 cleaning=某供应商 label 时,
+     清洗走该供应商;未指定/未匹配则走默认(本地代理 / 清洗配置)。 */
+  function cleaningProvider() {
+    try {
+      const raw = JSON.parse(localStorage.getItem('fav-room-race-v1') || 'null');
+      const label = raw && raw.cleaning;
+      if (!label) return {};
+      const p = (raw.providers || []).find((x) => x && x.label === label) || {};
+      return {
+        endpoint: String(p.endpoint || '').trim(),
+        model: String(p.model || '').trim(),
+        apiKey: String(p.apiKey || '').trim(),
+      };
+    } catch (_) {
+      return {};
+    }
+  }
   async function callStep(items, theme = '', sampleLimitOverride) {
-    let configuredEndpoint = $import('cleanEndpoint').value.trim() || llmConfig.endpoint;
-    if (/api\.stepfun\.com/i.test(configuredEndpoint) || !configuredEndpoint)
+    const prov = cleaningProvider();
+    let configuredEndpoint = prov.endpoint || $import('cleanEndpoint').value.trim() || llmConfig.endpoint;
+    if (!prov.endpoint && (/api\.stepfun\.com/i.test(configuredEndpoint) || !configuredEndpoint))
       configuredEndpoint = 'http://127.0.0.1:8128/api/step';
     const endpoint = configuredEndpoint,
-      model = $import('cleanModel').value.trim() || llmConfig.model,
-      key = $import('cleanApiKey').value.trim() || llmConfig.apiKey;
+      model = prov.model || $import('cleanModel').value.trim() || llmConfig.model,
+      key = prov.apiKey || $import('cleanApiKey').value.trim() || llmConfig.apiKey;
     if (!key && !/api\/step/.test(endpoint))
-      throw new Error('未提供 Step API Key，无法生成关卡');  // 本地 /api/step 代理由服务端注入密钥
+      throw new Error('该供应商未提供 API Key,无法生成关卡(' + endpoint + ')');  // 本地 /api/step 代理由服务端注入密钥
     const prompt = {
       /* sampleLimitOverride:cleanBatch 分批调用时按整批采样,避免被 sampleLimit 截断丢条目 */
       items: modelSample(
@@ -473,7 +491,7 @@
           : configuredEndpoint,
       model = getEl('cleanModel').value.trim() || llmConfig.model,
       key = getEl('cleanApiKey').value.trim() || llmConfig.apiKey;
-    if (!key && !/api\/step/.test(endpoint)) throw new Error('未提供 Step API Key，无法设计关卡');
+    if (!key && !/api\/step/.test(endpoint)) throw new Error('该供应商未提供 API Key,无法设计关卡(' + endpoint + ')');
     const candidates = (draft.items || [])
       .filter((item) => item.status !== 'archive')
       .slice(0, 18)
@@ -581,8 +599,8 @@
     } catch (err) {
       throw new Error(
         err.name === 'AbortError'
-          ? 'Step 关卡设计超时（240 秒），未生成关卡'
-          : 'Step 关卡设计请求失败：' + err.message,
+          ? '关卡设计请求超时,未生成关卡'
+          : '设计请求失败：' + err.message,
       );
     } finally {
       clearTimeout(timer);
@@ -593,7 +611,7 @@
         const body = await response.json();
         detail = body.error && body.error.message ? '：' + body.error.message : '';
       } catch (_) {}
-      throw new Error('Step 关卡设计 API ' + response.status + detail);
+      throw new Error('设计 API ' + response.status + detail);
     }
     const parsed = await readStepResponse(response, getEl('cleanReport')),
       allowed = new Set(candidates.map((x) => String(x.id)));
@@ -2798,6 +2816,13 @@
             return [String(it.id), { shown, consumed: false }];
           }),
         );
+        /* 容器节点也可被 beat 使用(打开工具桌等):可见容器按可用处理 */
+        ((level && Array.isArray(level.containers) ? level.containers : []) || []).forEach(
+          function (c) {
+            const cid = String(c.id || '');
+            if (cid && !st.has(cid)) st.set(cid, { shown: !c.hidden, consumed: false });
+          },
+        );
         const clues = new Set();
         const deliverTotal = beats.filter((b) => b.action === 'deliver').length;
         if (!deliverTotal) return { solvable: false, detail: '缺少 deliver 步骤' };
@@ -2967,7 +2992,7 @@
         model = (overrides && overrides.model) || getEl('cleanModel').value.trim() || eff.model,
         key = (overrides && overrides.apiKey) || getEl('cleanApiKey').value.trim() || eff.apiKey;
       if (!key && !/api\/step/.test(endpoint))
-        throw new Error('未提供 Step API Key，无法设计关卡');  // 本地 /api/step 代理由服务端注入密钥
+        throw new Error('该供应商未提供 API Key,无法设计关卡(' + endpoint + ')');  // 本地 /api/step 代理由服务端注入密钥
       const wantN = Math.max(6, Math.min(12, Number(materialCount) || 6));
       const candidates = items.slice(0, wantN).map(function (it) {
         return {
@@ -3091,7 +3116,7 @@
             throw new Error(
               err.name === 'AbortError'
                 ? 'Step 关卡设计超时（240 秒）'
-                : 'Step 关卡设计请求失败：' + err.message,
+                : '设计请求失败：' + err.message,
             );
           }
           if (!response.ok) {
@@ -3100,7 +3125,7 @@
               const body = await response.json();
               detail = body.error && body.error.message ? '：' + body.error.message : '';
             } catch (_) {}
-            throw new Error('Step 关卡设计 API ' + response.status + detail);
+            throw new Error('设计 API ' + response.status + detail);
           }
           report && report('设计完成，正在校验结构');
           const parsed = await readStepResponse(response, getEl('cleanReport'));

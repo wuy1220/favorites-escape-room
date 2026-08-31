@@ -5,7 +5,10 @@
   "rc-manual",
   "rc-notes",
   "rc-safe",
-  "rc-badge"
+  "rc-badge",
+  "rc-card-1",
+  "rc-card-2",
+  "rc-card-3"
  ],
  "items": [
   {
@@ -15,7 +18,7 @@
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "【事实】翻到 3.1 数据结构分类——动画图解,"
+   "description": "【网页内容】翻到 3.1 数据结构分类——数组、"
   },
   {
    "id": "rc-manual",
@@ -24,7 +27,7 @@
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "【事实】现代 JavaScript 教程,主课程"
+   "description": "【网页内容】现代 JavaScript 教程,主"
   },
   {
    "id": "rc-notes",
@@ -36,13 +39,40 @@
    "description": "原创中文精品教程。笔记扉页写着:研究互联网产品和"
   },
   {
+   "id": "rc-card-1",
+   "title": "数组卡",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "数组:连续内存、随机访问 O(1)。分类卡之一。"
+  },
+  {
+   "id": "rc-card-2",
+   "title": "链表卡",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "链表:指针串联、插入 O(1)。分类卡之二。"
+  },
+  {
+   "id": "rc-card-3",
+   "title": "栈卡",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "栈:先进后出 LIFO。分类卡之三。"
+  },
+  {
    "id": "rc-safe",
    "title": "学习保险箱",
    "domain": "demo",
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "学习保险箱:三位密码。你早就把计划写在纸上了——"
+   "description": "学习保险箱:三位密码 312。面板旁边有三个卡槽"
   },
   {
    "id": "rc-badge",
@@ -56,16 +86,19 @@
  ],
  "level": {
   "id": "level-demo-selfstudy",
-  "title": "秋末自学计划 · 312 号学习保险箱",
-  "premise": "2025 年 9 月,你决定系统自学编程。桌上摊着算法书、蓝皮手册和廖雪峰的笔记,角落立着一台学习保险箱——密码是你给自己定下的学习计划:算法书第 3.1 章,配两部分的教程。",
-  "objective": "读算法书与蓝皮手册,推出保险箱密码 312,取出金色徽章,把它带出房间完成开学仪式。",
-  "targetMinutes": 6,
+  "title": "秋末自学计划 · 数据结构之夜",
+  "premise": "2025 年 9 月,你决定系统自学编程。桌上摊着算法书、蓝皮手册和廖雪峰的笔记。学习保险箱要按正确顺序输入三张分类卡,密码是 31 接 2。",
+  "objective": "读算法书与蓝皮手册拿到数字 31 和 2,推出密码 312,按正确顺序把三张分类卡放入学习保险箱,取出金色徽章交付。",
+  "targetMinutes": 10,
   "selectedItemIds": [
    "rc-book",
    "rc-manual",
    "rc-notes",
    "rc-safe",
-   "rc-badge"
+   "rc-badge",
+   "rc-card-1",
+   "rc-card-2",
+   "rc-card-3"
   ],
   "containers": [],
   "items": [
@@ -75,7 +108,7 @@
     "roleLabel": "线索",
     "title": "图解算法书",
     "sceneName": "图解算法书",
-    "reason": "【事实】翻到 3.1 数据结构分类——动画图解,一键运行。这一章的编号,是你给自己的第一串数字。",
+    "reason": "【网页内容】翻到 3.1 数据结构分类——数组、链表、栈、队列,动画图解一键运行。章节号 31 是密码的前两位。",
     "hidden": false
    },
    {
@@ -84,7 +117,7 @@
     "roleLabel": "线索",
     "title": "蓝皮手册",
     "sceneName": "蓝皮手册",
-    "reason": "【事实】现代 JavaScript 教程,主课程包含 2 部分,涵盖 JavaScript 与浏览器。",
+    "reason": "【网页内容】现代 JavaScript 教程,主课程包含 2 部分,涵盖 JavaScript 与浏览器。2 是密码的末位。",
     "hidden": false
    },
    {
@@ -97,12 +130,39 @@
     "hidden": false
    },
    {
+    "id": "rc-card-1",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "数组卡",
+    "sceneName": "数组卡",
+    "reason": "数组:连续内存、随机访问 O(1)。分类卡之一。",
+    "hidden": false
+   },
+   {
+    "id": "rc-card-2",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "链表卡",
+    "sceneName": "链表卡",
+    "reason": "链表:指针串联、插入 O(1)。分类卡之二。",
+    "hidden": false
+   },
+   {
+    "id": "rc-card-3",
+    "role": "tool",
+    "roleLabel": "工具",
+    "title": "栈卡",
+    "sceneName": "栈卡",
+    "reason": "栈:先进后出 LIFO。分类卡之三。",
+    "hidden": false
+   },
+   {
     "id": "rc-safe",
     "role": "lock",
     "roleLabel": "锁",
     "title": "学习保险箱",
     "sceneName": "学习保险箱",
-    "reason": "学习保险箱:三位密码。你早就把计划写在纸上了——算法书章节号,接上教程的部分数。",
+    "reason": "学习保险箱:三位密码 312。面板旁边有三个卡槽,按正确顺序放入分类卡。",
     "hidden": false
    },
    {
@@ -124,6 +184,11 @@
      "rc-book"
     ],
     "requires": [],
+    "reveals": [
+     "rc-card-1",
+     "rc-card-2",
+     "rc-card-3"
+    ],
     "product": "翻过的算法书"
    },
    {
@@ -176,7 +241,7 @@
    "deliver"
   ],
   "hints": [
-   "两张教材摊在明面上:算法书和蓝皮手册,各藏着一段数字。",
+   "两张教材摊在明面上:算法书和蓝皮手册。",
    "算法书翻到 3.1;蓝皮手册说主课程有 2 部分。",
    "保险箱三位数:31 接 2。"
   ],

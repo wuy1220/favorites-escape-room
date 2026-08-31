@@ -226,6 +226,14 @@ with sync_playwright() as p:
     step_calls3 = {"n": 0}
 
     def step_invalid3(route):
+        body = json.loads(route.request.post_data)
+        if "整理器" in body["messages"][0]["content"]:
+            prompt = json.loads(body["messages"][1]["content"])
+            out = [{"id": it["id"], "status": "keep", "topics": [], "reason": "ok", "intent": ""}
+                   for it in prompt.get("items", [])]
+            route.fulfill(status=200, content_type="application/json",
+                          body=json.dumps({"choices": [{"message": {"content": json.dumps({"items": out})}}]}))
+            return
         step_calls3["n"] += 1
         route.fulfill(status=200, content_type="application/json",
                       body=json.dumps({"choices": [{"message": {"content": json.dumps({"title": "坏设计"})}}]}))
@@ -250,6 +258,107 @@ with sync_playwright() as p:
     check("单供应商:6 次调用后退回固定模板挂载", step_calls3["n"] == 6,
           f"step_calls={step_calls3['n']}")
     page3.close()
+    # ===== 自定义供应商/路数(2026-08-30):localStorage 配置 3 路 × 两家供应商 =====
+    page4 = b.new_page()
+    page4.add_init_script(
+        "localStorage.setItem('fav-room-race-v1', JSON.stringify({lanes: 3, providers: ["
+        "{label: '默认', endpoint: ''},"
+        "{label: '自建A', endpoint: 'https://custom.a.test/v1', model: 'm1', apiKey: 'k1', reasoningEffort: 'low'}],"
+        "cleaning: '自建A'}))"
+    )
+    calls4 = {"step": 0, "custom": 0, "customClean": 0, "stepClean": 0}
+
+    def valid_any(route, tag):
+        body = json.loads(route.request.post_data)
+        user_part = body["messages"][1]["content"].split("\n\n【参考关卡A")[0]
+        ids = [i for i in dict.fromkeys(re.findall(r'"id"\s*:\s*"([^"]+)"', user_part))
+               if not i.startswith("result:")][:6]
+        calls4[tag] += 1
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"choices": [{"message": {"content": json.dumps(valid_design(ids))}}]}))
+
+    def step_any4(route):
+        body = json.loads(route.request.post_data)
+        if "整理器" in body["messages"][0]["content"]:
+            calls4["stepClean"] += 1
+        valid_any(route, "step")
+
+    def custom_any4(route):
+        body = json.loads(route.request.post_data)
+        if "整理器" in body["messages"][0]["content"]:
+            calls4["customClean"] += 1
+            prompt = json.loads(body["messages"][1]["content"])
+            out = [{"id": it["id"], "status": "keep", "topics": [], "reason": "ok", "intent": ""}
+                   for it in prompt.get("items", [])]
+            route.fulfill(status=200, content_type="application/json",
+                          body=json.dumps({"choices": [{"message": {"content": json.dumps({"items": out})}}]}))
+            return
+        valid_any(route, "custom")
+
+    page4.route("**/api/step**", step_any4)
+    page4.route("**custom.a.test**", custom_any4)
+    page4.route("**/fetch-meta**", lambda route: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps({"results": {}})))
+    page4.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
+    page4.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    page4.wait_for_timeout(500)
+    page4.set_input_files("#homeFile", FIXTURE)
+    page4.wait_for_timeout(300)
+    page4.click("#homeGenerate")
+    page4.wait_for_function(
+        """() => { const t = document.getElementById('gameToolbar');
+             return t && !t.hasAttribute('hidden'); }""",
+        timeout=60000,
+    )
+    lane_rows4 = page4.evaluate("() => document.querySelectorAll('#wbLanes .wb-lane').length")
+    check("自定义供应商:3 路稿纸就位", lane_rows4 == 3, f"lane_rows={lane_rows4}")
+    check("自定义供应商:两家端点都被调用(默认 %d / 自建 %d)" % (calls4["step"], calls4["custom"]),
+          calls4["step"] >= 1 and calls4["custom"] >= 1, json.dumps(calls4))
+    check("清洗路由:清洗走自建供应商(自建 %d 次,默认 %d 次)" % (calls4["customClean"], calls4["stepClean"]),
+          calls4["customClean"] >= 1 and calls4["stepClean"] == 0, json.dumps(calls4))
+    # ===== 单供应商多路:错峰起跑,先胜后路不发(设计调用应只有 1 次) =====
+    page5 = b.new_page()
+    page5.add_init_script(
+        "localStorage.setItem('fav-room-race-v1', JSON.stringify({lanes: 2, providers: ["
+        "{label: '默认', endpoint: ''}]}))"
+    )
+    design_calls5 = []
+
+    def step_valid5(route):
+        body = json.loads(route.request.post_data)
+        if "整理器" in body["messages"][0]["content"]:
+            prompt = json.loads(body["messages"][1]["content"])
+            out = [{"id": it["id"], "status": "keep", "topics": [], "reason": "ok", "intent": ""}
+                   for it in prompt.get("items", [])]
+            route.fulfill(status=200, content_type="application/json",
+                          body=json.dumps({"choices": [{"message": {"content": json.dumps({"items": out})}}]}))
+            return
+        design_calls5.append(time.time())
+        user_part = body["messages"][1]["content"].split("\n\n【参考关卡A")[0]
+        ids = [i for i in dict.fromkeys(re.findall(r'"id"\s*:\s*"([^"]+)"', user_part))
+               if not i.startswith("result:")][:6]
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"choices": [{"message": {"content": json.dumps(valid_design(ids))}}]}))
+
+    page5.route("**/api/step**", step_valid5)
+    page5.route("**/fetch-meta**", lambda route: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps({"results": {}})))
+    page5.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
+    page5.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    page5.wait_for_timeout(500)
+    page5.set_input_files("#homeFile", FIXTURE)
+    page5.wait_for_timeout(300)
+    page5.click("#homeGenerate")
+    page5.wait_for_function(
+        """() => { const t = document.getElementById('gameToolbar');
+             return t && !t.hasAttribute('hidden'); }""",
+        timeout=60000,
+    )
+    page5.wait_for_timeout(3500)  # 等第二路的 2.5s 错峰窗口过去,确认它没有发出
+    check("单供应商双路:先胜后路不发(设计调用 %d 次)" % len(design_calls5), len(design_calls5) == 1,
+          f"calls={len(design_calls5)}")
+    page5.close()
+    page4.close()
     b.close()
 
 print(f"\n===== verify_design_race: {sum(results)}/{len(results)} 通过 =====")

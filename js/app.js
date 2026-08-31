@@ -648,6 +648,12 @@
     if (lbox) lbox.innerHTML = '';
     const dbox = wbEl('wbDrafts');
     if (dbox) dbox.innerHTML = '';
+    const crew = wbEl('wbHeadCrew');
+    if (crew)
+      crew.textContent =
+        defs.length > 1
+          ? '共 ' + defs.length + ' 位起草人同时起草,取先完成的那份'
+          : '单路起草,失败自动重试';
     wbState.laneRows = defs.map((d, i) => {
       let row = null;
       if (lbox) {
@@ -663,7 +669,7 @@
         draft = document.createElement('div');
         draft.className = 'wb-draft';
         draft.innerHTML =
-          '<span class="wb-draft-name">起草人 · ' + (i === 0 ? '甲' : '乙') + '</span>' +
+          '<span class="wb-draft-name">起草人 · ' + (DRAFT_NAMES[i] || i + 1) + '</span>' +
           '<div class="wb-draft-line">铺纸候墨</div>';
         dbox.appendChild(draft);
       }
@@ -878,6 +884,149 @@
     return true;
   };
 
+  /* ===== 赛马配置(2026-08-30):供应商与路数可自定义,管线不再耦合 step/glm =====
+     localStorage fav-room-race-v1 = {lanes:1-5, providers:[{label,endpoint,model,apiKey,reasoningEffort}]}。
+     端点留空的行 = 默认供应商(本地代理 / 清洗配置);各路按顺序循环取供应商。
+     未自定义时走自动模式:有 glm 配置双路并行,否则单路 step。 */
+  const RACE_CFG_KEY = 'fav-room-race-v1';
+  const DRAFT_NAMES = ['甲', '乙', '丙', '丁', '戊'];
+  function readRaceConfig() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(RACE_CFG_KEY) || 'null');
+      if (!raw) return null;
+      const lanes = Math.max(1, Math.min(5, Number(raw.lanes) || 1));
+      const providers = (Array.isArray(raw.providers) ? raw.providers : [])
+        .slice(0, 5)
+        .map(function (p, i) {
+          return {
+            label: String((p && p.label) || '').trim() || '供应商' + (i + 1),
+            endpoint: String((p && p.endpoint) || '').trim(),
+            model: String((p && p.model) || '').trim(),
+            apiKey: String((p && p.apiKey) || '').trim(),
+            reasoningEffort: String((p && p.reasoningEffort) || '').trim(),
+          };
+        })
+        .filter((p) => p.endpoint || p.model || p.apiKey);
+      if (!providers.length) return null;
+      return { lanes, providers };
+    } catch (_) {
+      return null;
+    }
+  }
+  function buildLaneDefs() {
+    const glmLane = window.__GLM_LANE__ || null;
+    const cfg = readRaceConfig();
+    if (cfg) {
+      const defs = [];
+      for (let i = 0; i < cfg.lanes; i++) {
+        const p = cfg.providers[i % cfg.providers.length];
+        if (p.endpoint) {
+          defs.push({
+            overrides: {
+              endpoint: p.endpoint,
+              ...(p.model ? { model: p.model } : {}),
+              ...(p.apiKey ? { apiKey: p.apiKey } : {}),
+              ...(p.reasoningEffort
+                ? { reasoningEffort: p.reasoningEffort, thinking: { type: 'enabled' } }
+                : {}),
+              label: p.label,
+            },
+            label: p.label,
+          });
+        } else {
+          defs.push({ overrides: null, label: p.label === '供应商1' ? '默认' : p.label });
+        }
+      }
+      return defs;
+    }
+    return glmLane
+      ? [
+          { overrides: null, label: 'step' },
+          { overrides: glmLane, label: 'glm' },
+        ]
+      : [{ overrides: null, label: 'step' }];
+  }
+  function raceModalOpen() {
+    const cfg = readRaceConfig();
+    const glm = window.__GLM_LANE__ || null;
+    const auto = glm
+      ? [
+          { label: '默认(step 代理)', endpoint: '', model: '', apiKey: '', reasoningEffort: '' },
+          {
+            label: 'glm',
+            endpoint: glm.endpoint,
+            model: glm.model,
+            apiKey: glm.apiKey || '',
+            reasoningEffort: glm.reasoningEffort || 'low',
+          },
+        ]
+      : [{ label: '默认(step 代理)', endpoint: '', model: '', apiKey: '', reasoningEffort: '' }];
+    const providers = (cfg && cfg.providers.length ? cfg.providers : auto).slice(0, 5);
+    $('raceLanes').value = cfg ? cfg.lanes : glm ? 2 : 1;
+    const sel = $('raceCleaning');
+    sel.innerHTML = ['<option value="">默认(本地代理 / step)</option>']
+      .concat(providers.map((p) => '<option value="' + esc(p.label) + '">' + esc(p.label) + '</option>'))
+      .join('');
+    sel.value = (cfg && cfg.cleaning) || '';
+    const box = $('raceProviders');
+    const rows = [];
+    for (let i = 0; i < 5; i++) {
+      rows.push(
+        '<div class="race-row">' +
+          '<input data-f="label" placeholder="名称">' +
+          '<input data-f="endpoint" placeholder="端点(留空=默认)">' +
+          '<input data-f="model" placeholder="模型">' +
+          '<input data-f="apiKey" type="password" placeholder="Key">' +
+          '<select data-f="reasoningEffort"><option value="">档位</option><option value="high">high</option><option value="low">low</option><option value="max">max</option></select>' +
+        '</div>',
+      );
+    }
+    box.innerHTML = rows.join('');
+    Array.from(box.children).forEach((row, i) => {
+      const p = providers[i] || {};
+      row.querySelectorAll('[data-f]').forEach((inp) => {
+        const f = inp.dataset.f;
+        inp.value = f === 'reasoningEffort' ? p.reasoningEffort || '' : p[f] || '';
+      });
+    });
+    $('raceModal').classList.remove('hidden');
+  }
+  function raceModalSave() {
+    const lanes = Math.max(1, Math.min(5, Number($('raceLanes').value) || 1));
+    const providers = [];
+    Array.from($('raceProviders').children).forEach((row, i) => {
+      const get = (f) => {
+        const el = row.querySelector('[data-f="' + f + '"]');
+        return el ? String(el.value).trim() : '';
+      };
+      if (get('endpoint') || get('model') || get('apiKey'))
+        providers.push({
+          label: get('label') || '供应商' + (i + 1),
+          endpoint: get('endpoint'),
+          model: get('model'),
+          apiKey: get('apiKey'),
+          reasoningEffort: get('reasoningEffort'),
+        });
+    });
+    if (!providers.length) {
+      setStatus('至少要有一个供应商(端点/模型/Key 任一非空)。', 'error');
+      return;
+    }
+    localStorage.setItem(
+      RACE_CFG_KEY,
+      JSON.stringify({ lanes, providers, cleaning: $('raceCleaning').value }),
+    );
+    $('raceModal').classList.add('hidden');
+    setStatus(
+      '赛马配置已保存:' + lanes + ' 路循环使用 ' + providers.length + ' 个供应商。',
+      'good',
+    );
+  }
+  function raceModalReset() {
+    localStorage.removeItem(RACE_CFG_KEY);
+    $('raceModal').classList.add('hidden');
+    setStatus('已恢复自动赛马配置。', 'good');
+  }
   async function generate() {
     const file = $('homeFile')?.files?.[0];
     if (!file) return;
@@ -1029,19 +1178,10 @@
           duplicates,
           stats: { input: items.length, unique: enriched.length, duplicates: duplicates.length },
         };
-        /* 赛马路由(2026-08-30 单供应商退化):配置了 GLM(/api/llm-config 下发)时
-           双供应商并行——glm(快,~1-2.5min)+ step advisor(质量兜底),每供应商
-           各一路(同供应商并发会被平台排队,glm×2 实测反而更慢),整体失败自动
-           重试一轮,两轮全败退回固定模板。没有 glm 配置(使用者只有一把 step key)
-           时只跑**单路** step——旧实现退化成 [step, step] 双同源路:同 key 并发被
-           平台排队,赛马塌回串行还双倍消耗限流配额。 */
-        const glmLane = window.__GLM_LANE__ || null;
-        const laneDefs = glmLane
-          ? [
-              { overrides: null, label: 'step' },
-              { overrides: glmLane, label: 'glm' },
-            ]
-          : [{ overrides: null, label: 'step' }];
+        /* 赛马路由(2026-08-30 供应商/路数可自定义):见 buildLaneDefs——
+           自动模式(未自定义)有 glm 双路并行、无 glm 单路 step;
+           自定义模式按「路数循环取供应商表」,最多 5 路,任意 OpenAI 兼容端点。 */
+        const laneDefs = buildLaneDefs();
         setStatus(
           '设计进行中:' + laneDefs.map((l) => l.label).join(' + ') + '……',
           'busy',
@@ -1155,8 +1295,26 @@
                 wbLane(laneIdx, '三轮均未通过', 'bad');
                 return { failNote: note };
               };
+              /* 启动节奏(2026-08-30):同端点的多路依次错开 2.5s 起跑——同供应商
+                 并发会被平台排队,先起跑的路快速通过时,后面的路不再发出(省配额);
+                 不同端点的路仍同时起跑。 */
+              const lastStart = {};
               for (let i = 0; i < laneDefs.length; i++) {
-                lane(i).then((res) => {
+                (function (i) {
+                  const epKey =
+                    laneDefs[i].overrides && laneDefs[i].overrides.endpoint
+                      ? laneDefs[i].overrides.endpoint
+                      : 'default';
+                  const now = Date.now();
+                  const delay = lastStart[epKey] ? Math.max(0, lastStart[epKey] + 2500 - now) : 0;
+                  lastStart[epKey] = now + delay;
+                  setTimeout(function () {
+                    if (raceState.won || wbState.cancelled) {
+                      /* 未起跑就被跳过:同样结算 remaining,赛马 Promise 才会收敛 */
+                      if (--raceState.remaining === 0 && !raceState.won) resolveRace(null);
+                      return;
+                    }
+                    lane(i).then((res) => {
                   if (res && res.draft && !raceState.won) {
                     raceState.won = true;
                     laneSignals.forEach((s) => s.abort());
@@ -1178,6 +1336,9 @@
                   }
                   if (--raceState.remaining === 0 && !raceState.won) resolveRace(null);
                 });
+                  },
+                  delay);
+                })(i);
               }
             });
             if (res) return res;
@@ -1309,7 +1470,7 @@
     if (document.getElementById('homeScreen')) return; /* 幂等:openDb 失败兜底会二次调用,重复注入会让两层卡片互相拦截点击 */
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一个或多个时间片（可多选）—— 那些时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="wb-overlay" id="wbOverlay" hidden><div class="gen-workbench wb-scene" id="genWorkbench" hidden><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-headline"><h3>你的密室正在搭建</h3><p>两位起草人正在同时起草,取先完成的那份——通常两分钟左右。<span style="white-space:nowrap">已用 <span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span></span></p></div><div class="wb-head"><div class="wb-actions"><button id="wbGameToggle" type="button">来翻几页</button><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button" class="wb-danger">取消生成</button></div></div><div class="wb-body"><div class="wb-rail"><div class="wb-phases" id="wbPhases"></div></div><div class="wb-main"><div class="wb-stage"><div class="wb-deck-side"><div class="wb-deck-bar"><span id="wbDeckCount">这间密室将用你的收藏造成——</span><button id="wbDeckFlip" type="button">翻一叠</button></div><div class="wb-deck" id="wbMaterials"></div></div><div class="wb-drafts" id="wbDrafts"></div></div><div class="wb-note" id="wbNote"></div></div></div><details class="wb-tech"><summary>工作记录(技术细节)</summary><div class="wb-lanes" id="wbLanes"></div><div class="wb-log" id="wbLog"></div></details><div class="wb-game" id="wbGame" hidden><canvas id="wbGameCanvas" height="150"></canvas><div class="wb-game-hint">空格 / 点击起跳 · 三滴墨:撞上障碍扣一滴,墨尽本局结束 · 收集纸页解锁工房手记</div></div></div></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span><div class="wb-door" id="wbDoor" hidden><div class="wb-door-l"></div><div class="wb-door-r"></div><div class="wb-door-glow"></div></div>',
+      '<div class="product-home" id="homeScreen"><div class="home-card"><div class="home-layout"><section><div class="home-kicker">收藏夹密室 / LOCAL EDITION</div><h2>把收藏变成一间<em>可以玩的房间</em>。</h2><p>上传一次收藏夹，选择一段时间片。那 6 条受控素材会填入多房间回访结构(条数可在下方调整),成为一间只属于你的密室。中间结果保存在当前浏览器，下一次生成可以复用。</p><div class="home-steps"><div class="home-step"><div class="step-no">01</div><div class="step-body"><label class="home-field">选择收藏夹导出文件（Chrome 书签 HTML / Bookmarks JSON）<input class="home-file" id="homeFile" type="file" accept=".html,.htm,.json,text/html,application/json"></label></div></div><div class="home-step"><div class="step-no">02</div><div class="step-body"><label class="home-field">情绪或边界偏好（可选）<textarea id="homeThemeCustom" placeholder="例如：深夜、克制、不要恐怖元素——只作为联想起点，不预设主题"></textarea></label><label class="home-field">单次使用的网页数量（素材越多，房间与谜题链越复杂，生成也越慢）<select id="homeMaterialCount"><option value="6" selected>6 条 · 默认（约 2 分钟）</option><option value="8">8 条 · 进阶（3 间房间，实测约 2-3 分钟）</option><option value="10">10 条 · 实验（结构门槛常打回，可能多轮重试或失败）</option></select></label><label class="home-check"><input id="homeAutoSave" type="checkbox" checked> 自动保存游玩进度</label></div></div><div class="home-step" id="windowPanel" style="display:none"><div class="step-no">03</div><div class="step-body"><div class="home-kicker">选择一个或多个时间片（可多选）—— 那些时间的你，将变成一间密室</div><div id="windowList" class="window-list"></div></div></div></div><div class="home-actions"><button class="primary" id="homeGenerate" disabled>生成一次未命名冒险</button></div><div class="wb-overlay" id="wbOverlay" hidden><div class="gen-workbench wb-scene" id="genWorkbench" hidden><svg class="wb-sil" viewBox="0 0 420 170" aria-hidden="true"><g class="sil-g sil-1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M30 150 H390"/><path d="M38 150 V46"/><path d="M382 150 V52"/><path d="M38 46 H180"/><path d="M382 52 H300"/></g><g class="sil-g sil-2" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="252" y="96" width="86" height="54" rx="2"/><path d="M252 116 h86 M295 96 v54"/><path d="M120 118 h110 v32 h-110 z"/><path d="M130 150 v-8 M220 150 v-8"/></g><g class="sil-g sil-3" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M160 118 v-20 h24 v20"/><path d="M172 98 v-10"/><circle cx="172" cy="84" r="5"/><path d="M150 66 L172 78 M194 66 L172 78 M172 60 v16"/></g><g class="sil-g sil-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="46" y="70" width="52" height="80" rx="2"/><circle cx="92" cy="112" r="2.5"/></g></svg><div class="wb-headline"><h3>你的密室正在搭建</h3><p><span id="wbHeadCrew">起草人准备中</span>——通常两分钟左右。<span style="white-space:nowrap">已用 <span class="wb-elapsed" id="wbElapsed" title="已用时间">0s</span></span></p></div><div class="wb-head"><div class="wb-actions"><button id="wbGameToggle" type="button">来翻几页</button><button id="wbMin" type="button" title="收起为浮标,生成在后台继续">收起</button><button id="wbCancel" type="button" class="wb-danger">取消生成</button></div></div><div class="wb-body"><div class="wb-rail"><div class="wb-phases" id="wbPhases"></div></div><div class="wb-main"><div class="wb-stage"><div class="wb-deck-side"><div class="wb-deck-bar"><span id="wbDeckCount">这间密室将用你的收藏造成——</span><button id="wbDeckFlip" type="button">翻一叠</button></div><div class="wb-deck" id="wbMaterials"></div></div><div class="wb-drafts" id="wbDrafts"></div></div><div class="wb-note" id="wbNote"></div></div></div><details class="wb-tech"><summary>工作记录(技术细节)</summary><div class="wb-lanes" id="wbLanes"></div><div class="wb-log" id="wbLog"></div></details><div class="wb-game" id="wbGame" hidden><canvas id="wbGameCanvas" height="150"></canvas><div class="wb-game-hint">空格 / 点击起跳 · 三滴墨:撞上障碍扣一滴,墨尽本局结束 · 收集纸页解锁工房手记</div></div></div></div><div class="home-secondary"><button id="homeImport" type="button">导入关卡</button><button id="raceConfigBtn" type="button">赛马配置</button><input id="homeImportFile" type="file" accept=".json,application/json" style="display:none"><button id="homeContinue" disabled>继续游戏</button><button id="homeClearCache" type="button">清空清洗缓存</button></div><div class="home-status" id="homeStatus">等待上传收藏夹。</div></section><section class="saved-panel"><h3>已保存关卡</h3><p>关卡和清洗结果都保存在当前浏览器。原始收藏夹不会上传保存。</p><div id="savedList" class="saved-list"><div class="saved-empty">正在读取本地存档……</div></div></section></div></div></div><div class="modal hidden" id="namingModal"><div class="modal-card"><div class="kicker">通关 / 延迟命名</div><h2>这场冒险还没有名字。</h2><p>先给它起一个只属于你的名字——下方候选标题由你的收藏事实生成，每一个都只是一种理解，不是标准答案。</p><input id="adventureNameInput" class="naming-input" placeholder="为这场冒险命名……"><div id="nameCandidates" class="name-candidates"></div><div class="modal-actions"><button class="primary" id="adventureNameSave" type="button">以此命名</button><button id="adventureNameDone" type="button" style="display:none">查看回执并结束</button></div><div id="adventureReceipt" class="adventure-receipt" style="display:none"></div></div></div><div class="game-toolbar" id="gameToolbar" hidden><strong id="gameTitle">收藏关卡</strong><button id="gameSave" type="button">保存进度</button><button id="gameExport" type="button">导出关卡</button><button id="gameHome" type="button">标题界面</button></div><div class="modal hidden" id="raceModal"><div class="modal-card"><div class="kicker">赛马配置(可选)</div><h2>设计竞速的供应商与路数</h2><p class="race-note">路数 1-5,各路按顺序循环使用下方供应商;端点留空 = 默认(本地代理 / 清洗配置)。同一家供应商并发可能被平台排队。空行忽略。自定义密钥只保存在本机浏览器,不上传、不入仓库。</p><label class="race-lanes">赛马路数 <input id="raceLanes" type="number" min="1" max="5" value="2"></label><div id="raceProviders"></div><label class="race-lanes">清洗使用 <select id="raceCleaning"></select></label><div class="modal-actions"><button class="reset" id="raceReset" type="button">恢复自动</button><button class="primary" id="raceSave" type="button">保存配置</button></div></div></div><div class="gen-pill" id="genPill" hidden><span id="genPillText">生成中…</span><div class="wb-door" id="wbDoor" hidden><div class="wb-door-l"></div><div class="wb-door-r"></div><div class="wb-door-glow"></div></div>',
     );
   }
   async function boot() {
@@ -1323,6 +1484,9 @@
       hintFloat.classList.toggle('hidden');
       logFloat.classList.add('hidden');
     };
+    $('raceConfigBtn').onclick = raceModalOpen;
+    $('raceSave').onclick = raceModalSave;
+    $('raceReset').onclick = raceModalReset;
     $('logTicker').onclick = () => {
       logFloat.classList.toggle('hidden');
       hintFloat.classList.add('hidden');
