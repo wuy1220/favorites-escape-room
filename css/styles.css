@@ -3440,3 +3440,14 @@ body {
     animation: none;
   }
 }
+/* ===== 引导线过渡(2026-08-31):与子节点 arrive 0.5s 同拍 =====
+   2026-08-30:删掉 .link-enter。新生连线原本加它做 0.5s 淡入,但淡入与
+   "从父锚点生长"抢的是同一段时间——实测 144ms 时线才 0.3 不透明度,生长被
+   整个盖住,玩家只看到淡入(见 drawLinks 处注释)。新生线的起始长度本就是 0,
+   不需要淡入;淡入只留给 .link-hidden 停放后重新出现的线。 */
+#links line {
+  transition: opacity 0.5s var(--ease);
+}
+#links line.link-hidden {
+  opacity: 0;
+}

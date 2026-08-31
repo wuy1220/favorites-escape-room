@@ -1,254 +1,289 @@
 {
- "records": [],
- "controlledIds": [
-  "rc-book",
-  "rc-manual",
-  "rc-notes",
-  "rc-card-1",
-  "rc-card-2",
-  "rc-card-3",
-  "rc-safe",
-  "rc-badge"
- ],
- "items": [
-  {
-   "id": "rc-book",
-   "title": "图解算法书",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "【网页内容】翻到 3.1 数据结构分类——数组、"
-  },
-  {
-   "id": "rc-manual",
-   "title": "蓝皮手册",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "【网页内容】现代 JavaScript 教程,主"
-  },
-  {
-   "id": "rc-notes",
-   "title": "廖雪峰笔记",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "原创中文精品教程。笔记扉页写着:研究互联网产品和"
-  },
-  {
-   "id": "rc-card-1",
-   "title": "数组卡",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "数组:连续内存、随机访问 O(1)。分类卡之一。"
-  },
-  {
-   "id": "rc-card-2",
-   "title": "链表卡",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "链表:指针串联、插入 O(1)。分类卡之二。"
-  },
-  {
-   "id": "rc-card-3",
-   "title": "栈卡",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "栈:先进后出 LIFO。分类卡之三。"
-  },
-  {
-   "id": "rc-safe",
-   "title": "学习保险箱",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "学习保险箱:三位密码 312。面板旁边有三个卡槽"
-  },
-  {
-   "id": "rc-badge",
-   "title": "金色小徽章",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "开学仪式的金色徽章。把它带出房间,自学计划就正式"
-  }
- ],
- "level": {
-  "id": "level-demo-selfstudy",
-  "title": "秋末自学计划 · 数据结构之夜",
-  "premise": "2025 年 9 月,你决定系统自学编程。桌上摊着算法书、蓝皮手册和廖雪峰的笔记。学习保险箱要按正确顺序输入三张分类卡,密码是 31 接 2。",
-  "objective": "读算法书与蓝皮手册拿到数字 31 和 2,推出密码 312,按正确顺序把三张分类卡放入学习保险箱,取出金色徽章交付。",
-  "targetMinutes": 10,
-  "selectedItemIds": [
-   "rc-book",
-   "rc-manual",
-   "rc-notes",
-   "rc-card-1",
-   "rc-card-2",
-   "rc-card-3",
-   "rc-safe",
-   "rc-badge"
+  "records": [],
+  "controlledIds": [
+    "rc-door",
+    "rc-manual",
+    "rc-book-js",
+    "rc-book-web",
+    "rc-book-algo",
+    "rc-shelf",
+    "rc-stamp",
+    "rc-ticket"
   ],
-  "containers": [],
   "items": [
-   {
-    "id": "rc-book",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "图解算法书",
-    "sceneName": "图解算法书",
-    "reason": "【网页内容】翻到 3.1 数据结构分类——数组、链表、栈、队列,动画图解一键运行。章节号 31 是密码的前两位。",
-    "hidden": false
-   },
-   {
-    "id": "rc-manual",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "蓝皮手册",
-    "sceneName": "蓝皮手册",
-    "reason": "【网页内容】现代 JavaScript 教程,主课程包含 2 部分,涵盖 JavaScript 与浏览器。2 是密码的末位。",
-    "hidden": false
-   },
-   {
-    "id": "rc-notes",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "廖雪峰笔记",
-    "sceneName": "廖雪峰笔记",
-    "reason": "原创中文精品教程。笔记扉页写着:研究互联网产品和技术。",
-    "hidden": false
-   },
-   {
-    "id": "rc-card-1",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "数组卡",
-    "sceneName": "数组卡",
-    "reason": "数组:连续内存、随机访问 O(1)。分类卡之一。",
-    "hidden": false
-   },
-   {
-    "id": "rc-card-2",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "链表卡",
-    "sceneName": "链表卡",
-    "reason": "链表:指针串联、插入 O(1)。分类卡之二。",
-    "hidden": false
-   },
-   {
-    "id": "rc-card-3",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "栈卡",
-    "sceneName": "栈卡",
-    "reason": "栈:先进后出 LIFO。分类卡之三。",
-    "hidden": false
-   },
-   {
-    "id": "rc-safe",
-    "role": "lock",
-    "roleLabel": "锁",
-    "title": "学习保险箱",
-    "sceneName": "学习保险箱",
-    "reason": "学习保险箱:三位密码 312。面板旁边有三个卡槽,按正确顺序放入分类卡。",
-    "hidden": false
-   },
-   {
-    "id": "rc-badge",
-    "role": "reward",
-    "roleLabel": "结果",
-    "title": "金色小徽章",
-    "sceneName": "金色小徽章",
-    "reason": "开学仪式的金色徽章。把它带出房间,自学计划就正式启动。",
-    "hidden": true
-   }
+    {
+      "id": "rc-door",
+      "title": "资料室门",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "资料室的门虚掩着,门缝里能看到书车。点击推门进去。"
+    },
+    {
+      "id": "rc-manual",
+      "title": "排架规则卡",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "资料室的排架次序按课程大纲来,只收一对书。"
+    },
+    {
+      "id": "rc-book-js",
+      "title": "语言书 · 现代JavaScript教程",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书脊印着课程介绍:一部分讲语言本身,一部分讲浏览器。"
+    },
+    {
+      "id": "rc-book-web",
+      "title": "手册 · JavaScript指南",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书脊印着『JavaScript 指南』,讲语言在浏览器里的用法。"
+    },
+    {
+      "id": "rc-book-algo",
+      "title": "算法书 · Hello 算法",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书脊印着:动画图解、一键运行的数据结构与算法教程。"
+    },
+    {
+      "id": "rc-shelf",
+      "title": "排架台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "排架台的凹槽刻着 ①② 两个位置,连着借阅系统。"
+    },
+    {
+      "id": "rc-stamp",
+      "title": "借阅章",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "黄铜借阅章,章面刻着『已排架』。"
+    },
+    {
+      "id": "rc-ticket",
+      "title": "提货单",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅系统的提货单,空白处等着盖章。"
+    }
   ],
-  "beats": [
-   {
-    "id": "c1",
-    "title": "读图解算法书",
-    "action": "inspect",
-    "uses": [
-     "rc-book"
+  "level": {
+    "id": "level-demo-selfstudy",
+    "title": "秋末自学计划 · 资料室排架日",
+    "premise": "2025 年 11 月,你终于腾出一个下午整理自学资料。资料室的书车停在门口,排架台连着借阅系统——它只按排架规则认书:放对了,借阅章才会从台下弹出来。",
+    "objective": "推开资料室,读排架规则与书脊,把对的两本书按次序排上书架,取出借阅章盖在提货单上,交单出室。",
+    "targetMinutes": 10,
+    "selectedItemIds": [
+      "rc-door",
+      "rc-manual",
+      "rc-book-js",
+      "rc-book-web",
+      "rc-book-algo",
+      "rc-shelf",
+      "rc-stamp",
+      "rc-ticket"
     ],
-    "requires": [],
-    "reveals": [
-     "rc-card-1",
-     "rc-card-2",
-     "rc-card-3"
+    "containers": [],
+    "items": [
+      {
+        "id": "rc-door",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "资料室门",
+        "sceneName": "资料室门",
+        "reason": "资料室的门虚掩着,门缝里漏出旧纸的味道。点击推门进去。",
+        "hidden": false
+      },
+      {
+        "id": "rc-manual",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "排架规则卡",
+        "sceneName": "排架规则卡",
+        "reason": "【规则页】资料室只收一对书:凹槽①放那本『先讲语言本身』的书,凹槽②放那本『讲浏览器里的用法』的书。次序放反,书会滑回来。",
+        "hidden": true
+      },
+      {
+        "id": "rc-book-js",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "语言书 · 现代JavaScript教程",
+        "sceneName": "语言书 · 现代JavaScript教程",
+        "reason": "【网页内容·书脊】主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。第一部分讲语言本身,第二部分才讲浏览器。",
+        "hidden": true
+      },
+      {
+        "id": "rc-book-web",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "手册 · JavaScript指南",
+        "sceneName": "手册 · JavaScript指南",
+        "reason": "【网页内容·书脊】JavaScript 指南——讲的是这门语言在浏览器里的用法,是语言书的下一站。",
+        "hidden": true
+      },
+      {
+        "id": "rc-book-algo",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "算法书 · Hello 算法",
+        "sceneName": "算法书 · Hello 算法",
+        "reason": "【网页内容·书脊】动画图解、一键运行的数据结构与算法教程。可惜排架规则只收一对书,它今天只能留在书车上。",
+        "hidden": true
+      },
+      {
+        "id": "rc-shelf",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "排架台",
+        "sceneName": "排架台",
+        "reason": "排架台的凹槽刻着 ①② 两个位置。把书按次序放上去——点错了顺序,整组会重来。",
+        "hidden": false
+      },
+      {
+        "id": "rc-stamp",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "借阅章",
+        "sceneName": "借阅章",
+        "reason": "黄铜借阅章,章面刻着『已排架』。排架台认可之后,它才会从台下弹出来。",
+        "hidden": true
+      },
+      {
+        "id": "rc-ticket",
+        "role": "transform",
+        "roleLabel": "结果",
+        "title": "提货单",
+        "sceneName": "提货单",
+        "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交给出入口。",
+        "hidden": true
+      }
     ],
-    "product": "翻过的算法书"
-   },
-   {
-    "id": "c2",
-    "title": "读蓝皮手册",
-    "action": "inspect",
-    "uses": [
-     "rc-manual"
+    "beats": [
+      {
+        "id": "c1",
+        "title": "推开资料室",
+        "action": "inspect",
+        "uses": [
+          "rc-door"
+        ],
+        "reveals": [
+          "rc-manual",
+          "rc-book-js",
+          "rc-book-web",
+          "rc-book-algo",
+          "rc-ticket"
+        ]
+      },
+      {
+        "id": "c2",
+        "title": "读排架规则卡",
+        "action": "inspect",
+        "uses": [
+          "rc-manual"
+        ],
+        "requires": [
+          "c1"
+        ]
+      },
+      {
+        "id": "c3",
+        "title": "查看语言书书脊",
+        "action": "inspect",
+        "uses": [
+          "rc-book-js"
+        ],
+        "requires": [
+          "c1"
+        ]
+      },
+      {
+        "id": "c4",
+        "title": "查看手册书脊",
+        "action": "inspect",
+        "uses": [
+          "rc-book-web"
+        ],
+        "requires": [
+          "c1"
+        ]
+      },
+      {
+        "id": "c5",
+        "title": "按次序排架",
+        "action": "sequence",
+        "uses": [
+          "rc-book-js",
+          "rc-book-web"
+        ],
+        "requires": [
+          "c2",
+          "c3",
+          "c4"
+        ],
+        "resultOn": "rc-shelf",
+        "product": "排好架的一对书",
+        "reveals": [
+          "rc-stamp"
+        ]
+      },
+      {
+        "id": "c6",
+        "title": "盖借阅章",
+        "action": "combine",
+        "uses": [
+          "rc-stamp",
+          "rc-ticket"
+        ],
+        "requires": [
+          "c5"
+        ],
+        "resultOn": "rc-ticket",
+        "product": "盖章的提货单",
+        "consume": [
+          "rc-stamp"
+        ]
+      },
+      {
+        "id": "c7",
+        "title": "交单出室",
+        "action": "deliver",
+        "uses": [
+          "result:c6"
+        ],
+        "requires": [
+          "c6"
+        ]
+      }
     ],
-    "requires": [],
-    "product": "翻过的蓝皮手册"
-   },
-   {
-    "id": "c3",
-    "title": "打开学习保险箱",
-    "action": "password",
-    "uses": [
-     "rc-safe"
+    "hints": [
+      "资料室的门要自己推开——里面的书车和规则卡都会现身。",
+      "排架规则卡说明了次序,以及『只收一对书』。",
+      "两本书的书脊都读一读,才能分清哪本先讲语言、哪本讲浏览器。",
+      "排架台要按次序逐个点击,点错整组重来。",
+      "排对了,借阅章会从台下弹出来——把它盖到提货单上。",
+      "盖章的提货单才能交给出入口。"
     ],
-    "requires": [
-     "c1",
-     "c2"
-    ],
-    "expected": "312",
-    "deriveFrom": [
-     "rc-book",
-     "rc-manual"
-    ],
-    "product": "打开的学习保险箱",
-    "reveals": [
-     "rc-badge"
+    "mechanics": [
+      "inspect",
+      "sequence",
+      "combine"
     ]
-   },
-   {
-    "id": "c4",
-    "title": "带徽章离开",
-    "action": "deliver",
-    "uses": [
-     "rc-badge"
-    ],
-    "requires": [
-     "c3"
-    ]
-   }
-  ],
-  "scenes": [],
-  "mechanics": [
-   "inspect",
-   "password",
-   "deliver"
-  ],
-  "hints": [
-   "两张教材摊在明面上:算法书和蓝皮手册。",
-   "算法书翻到 3.1;蓝皮手册说主课程有 2 部分。",
-   "保险箱三位数:31 接 2。"
-  ],
-  "validation": {
-   "valid": true,
-   "issues": []
-  },
-  "grounding": "demo"
- }
+  }
 }

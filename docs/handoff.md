@@ -247,7 +247,83 @@ continue→restore 全程 started=false,无回归。)
 ## 最新:2026-08-30 生成工作台 v2「深夜工房」+ 纸页夜奔小游戏
 
 ### v3 修订(同日,需求方实测反馈:「速度过快,碰任何障碍物都没有失败判定」)
-### 赛马配置化补全:清洗供应商可配 + 同供应商错峰(2026-08-30,需求方追问「清洗的供应商也应该能自定义」「单供应商多并发赛马的情况也需要考虑」)
+### 节点飞入源修正(2026-08-31,需求方:「节点动画不是从父节点出发的,而是从画面顶部出发的」)
+
+`--fx/--fy` 注入取 `srcNode = revealFromId || parent`——房间初始物件的 parent 是
+**场景 zone 标签**,而 zone 全部贴在画布顶部(baseY+si*14),从它起飞 = 整排物件
+从画面顶部俯冲(线却是从 zone 长到物件的,方向倒是一致,起点观感错误)。修订:
+**zone 不作为起飞源**——它不是器物;这类物件原地浮现(scale 0.78+fade+交错保留);
+真正有物理来源的飞行不变:容器内容物从容器飞出、beat 显形物从照亮它的物件飞出、
+教程关从入口卡飞出。探针:房间初始物件 --fx/--fy 为空(原地)、--fd 交错保留;
+容器与 reveal 路径不受影响。
+
+
+真相:节点 `.arrive` 本来就是沿「父→槽位」向量飞入(--fx/--fy 注入,0.5s
+ease-spring,--fd 70ms 交错)——线却原地淡入,同一根向量一个飞一个淡。
+v2 把线的出现改为**沿同一向量从父锚点同步生长**(像被孩子拉出来):
+
+- 时长 500ms、delay 对齐子节点的 `--fd` 交错、缓动手写
+  cubic-bezier(0.34,1.45,0.64,1) 求解(与 --ease-spring 同曲线,二分 x→t 取 y);
+- **实现机制**:WAAPI 不支持 line 的 x2/y2 几何属性(关键帧被静默丢弃,探针
+  getKeyframes x2=null 实证)——改为 linkTweens Map + 专用 rAF ticker 手写补间;
+  补间期间 drawLinks 不覆盖该线的 x2/y2(由补间驱动),svg 被外部清空时连
+  补间一起清;
+- 淡入(opacity 0.5s)保留,与生长叠加。
+
+回归:smoke 4/4、prison 42/42、bear 30/30、workbench 16/16、reset 13/13;
+行为探针:根展开后 380ms 处 x2 已沿向量位移 127px、透明度同步升到 0.51——
+线与节点同轨同拍。
+
+
+旧 `drawLinks()` 每次绘制都 `innerHTML=''` 全量重建线元素——线条瞬时出现,与子节点
+`.arrive` 0.5s 过渡完全脱节,且平移/缩放的每一帧都在重建 DOM。重构:
+
+1. **线元素按「父→子」键持久复用**(linkEls Map):绘制只更新坐标,不再重建;
+   平移/缩放高频重绘不再打断任何过渡(也是渲染性能修复)。
+2. **与节点同拍的过渡**:`#links line` 加 `transition: opacity 0.5s var(--ease)`
+   (与 `.node.arrive` 0.5s 同 duration/easing);新线以 `link-enter`(opacity 0)
+   创建,双 rAF 后移除类 → 0.5s 淡入,和子节点出现同拍。
+3. **淡出停放**:端点隐藏/用掉时线加 `link-hidden`(opacity 0)停放不删除——
+   再现时自然淡入;`svg.childElementCount===0` 时同步清登记表(兼容外部清空)。
+   坐标仍即时更新(世界坐标静态,不平滑插值——FLIP 位置过渡属方向文档
+   313 行的另一笔动画债,不在本批)。
+
+回归:prison 42/42、bear 30/30、workbench 16/16、reset 13/13、naming 10/10、
+save 10/10、wait_game 9/9、design_race 15/15;行为探针:根展开 4 条新线
+opacity 0 起步 + transition-duration 0.5s、连绘两次元素恒等(零重建)。
+
+
+1. **点击更新原语 `clickUpdate(n)`**(engine.js,替代 exploreRoom + 三处内联扫描):
+   只显形节点 n 的**下一级就绪子节点**,三种形态——根/入口=直接挂根的就绪物;
+   房间(zone)=首次走进亮出可见物件、之后=就绪隐藏物;物件/容器=就绪内容物
+   (parent 挂靠或 revealFrom 指向)。**未开启的容器不由环顾代开**(必须玩家自己
+   点,开柜才算发现)。三处调用方(root 点击/房间点击/容器点击)全部改走原语,
+   exploreRoom 删除;`revisitRoom`(环顾四周)= 对**所有**节点各执行一次
+   clickUpdate 并聚合去重——语义从此只有一个定义。
+2. **进度条单一写方**:乱跳根因 = 引擎 compiledObjective(已完成 beat/总 beat)
+   与 room02 update()(原生 6 状态计数)交替写同一对 `#doorStatus/#meter`。
+   修法:runtime 暴露 `hasCompiledLevel()`,room02 update() 在编译关卡存活期间
+   不写顶栏读数/进度条/roomState——引擎是唯一写方;纯原生房间行为不变。
+
+回归:prison 42/42(容器链+环顾最重)、bear 30/30、workbench 16/16、reset
+13/13、naming 10/10、save 10/10、wait_game 9/9、design_race 15/15。
+
+
+旧版四处(密码盘位数不足/密码错/摩斯错/无效组合)对整个 `#stage` 做 0.35s ±7px
+全屏震动。修订:
+
+1. **局部轻推**:引擎新增 `nudge(targets)`(targets 可为数组)——密码/摩斯错摇
+   **弹窗卡片**,无效组合摇**涉及的两张物件卡**(`nodeEl()` 按 data-id 查元素,
+   CSS.escape 防注入);`.shake-soft` 动画 0.22s ±3px,比全屏 ±7px/0.35s 温和得多。
+2. **全局限频 ≥900ms**:连输密码+连试组合也最多 0.9s 一次。
+3. **prefers-reduced-motion 不播**(CSS+JS 双保险)。
+4. **顺序坑(实测抓到)**:无效组合分支的 `roomRender()` 会重建节点元素——
+   nudge 必须放在渲染之后,否则刚加的类被抹掉(探针 nudged=[] 定位后已修)。
+
+回归:prison 42/42、bear 30/30(有效路径不受影响)、workbench 16/16、
+reset 13/13;行为探针:生成关里无效组合 → 两张物件卡获 shake-soft、
+#stage 无 shake 类。
+
 
 1. **清洗供应商可配**:赛马配置弹窗增「清洗使用」下拉(默认(本地代理/step)
    或任一自定义供应商,存 config.cleaning=label);`callStep` 头部经

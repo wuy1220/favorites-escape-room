@@ -774,6 +774,30 @@ function roomReset() {
   render();
 }
 
+/* 父子链锚点(2026-08-30 修复):**连线与出现动画共用同一支解析**。
+   此前两边各算各的——
+     · drawLinks 取「父子链上第一个**可见**的祖先」
+     · 飞入起点直接取 n.revealFromId || n.parent
+   编译关卡里所有物件的 parent 都是 compiled-level 标题板(常态 hidden,
+   摆在画布顶边 y=2),于是连线锚到了 root(画布中心),物件却从顶边飞出,
+   实测两端起点相差约 450px——「线从中间长出来、卡片从顶上砸下来」的割裂感。
+   现在统一走这里:先认显形源物件(照亮/再点一下源物件显形的物件从源物件飞出),
+   否则沿父子链上溯到第一个可见祖先;两边取到的一定是同一个节点。 */
+function originOf(n) {
+  if (!n) return null;
+  const rf = n.revealFromId && get(n.revealFromId);
+  if (rf && !rf.hidden && rf !== n) return rf;
+  let a = n.parent,
+    guard = 0;
+  while (a && guard++ < 16) {
+    const p = get(a);
+    if (!p) return null;
+    if (!p.hidden && p !== n) return p;
+    a = p.parent;
+  }
+  return null;
+}
+
 function roomRender() {
   const box = $('nodes');
   box.innerHTML = state.nodes
@@ -822,9 +846,6 @@ function roomRender() {
     .join('');
   /* 展开起点(11.13 #3):容器/父物件的内容物从父节点位置飞入自己的槽位,
      同容器兄弟按序交错出现;--fx/--fy/--fd 由 arrive 关键帧消费 */
-  const stageEl = $('stage');
-  const stageW = stageEl.clientWidth || 1;
-  const stageH = stageEl.clientHeight || 1;
   let arriveIdx = 0;
   let anyArrived = false;
   state.nodes.forEach((n) => {
@@ -832,12 +853,16 @@ function roomRender() {
     anyArrived = true;
     const el = document.querySelector('.node[data-id="' + n.id + '"]');
     if (!el) return;
-    /* 飞入起点 = 显形源物件(2026-08-31):照亮时从台灯飞向自己的槽位;
-       无源物件时原地浮现 */
-    const srcNode = (n.revealFromId || n.parent) && state.nodes.find((q) => q.id === (n.revealFromId || n.parent));
-    if (srcNode) {
-      el.style.setProperty('--fx', ((srcNode.x - n.x) / 100) * stageW + 'px');
-      el.style.setProperty('--fy', ((srcNode.y - n.y) / 100) * stageH + 'px');
+    /* 起飞点 = 连线的父端锚点(见 originOf 注释)。位移按两端**实测盒心**相减,
+       不再用百分比乘舞台尺寸——与连线端点(offsetLeft + 宽/2)逐像素对齐,
+       平移缩放、边界内缩都不会让两者错开。取不到锚点(如房间根)时原地浮现。 */
+    const srcNode = originOf(n);
+    const srcEl = srcNode && document.querySelector('.node[data-id="' + srcNode.id + '"]');
+    if (srcEl && srcEl !== el) {
+      const dx = srcEl.offsetLeft + srcEl.offsetWidth / 2 - (el.offsetLeft + el.offsetWidth / 2);
+      const dy = srcEl.offsetTop + srcEl.offsetHeight / 2 - (el.offsetTop + el.offsetHeight / 2);
+      el.style.setProperty('--fx', dx + 'px');
+      el.style.setProperty('--fy', dy + 'px');
     }
     el.style.setProperty('--fd', arriveIdx * 70 + 'ms');
     arriveIdx++;
@@ -848,6 +873,41 @@ function roomRender() {
   if (anyArrived) {
     const hf = document.getElementById('hintFloat');
     if (hf) hf.classList.add('hidden');
+    /* 新显形物件可能落在已打开的详情卡下方(2026-08-31):开卡时的四向避让只看过
+       当时的节点,后显形的物件恰好被卡片盖住时,点击会先命中卡片宿主——入口卡
+       还会把它当成环视,物件的响应被吞(资料室关实测:规则卡落在入口卡下)。
+       飞入动画落定后复检一次,有覆盖就清掉该宿主的方向记忆并重新避让;
+       重避让后仍覆盖则收卡兜底。不在动画中途测量(transform 未归零,盒坐标不可信)——
+       复检延时取 1500ms:飞入动画 0.7s + 每节点 70ms 交错,12 物件内必然全部落定。 */
+    if (state.activePop) {
+      const hostId = state.activePop;
+      setTimeout(() => {
+        if (state.activePop !== hostId) return;
+        const host = document.querySelector('.node[data-id="' + hostId + '"]');
+        const pop = host && host.querySelector('.node-pop');
+        if (!host || !pop) return;
+        const coversNode = () => {
+          const pr = pop.getBoundingClientRect();
+          return state.nodes.some((n) => {
+            if (n.hidden || n.id === hostId) return false;
+            const el = document.querySelector('.node[data-id="' + n.id + '"]');
+            if (!el) return false;
+            const nr = el.getBoundingClientRect();
+            return (
+              nr.left < pr.right && nr.right > pr.left && nr.top < pr.bottom && nr.bottom > pr.top
+            );
+          });
+        };
+        if (!coversNode()) return;
+        state.popSide = state.popSide || {};
+        delete state.popSide[hostId];
+        placePops();
+        if (coversNode()) {
+          state.activePop = null;
+          roomRender();
+        }
+      }, 1500);
+    }
   }
   /* 出现/变化标记延到下一帧再清(2026-08-30 修复):
      一次点击里 roomRender 常被连续调用 2~3 次(inspect() 内部一次 + 末尾再显式
@@ -1321,9 +1381,18 @@ function roomObjective() {
 }
 function update() {
   const count = ROOM_PROGRESS.filter((x) => state.clues.has(x)).length;
-  $('doorStatus').textContent = count + ' / 6 个状态';
-  $('meter').style.width = (count / 6) * 100 + '%';
-  $('roomState').textContent = count === 6 ? '出口已响应' : count ? '房间在变化' : '静止';
+  /* 进度条单一写方(2026-08-31):编译关卡在跑时,顶栏读数/进度条/房间状态由引擎
+     (已完成 beat / 总 beat)唯一负责——原生 6 状态计数不再插写,消灭两套数值跳变 */
+  const compiledLive = !!(
+    window.__favoriteRoomRuntime &&
+    window.__favoriteRoomRuntime.hasCompiledLevel &&
+    window.__favoriteRoomRuntime.hasCompiledLevel()
+  );
+  if (!compiledLive) {
+    $('doorStatus').textContent = count + ' / 6 个状态';
+    $('meter').style.width = (count / 6) * 100 + '%';
+    $('roomState').textContent = count === 6 ? '出口已响应' : count ? '房间在变化' : '静止';
+  }
   [...$('door').querySelectorAll('.door-locks i')].forEach((x, i) =>
     x.classList.toggle('on', i < count),
   );
@@ -1494,32 +1563,117 @@ document.querySelectorAll('[data-ending]').forEach(
     }),
 );
 
+/* 引导线(2026-08-31 重构):线元素按「父→子」键持久复用,不再每次绘制全量重建——
+   新线淡入 0.5s(与子节点 .arrive 0.5s 同拍),端点隐藏/用掉时淡出;平移缩放的
+   高频重绘只更新坐标,不再打断过渡。 */
+const linkEls = new Map();
+const linkTweens = new Map();
+let linkTicker = 0;
 function drawLinks() {
   const svg = $('links');
-  svg.innerHTML = '';
-  const pairs = [];
+  if (!svg) return;
+  if (svg.childElementCount === 0) {
+    linkEls.clear();
+    linkTweens.clear();
+  } /* 外部清空画布时同步登记表 */
+  const want = new Map();
   state.nodes.forEach((n) => {
-    if (!n.parent || n.hidden || n.used) return;
-    let a = n.parent,
-      guard = 0;
-    while (a && guard++ < 12) {
-      const p = get(a);
-      if (p && !p.hidden) break;
-      a = p ? p.parent : null;
-    }
-    if (a) pairs.push([a, n.id]);
-  });
-  pairs.forEach(([a, b]) => {
-    const x = document.querySelector(`[data-id="${a}"]`),
-      y = document.querySelector(`[data-id="${b}"]`);
+    if (n.hidden || n.used) return;
+    /* 父端锚点与物件飞入起点同为 originOf(2026-08-30):见函数处注释 */
+    const p = originOf(n);
+    if (!p) return;
+    const a = p.id;
+    const x = document.querySelector(`.node[data-id="${a}"]`),
+      y = document.querySelector(`.node[data-id="${n.id}"]`);
     if (!x || !y) return;
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', x.offsetLeft + x.offsetWidth / 2);
-    line.setAttribute('y1', x.offsetTop + x.offsetHeight / 2);
-    line.setAttribute('x2', y.offsetLeft + y.offsetWidth / 2);
-    line.setAttribute('y2', y.offsetTop + y.offsetHeight / 2);
-    svg.appendChild(line);
+    want.set(a + '→' + n.id, {
+      x1: x.offsetLeft + x.offsetWidth / 2,
+      y1: x.offsetTop + x.offsetHeight / 2,
+      x2: y.offsetLeft + y.offsetWidth / 2,
+      y2: y.offsetTop + y.offsetHeight / 2,
+      /* 子节点的交错延迟:线的生长与节点飞入同时开始、同拍结束 */
+      fd: parseFloat((y.style && y.style.getPropertyValue('--fd')) || '0') || 0,
+    });
   });
+  linkEls.forEach((el, key) => {
+    if (!want.has(key)) el.classList.add('link-hidden'); /* 淡出停放,再现时淡入 */
+  });
+  want.forEach((w, key) => {
+    let el = linkEls.get(key);
+    const isNew = !el;
+    if (!el) {
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      /* 新生连线不再淡入(2026-08-30):它的起始长度就是 0(端点停在父锚点),
+         本身不存在"凭空出现"的突兀;再叠一层 0.5s 淡入,恰好把"从父锚点被孩子
+         拉出来"的这 0.5s 盖住——实测 144ms 时线只有 0.3 不透明度,玩家看到的
+         就只剩淡入,和节点飞入对不上拍。淡入只留给 link-hidden 后重新出现的线。 */
+      svg.appendChild(el);
+      linkEls.set(key, el);
+    }
+    el.classList.remove('link-hidden');
+    el.setAttribute('x1', w.x1);
+    el.setAttribute('y1', w.y1);
+    if (!linkTweens.has(el)) {
+      el.setAttribute('x2', w.x2);
+      el.setAttribute('y2', w.y2);
+    }
+    if (isNew && typeof w.fd === 'number') {
+      /* 生长同步(2026-08-31):子节点沿「父→槽位」向量飞入(0.5s spring,
+         --fd 交错)——线沿**同一向量**从父锚点同步生长,像被孩子拉出来。
+         WAAPI 不支持 line 的 x2/y2 几何属性(关键帧被静默丢弃),故手写补间。 */
+      linkTweens.set(el, {
+        fx: w.x1,
+        fy: w.y1,
+        tx: w.x2,
+        ty: w.y2,
+        start: performance.now(),
+        delay: w.fd,
+        dur: 500,
+      });
+      el.setAttribute('x2', w.x1);
+      el.setAttribute('y2', w.y1); /* delay 段停在父锚点 */
+      startLinkTicker();
+    }
+  });
+  /* --ease-spring 同款缓动:cubic-bezier(0.34,1.45,0.64,1) 求解(二分 x→t,取 y) */
+  function springAt(k) {
+    const x1 = 0.34,
+      y1 = 1.45,
+      x2 = 0.64,
+      y2 = 1;
+    const bx = (t) => 3 * t * (1 - t) * (1 - t) * x1 + 3 * t * t * (1 - t) * x2 + t * t * t;
+    const by = (t) => 3 * t * (1 - t) * (1 - t) * y1 + 3 * t * t * (1 - t) * y2 + t * t * t;
+    let lo = 0,
+      hi = 1,
+      t = k;
+    for (let i = 0; i < 14; i++) {
+      t = (lo + hi) / 2;
+      if (bx(t) < k) lo = t;
+      else hi = t;
+    }
+    return by(t);
+  }
+  function startLinkTicker() {
+    if (linkTicker) return;
+    const step = () => {
+      const now = performance.now();
+      linkTweens.forEach((t, el) => {
+        const elapsed = now - t.start - t.delay;
+        if (elapsed <= 0) {
+          el.setAttribute('x2', t.fx);
+          el.setAttribute('y2', t.fy);
+          return;
+        }
+        const k = Math.min(1, elapsed / t.dur),
+          e = springAt(k);
+        el.setAttribute('x2', t.fx + (t.tx - t.fx) * e);
+        el.setAttribute('y2', t.fy + (t.ty - t.fy) * e);
+        if (k >= 1) linkTweens.delete(el);
+      });
+      linkTicker = linkTweens.size ? requestAnimationFrame(step) : 0;
+    };
+    linkTicker = requestAnimationFrame(step);
+  }
 }
 
 /* ---------------- 画布视图 ---------------- */

@@ -1021,21 +1021,16 @@
      入口是工具条上的「环顾四周」按钮(以及点房间/场景节点),因为节点经常被物件网格盖住,
      点击不可靠。容器里未开封的物件不算"发现",仍要先打开那个容器。 */
   function revisitRoom() {
+    /* 环顾四周 = 对**所有**节点各执行一次点击更新(2026-08-31 语义统一):
+       每个节点只贡献它的下一级就绪子节点;未开启容器不代开。 */
     const found = [];
-    state.nodes.forEach(function (m) {
-      if (m.hidden !== true || !m.revealReady) return;
-      const pc =
-        m.compiledItem &&
-        typeof m.parent === 'string' &&
-        m.parent.indexOf('compiled-container-') === 0
-          ? levelNode(m.parent)
-          : null;
-      if (pc && !pc.opened) return;
-      m.hidden = false;
-      m.revealed = true;
-      m.spawned = true;
-      m.justArrived = true;
-      found.push(m.name);
+    const seen = new Set();
+    state.nodes.forEach(function (n) {
+      clickUpdate(n).forEach(function (m) {
+        if (seen.has(m.id)) return;
+        seen.add(m.id);
+        found.push(m.name);
+      });
     });
     if (found.length) {
       log('你环顾四周——多了些什么:' + found.join('、') + '。', 'good');
@@ -1128,27 +1123,58 @@
   /* 走进一间房(2026-08-31 分层探索):首次点击房间节点时亮出其中可直接看见的
      物件(hidden 的仍等 reveals);之后点击退化为回看(revealReady 的隐藏物发现)。
      返回是否是首次走进。 */
-  function exploreRoom(z) {
-    if (!z || !compiled.hasScenes) return false;
-    if (compiled.roomExplored[z.id]) return false;
-    compiled.roomExplored[z.id] = true;
-    let any = false;
-    state.nodes
-      .filter((n) => n.compiledItem && n.compiledScene === z.id && !n.compiledResult)
-      .forEach(function (n) {
-        const was = n.hidden;
-        n.hidden = n.compiledHidden && !n.revealReady;
-        if (!n.hidden) {
-          n.spawned = true;
-          /* 11.13 #6:visible 必须同步 revealed=true,否则 compiled-hidden-item
-             的 opacity:0/pointer-events:none 仍挂在类上,物件"显形了却看不见" */
-          if (was || !n.revealed) n.revealed = true;
-          if (was) n.justArrived = true;
-          any = true;
-        }
+  /* 「点击更新」原语(2026-08-31 理清环顾四周/回访,需求方裁定):
+     对节点 n 执行一次点击更新,只显形它的**下一级就绪子节点**,返回新现形节点。
+     三种形态:根/入口=直接挂在根上的就绪物;房间(zone)=首次走进亮出可见物件、
+     之后=就绪隐藏物;物件/容器=就绪内容物(parent 挂靠或 revealFrom 指向)——
+     **未开启的容器不由环顾代开**,必须玩家自己点(开柜才算发现)。 */
+  function clickUpdate(n) {
+    const found = [];
+    if (!n || !compiled) return found;
+    const reveal = (m) => {
+      const was = m.hidden;
+      m.hidden = false;
+      m.revealed = true;
+      m.spawned = true;
+      /* 11.13 #6:visible 必须同步 revealed=true,否则 compiled-hidden-item
+         的 opacity:0/pointer-events:none 仍挂在类上,物件"显形了却看不见" */
+      if (was || !m.revealed) m.revealed = true;
+      if (was) m.justArrived = true;
+      found.push(m);
+    };
+    if ((n.id === 'root' && compiled.rootMode) || n.id === 'compiled-level') {
+      state.nodes.forEach((m) => {
+        if (m.hidden && m.revealReady && (m.parent === n.id || m.parent === 'compiled-level'))
+          reveal(m);
       });
-    log('你走进「' + (z.name || '房间') + '」——' + (any ? '打量里面的摆设。' : '里面空荡荡的。'), 'good');
-    return true;
+      return found;
+    }
+    if (n.compiledScene && n.kind && n.kind.includes('zone')) {
+      const first = !compiled.roomExplored[n.id];
+      if (first) compiled.roomExplored[n.id] = true;
+      state.nodes.forEach((m) => {
+        if (!m.compiledItem || m.compiledResult || m.compiledScene !== n.id) return;
+        if (first && !m.compiledHidden && m.hidden) {
+          reveal(m);
+          return;
+        }
+        if (m.hidden && m.revealReady) reveal(m);
+      });
+      return found;
+    }
+    if (n.compiledItem || n.compiledResult) {
+      if (n.compiledContainer && !n.opened) return found; /* 环顾不代开容器 */
+      state.nodes.forEach((m) => {
+        if (
+          m.hidden &&
+          m.revealReady &&
+          m.compiledHidden &&
+          (m.parent === n.id || m.revealFromId === n.id)
+        )
+          reveal(m);
+      });
+    }
+    return found;
   }
 
   /* ---------- 场景推进:亮出第 si 幕;前序幕收起 ---------- */
@@ -1241,17 +1267,7 @@
       /* 环视房间(2026-08-31 精确语义,需求方裁定):点节点只现形**它自己的、
          已就绪的直接子节点**——子节点的子节点(如挂钟容器里的断钟摆)与根无关,
          由回访所属容器显形。root 直接子节点:教程关的便签/抽屉等 */
-      const names = [];
-      const roomCard = n.id; /* root 与 compiled-level 都是入口卡:两 id 都视为房间根 */
-      state.nodes.forEach(function (m) {
-        if (m.hidden && m.revealReady && (m.parent === n.id || m.parent === 'compiled-level')) {
-          m.hidden = false;
-          m.revealed = true;
-          m.spawned = true;
-          m.justArrived = true;
-          names.push(m.name);
-        }
-      });
+      const names = clickUpdate(n).map((m) => m.name); /* 只现形自己的下一级就绪子节点 */
       if (names.length)
         log('环视「' + (n.name || '房间') + '」——多了些什么:' + names.join('、') + '。', 'good');
       action();
@@ -1264,20 +1280,9 @@
     /* 场景节点:首次点击=走进(亮出其中可直接看见的物件);之后=回看,
        发现 reveal 就绪的隐藏物件 */
     if (n.compiledScene && n.kind && n.kind.includes('zone')) {
-      const firstStep = exploreRoom(n);
+      const firstStep = !compiled.roomExplored[n.id];
+      const found = clickUpdate(n).map((m) => m.name); /* 首次=走进亮可见物,之后=就绪隐藏物 */
       inspect(n);
-      const found = [];
-      state.nodes.forEach(function (m) {
-        /* 2026-08-31 修复:zone 节点的 compiledScene 是布尔标记,物件的才是场景 id——
-           旧比较恒 false,beat 显形的隐藏物在「先逛房、后解谜」流程里永远不再出现 */
-        if (m.compiledItem && m.hidden && m.revealReady && m.compiledScene === n.id) {
-          m.hidden = false;
-          m.revealed = true;
-          m.spawned = true;
-          m.justArrived = true;
-          found.push(m.name);
-        }
-      });
       if (found.length)
         log('回看「' + n.name + '」——多了些什么:' + found.join('、') + '。', 'good');
       if (compiled.hasScenes && !firstStep) {
@@ -1526,8 +1531,8 @@
       drawLinks();
       return true;
     }
-    /* --- 错误组合:可恢复反馈(局部轻推两张物件卡,不再全屏震动) --- */
-    nudge([nodeEl(a && a.id), nodeEl(b && b.id)]);
+    /* --- 错误组合:可恢复反馈(局部轻推两张物件卡,不再全屏震动);
+         轻推必须放在 roomRender 之后——重渲染会重建节点元素,先推会被抹掉 --- */
     toast('这两个东西放在一起没有反应。');
     log(
       '"' +
@@ -1539,6 +1544,7 @@
     );
     action();
     roomRender();
+    nudge([nodeEl(a && a.id), nodeEl(b && b.id)]);
     return true;
   }
 
@@ -1982,6 +1988,9 @@
        经此公开入口调用(环顾四周与提示合并后的唯一空间回访通道) */
     lookAround: function () {
       revisitRoom();
+    },
+    hasCompiledLevel: function () {
+      return !!compiled; /* 进度条单一写方守卫:编译关卡在跑时原生 HUD 不再写 meter */
     },
     snapshot: function () {
       return compiled

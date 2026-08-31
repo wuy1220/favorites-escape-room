@@ -1,295 +1,329 @@
 {
- "records": [],
- "controlledIds": [
-  "tb-clip",
-  "tb-note",
-  "tb-tutorial",
-  "tb-desk",
-  "tb-lock1",
-  "tb-lock2",
-  "tb-installer",
-  "tb-badge"
- ],
- "items": [
-  {
-   "id": "tb-clip",
-   "title": "知乎专栏剪报",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "【事实】剪报路径印着:/p/2026071811"
-  },
-  {
-   "id": "tb-note",
-   "title": "少数派效率卡",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "【事实】效率卡编号印着:/post/83763—"
-  },
-  {
-   "id": "tb-tutorial",
-   "title": "Obsidian 教程页",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "【网页内容】菜鸟教程写着:Obsidian 基于"
-  },
-  {
-   "id": "tb-desk",
-   "title": "知识库底座",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "底座上有一个凹槽。把安装盘放进去,知识库就建成了"
-  },
-  {
-   "id": "tb-lock1",
-   "title": "年份锁",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "底座的年份锁:四位数字。剪报路径的开头就是答案。"
-  },
-  {
-   "id": "tb-lock2",
-   "title": "编号锁",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "底座的编号锁:三位数字。效率卡的编号就是答案。"
-  },
-  {
-   "id": "tb-installer",
-   "title": "Obsidian 安装盘",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "银色安装盘:Obsidian——Sharpen "
-  },
-  {
-   "id": "tb-badge",
-   "title": "金色档案盒",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "备份完成的金色档案盒。把它带出房间,交付给出口。"
-  }
- ],
- "level": {
-  "id": "level-demo-toolbox",
-  "title": "春日工具箱 · 知识库建成之夜",
-  "premise": "2025 年 4 月,你决定给自己的知识建一座房子。工具桌上摊着教程页和效率卡,底座上挂着两把密码锁——一个数字来自剪报的路径,一个来自效率卡的编号。",
-  "objective": "读剪报与效率卡拿数字;开年份锁取安装盘;装上 Obsidian 建成知识库;开编号锁完成备份;把备份档案拖到出口交付。",
-  "targetMinutes": 8,
-  "selectedItemIds": [
-   "tb-clip",
-   "tb-note",
-   "tb-tutorial",
-   "tb-desk",
-   "tb-lock1",
-   "tb-lock2",
-   "tb-installer",
-   "tb-badge"
+  "records": [],
+  "controlledIds": [
+    "tb-clip",
+    "tb-card-obs",
+    "tb-card-algo",
+    "tb-card-js",
+    "tb-manual",
+    "tb-gate",
+    "tb-shelf",
+    "tb-desk",
+    "tb-note"
   ],
-  "containers": [],
   "items": [
-   {
-    "id": "tb-clip",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "知乎专栏剪报",
-    "sceneName": "知乎专栏剪报",
-    "reason": "【事实】剪报路径印着:/p/2026071811813643264——开头的年份 2026,是年份锁的密码。",
-    "hidden": false
-   },
-   {
-    "id": "tb-note",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "少数派效率卡",
-    "sceneName": "少数派效率卡",
-    "reason": "【事实】效率卡编号印着:/post/83763——后三位 763,是编号锁的密码。",
-    "hidden": false
-   },
-   {
-    "id": "tb-tutorial",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "Obsidian 教程页",
-    "sceneName": "Obsidian 教程页",
-    "reason": "【网页内容】菜鸟教程写着:Obsidian 基于 Markdown 文件构建个人知识库,本地存储。教程页就是安装指南。",
-    "hidden": false
-   },
-   {
-    "id": "tb-desk",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "知识库底座",
-    "sceneName": "知识库底座",
-    "reason": "底座上有一个凹槽。把安装盘放进去,知识库就建成了。",
-    "hidden": false
-   },
-   {
-    "id": "tb-lock1",
-    "role": "lock",
-    "roleLabel": "锁",
-    "title": "年份锁",
-    "sceneName": "年份锁",
-    "reason": "底座的年份锁:四位数字。剪报路径的开头就是答案。",
-    "hidden": false
-   },
-   {
-    "id": "tb-lock2",
-    "role": "lock",
-    "roleLabel": "锁",
-    "title": "编号锁",
-    "sceneName": "编号锁",
-    "reason": "底座的编号锁:三位数字。效率卡的编号就是答案。",
-    "hidden": false
-   },
-   {
-    "id": "tb-installer",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "Obsidian 安装盘",
-    "sceneName": "Obsidian 安装盘",
-    "reason": "银色安装盘:Obsidian——Sharpen your thinking。装上教程页,知识库就建成了。",
-    "hidden": true,
-    "container": "tb-desk"
-   },
-   {
-    "id": "tb-badge",
-    "role": "reward",
-    "roleLabel": "结果",
-    "title": "金色档案盒",
-    "sceneName": "金色档案盒",
-    "reason": "备份完成的金色档案盒。把它带出房间,交付给出口。",
-    "hidden": true
-   }
+    {
+      "id": "tb-clip",
+      "title": "素材夹",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "牛皮纸夹里滑出几张打印卡。点击打开素材夹。"
+    },
+    {
+      "id": "tb-card-obs",
+      "title": "宣传卡 · 笔记库",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "卡上印着一句英文标语,下面还有一行中文小字。"
+    },
+    {
+      "id": "tb-card-algo",
+      "title": "宣传卡 · 算法书",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "卡上印着算法教程的标语,角落画着一个会动的小人。"
+    },
+    {
+      "id": "tb-card-js",
+      "title": "宣传卡 · 语言书",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "卡上印着语言课程的介绍,背面空白,像还有下文。"
+    },
+    {
+      "id": "tb-manual",
+      "title": "入库规则卡",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "馆长手书:口令与标签的取法都写在上面。"
+    },
+    {
+      "id": "tb-gate",
+      "title": "库门文字屏",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "笔记库的库门没有锁孔,只有一块文字输入屏。"
+    },
+    {
+      "id": "tb-shelf",
+      "title": "书架标签屏",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书架侧面嵌着一块标签屏,库门开了它才通电。"
+    },
+    {
+      "id": "tb-desk",
+      "title": "书桌",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "空书桌等着建成仪式。"
+    },
+    {
+      "id": "tb-note",
+      "title": "藏书票",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一枚烫金藏书票,票面上印着『我的第一座笔记库』。"
+    }
   ],
-  "beats": [
-   {
-    "id": "t1",
-    "title": "读知乎剪报",
-    "action": "inspect",
-    "uses": [
-     "tb-clip"
+  "level": {
+    "id": "level-demo-toolbox",
+    "title": "春日工具箱 · 知识库建成之夜",
+    "premise": "2025 年 4 月的春夜,你决定把散落各处的收藏整理成一座私人笔记库。素材夹里的几张打印卡还带着打印机的余温——库门和书架都不认钥匙,只认卡片上的原话。",
+    "objective": "打开素材夹,读宣传卡与入库规则卡,推导库门口令与书架标签,取出藏书票插上书桌,建成你的笔记库。",
+    "targetMinutes": 12,
+    "selectedItemIds": [
+      "tb-clip",
+      "tb-card-obs",
+      "tb-card-algo",
+      "tb-card-js",
+      "tb-manual",
+      "tb-gate",
+      "tb-shelf",
+      "tb-desk",
+      "tb-note"
     ],
-    "requires": [],
-    "product": "细读过的剪报"
-   },
-   {
-    "id": "t2",
-    "title": "读少数派效率卡",
-    "action": "inspect",
-    "uses": [
-     "tb-note"
+    "containers": [
+      {
+        "id": "tb-clip",
+        "name": "素材夹",
+        "desc": "牛皮纸夹里滑出几张打印卡。点击打开素材夹。",
+        "hidden": false
+      }
     ],
-    "requires": [],
-    "product": "细读过的效率卡"
-   },
-   {
-    "id": "t3",
-    "title": "读 Obsidian 教程页",
-    "action": "inspect",
-    "uses": [
-     "tb-tutorial"
+    "items": [
+      {
+        "id": "tb-clip",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "素材夹",
+        "sceneName": "素材夹",
+        "reason": "牛皮纸夹里滑出几张打印卡。点击打开素材夹,把卡都翻一遍。",
+        "hidden": false
+      },
+      {
+        "id": "tb-card-obs",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "宣传卡 · 笔记库",
+        "sceneName": "宣传卡 · 笔记库",
+        "reason": "【网页内容】卡上印着那句英文标语:Sharpen your thinking。下面还有一行中文小字:把思想磨得更锋利。",
+        "hidden": true,
+        "container": "tb-clip"
+      },
+      {
+        "id": "tb-card-algo",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "宣传卡 · 算法书",
+        "sceneName": "宣传卡 · 算法书",
+        "reason": "【网页内容】卡上印着:动画图解、一键运行的数据结构与算法教程。角落画着一个会动的小人在排序。",
+        "hidden": true,
+        "container": "tb-clip"
+      },
+      {
+        "id": "tb-card-js",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "宣传卡 · 语言书",
+        "sceneName": "宣传卡 · 语言书",
+        "reason": "【网页内容】卡上印着:主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。背面空白,像还有下文——可惜规则卡只提到另外两张。",
+        "hidden": true,
+        "container": "tb-clip"
+      },
+      {
+        "id": "tb-manual",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "入库规则卡",
+        "sceneName": "入库规则卡",
+        "reason": "【规则页】馆长手书:入库口令 = 笔记库标语去掉第一个词;书架顶层标签 = 算法书标语的头一个词。口令与标签都对上,库才算建成。",
+        "hidden": true,
+        "container": "tb-clip"
+      },
+      {
+        "id": "tb-gate",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "库门文字屏",
+        "sceneName": "库门文字屏",
+        "reason": "笔记库的库门没有锁孔,只有一块文字输入屏,屏上闪烁着一行提示:请输入入库口令。",
+        "hidden": false
+      },
+      {
+        "id": "tb-shelf",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "书架标签屏",
+        "sceneName": "书架标签屏",
+        "reason": "书架侧面嵌着一块标签屏:请输入顶层标签。库门开了它才通电。",
+        "hidden": false
+      },
+      {
+        "id": "tb-desk",
+        "role": "transform",
+        "roleLabel": "结果",
+        "title": "书桌",
+        "sceneName": "书桌",
+        "reason": "空书桌等着建成仪式。把藏书票插上去,它就是笔记库的正门。",
+        "hidden": false
+      },
+      {
+        "id": "tb-note",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "藏书票",
+        "sceneName": "藏书票",
+        "reason": "一枚烫金藏书票,票面上印着『我的第一座笔记库』。该把它插上书桌了。",
+        "hidden": true
+      }
     ],
-    "requires": [],
-    "product": "读过的教程页"
-   },
-   {
-    "id": "t4",
-    "title": "开年份锁",
-    "action": "password",
-    "uses": [
-     "tb-lock1"
+    "beats": [
+      {
+        "id": "t1",
+        "title": "打开素材夹",
+        "action": "inspect",
+        "uses": [
+          "tb-clip"
+        ],
+        "reveals": [
+          "tb-card-obs",
+          "tb-card-algo",
+          "tb-card-js",
+          "tb-manual"
+        ]
+      },
+      {
+        "id": "t2",
+        "title": "读笔记库宣传卡",
+        "action": "inspect",
+        "uses": [
+          "tb-card-obs"
+        ],
+        "requires": [
+          "t1"
+        ]
+      },
+      {
+        "id": "t3",
+        "title": "读入库规则卡",
+        "action": "inspect",
+        "uses": [
+          "tb-manual"
+        ],
+        "requires": [
+          "t1"
+        ]
+      },
+      {
+        "id": "t4",
+        "title": "输入库门口令",
+        "action": "password",
+        "uses": [
+          "tb-gate"
+        ],
+        "expected": "your thinking",
+        "requires": [
+          "t2",
+          "t3"
+        ]
+      },
+      {
+        "id": "t5",
+        "title": "读算法书宣传卡",
+        "action": "inspect",
+        "uses": [
+          "tb-card-algo"
+        ],
+        "requires": [
+          "t4"
+        ]
+      },
+      {
+        "id": "t6",
+        "title": "输入书架顶层标签",
+        "action": "password",
+        "uses": [
+          "tb-shelf"
+        ],
+        "expected": "动画图解",
+        "requires": [
+          "t3",
+          "t5"
+        ],
+        "reveals": [
+          "tb-note"
+        ]
+      },
+      {
+        "id": "t7",
+        "title": "插上藏书票",
+        "action": "combine",
+        "uses": [
+          "tb-note",
+          "tb-desk"
+        ],
+        "requires": [
+          "t6"
+        ],
+        "resultOn": "tb-desk",
+        "product": "建成的笔记库",
+        "consume": [
+          "tb-note"
+        ]
+      },
+      {
+        "id": "t8",
+        "title": "宣告笔记库建成",
+        "action": "deliver",
+        "uses": [
+          "result:t7"
+        ],
+        "requires": [
+          "t7"
+        ]
+      }
     ],
-    "requires": [
-     "t1"
+    "hints": [
+      "素材夹里的卡不止一张——每张都要读。",
+      "入库规则卡是两把锁的总说明,口令和标签的取法都写在上面。",
+      "库门口令要从笔记库宣传卡的原话里取,注意规则卡说的取法。",
+      "进了门再看算法书卡——书架标签同样从原话里取。",
+      "书架通了电,藏书票才有地方放。",
+      "藏书票插上书桌,笔记库就算建成,把成品交付出去。"
     ],
-    "expected": "2026",
-    "deriveFrom": [
-     "tb-clip"
-    ],
-    "product": "开着的年份锁",
-    "reveals": [
-     "tb-installer"
+    "mechanics": [
+      "inspect",
+      "password-text×2",
+      "combine"
     ]
-   },
-   {
-    "id": "t5",
-    "title": "装上安装盘",
-    "action": "combine",
-    "uses": [
-     "tb-installer",
-     "tb-desk"
-    ],
-    "requires": [
-     "t3",
-     "t4"
-    ],
-    "consume": [
-     "tb-installer"
-    ],
-    "resultOn": "tb-desk",
-    "product": "装好的底座"
-   },
-   {
-    "id": "t6",
-    "title": "开编号锁",
-    "action": "password",
-    "uses": [
-     "tb-lock2"
-    ],
-    "requires": [
-     "t2",
-     "t5"
-    ],
-    "expected": "763",
-    "deriveFrom": [
-     "tb-note"
-    ],
-    "product": "完成的备份"
-   },
-   {
-    "id": "t7",
-    "title": "备份交付",
-    "action": "deliver",
-    "uses": [
-     "result:t6"
-    ],
-    "requires": [
-     "t6"
-    ]
-   }
-  ],
-  "scenes": [],
-  "mechanics": [
-   "inspect",
-   "combine",
-   "password",
-   "deliver"
-  ],
-  "hints": [
-   "两张线索卡在明面上:剪报和效率卡。",
-   "剪报路径开头 2026 是年份锁密码;效率卡编号 763 是编号锁密码。",
-   "先开年份锁,取出安装盘;装上底座后,再开编号锁。",
-   "全部完成后,把备份档案拖到出口。"
-  ],
-  "validation": {
-   "valid": true,
-   "issues": []
-  },
-  "grounding": "demo"
- }
+  }
 }
