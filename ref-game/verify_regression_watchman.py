@@ -25,7 +25,12 @@ def wait_visible(page, sel, name, timeout=8000):
     except Exception as e:
         check(name, False, str(e))
 
+def settle(page):
+    # 2026-08-31:节点飞入动画期间不可点击(.node.arrive pe:none),交互前等全部落定
+    page.wait_for_function("() => !document.querySelector('.node.arrive')", timeout=5000)
+
 def click(page, sel):
+    settle(page)
     box = page.locator(sel).first.bounding_box()
     assert box, f"不可点击 {sel}"
     cx = box["x"] + box["width"]/2
@@ -33,6 +38,7 @@ def click(page, sel):
     page.mouse.click(cx, cy); time.sleep(0.4)
 
 def drag(page, src_sel, dst_sel):
+    settle(page)
     src = page.locator(src_sel).first; dst = page.locator(dst_sel).first
     sb = src.bounding_box(); db = dst.bounding_box()
     assert sb and db, f"不可拖拽 {src_sel} -> {dst_sel}"
@@ -59,6 +65,8 @@ def main():
         page.set_input_files("#homeImportFile", PUZZLE)
         wait_visible(page, '[data-id="root"]', "根节点出现", 10000)
         click(page, '[data-id="root"]')
+        # 2026-08-31:节点飞入动画期间不可点击(.node.arrive pe:none),等全部落定再交互
+        page.wait_for_function("() => !document.querySelector('.node.arrive')", timeout=5000)
         no_result_nodes(page, "开局")
 
         # scene-1 值班台: 检查三件 + 组合 + 顺序

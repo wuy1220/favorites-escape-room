@@ -1249,6 +1249,10 @@ h1 {
 .node.arrive {
   animation: arrive 0.5s var(--ease-spring) both;
   animation-delay: var(--fd, 0ms);
+  /* 2026-08-31 修复:飞入中的节点位置未定,不可点击——否则开局连点会把点击
+     落在恰好飞过目标槽位的别的节点上(实测 watchman 检查步被路过节点吞掉)。
+     动画结束由 room02 在 animationend 摘掉 .arrive,落定即可点。 */
+  pointer-events: none;
 }
 /* 11.13 #5:arrive 与 changed 同帧并存时,animation 简写会整条互相覆盖——
    用逗号列表让两个动画并行(出现 + 变身脉冲) */
@@ -1295,8 +1299,11 @@ h1 {
   flex: none;
   background: rgba(130, 163, 189, 0.1);
 }
-/* 节点详情卡(2026-08-29 就地化):可交互、可选中、带关闭;
-   不再只是只读气泡——看详情不用离开现场 */
+/* 节点详情卡(2026-08-29 就地化):可交互、带关闭;不再只是只读气泡——看详情不用离开现场。
+   2026-08-31 修复(与 pop-open 抬层的联动):卡片本体 pointer-events:none——详情卡打开时
+   宿主被抬到相邻节点之上,若卡片可点,它会吞掉盖住区域里其他节点的点击(实测 watchman
+   连续检查三件素材时,前一卡正压在下一节点上,点击被吞导致 inspect 缺步、组合失败)。
+   穿透后点卡片=点它下面的节点(点击本身就会关卡,原行为不变);关闭按钮与链接保留可点。 */
 .node-pop {
   position: absolute;
   left: 50%;
@@ -1313,10 +1320,14 @@ h1 {
   line-height: 1.6;
   z-index: var(--z-pop);
   text-align: left;
-  pointer-events: auto;
-  user-select: text;
+  pointer-events: none;
+  user-select: none;
   cursor: default;
   box-shadow: var(--shadow-2), var(--shadow-paper);
+}
+.node-pop .np-close,
+.node-pop .np-link {
+  pointer-events: auto;
 }
 .node-pop.below {
   bottom: auto;

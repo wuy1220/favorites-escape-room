@@ -32,11 +32,17 @@ def gone(page, sel, name):
     vis = page.locator(sel).first.is_visible()
     check(name, not vis)
 
+def settle(page):
+    # 2026-08-31:节点飞入动画期间不可点击(.node.arrive pe:none),交互前等全部落定
+    page.wait_for_function("() => !document.querySelector('.node.arrive')", timeout=5000)
+
 def click(page, sel):
+    settle(page)
     box = page.locator(sel).first.bounding_box(); assert box, f"不可点击 {sel}"
     page.mouse.click(box["x"]+box["width"]/2, box["y"]+box["height"]/2); time.sleep(0.9)
 
 def drag(page, src_sel, dst_sel):
+    settle(page)
     src = page.locator(src_sel).first; dst = page.locator(dst_sel).first
     sb = src.bounding_box(); db = dst.bounding_box(); assert sb and db, f"不可拖拽 {src_sel}->{dst_sel}"
     sx, sy = sb["x"]+sb["width"]/2, sb["y"]+sb["height"]/2

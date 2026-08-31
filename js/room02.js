@@ -922,6 +922,21 @@ function roomRender() {
       dirty.forEach((n) => {
         n.justArrived = false;
         n.justChanged = false;
+        /* 2026-08-31 修复:.arrive 类此前一直滞留到下一次重渲染——飞入中的节点
+           位置未定却可被点击,开局连点会把点击落在恰好飞过的别的节点上
+           (实测 watchman 按序检查三件素材,第一步点击落到路过节点,inspect
+           缺步、组合失败)。改为 arrive 动画结束(animationend)即摘类,
+           配合 CSS 的 .node.arrive { pointer-events:none }:飞行中不可点、
+           落定即可点。changed 脉冲与点击无关,保持原样。 */
+        const el = document.querySelector('.node[data-id="' + n.id + '"]');
+        if (el && el.classList.contains('arrive')) {
+          el.addEventListener('animationend', function h(e) {
+            if (e.animationName === 'arrive') {
+              el.classList.remove('arrive');
+              el.removeEventListener('animationend', h);
+            }
+          });
+        }
       });
     });
   }

@@ -4,15 +4,20 @@
     "tb-clip",
     "tb-card-obs",
     "tb-card-js",
-    "tb-note-folded",
+    "tb-paper1",
+    "tb-paper2",
+    "tb-letter",
+    "tb-desk",
     "tb-lamp",
     "tb-panelbase",
-    "tb-note-wall1",
-    "tb-note-wall2",
+    "tb-calendar",
+    "tb-front",
     "tb-gate",
     "tb-shelf",
-    "tb-desk",
-    "tb-ticket"
+    "tb-wall",
+    "tb-note-wall1",
+    "tb-note-wall2",
+    "tb-letter-final"
   ],
   "items": [
     {
@@ -22,7 +27,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "牛皮纸夹里滑出几张打印卡和一张皱便签。"
+      "description": "牛皮纸夹里滑出几张打印卡,夹层里还掉出两张撕碎的纸片。"
     },
     {
       "id": "tb-card-obs",
@@ -43,13 +48,40 @@
       "description": "卡上印着语言课程的介绍,背面空白。"
     },
     {
-      "id": "tb-note-folded",
-      "title": "皱便签",
+      "id": "tb-paper1",
+      "title": "纸片 · 上",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "守库人的字,折了又折。"
+      "description": "撕碎的纸片,锯齿边缘。"
+    },
+    {
+      "id": "tb-paper2",
+      "title": "纸片 · 下",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "撕碎的纸片,锯齿边缘。"
+    },
+    {
+      "id": "tb-letter",
+      "title": "完整的信",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "两张纸片拼成的信。"
+    },
+    {
+      "id": "tb-desk",
+      "title": "书桌",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书房正中的旧书桌。"
     },
     {
       "id": "tb-lamp",
@@ -58,7 +90,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书桌上的旧台灯,开关拨了没反应,底座敞着。"
+      "description": "书桌上的台灯,被人剪断了线。"
     },
     {
       "id": "tb-panelbase",
@@ -70,22 +102,22 @@
       "description": "台灯底座里的三色接线和端子。"
     },
     {
-      "id": "tb-note-wall1",
-      "title": "灯下便签 · 口令",
+      "id": "tb-calendar",
+      "title": "台历",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "灯光下显出的一张便签。"
+      "description": "台历停在他离开的那天。"
     },
     {
-      "id": "tb-note-wall2",
-      "title": "灯下便签 · 标语",
+      "id": "tb-front",
+      "title": "正门",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "灯光下显出的另一张便签。"
+      "description": "笔记库的正门,门上是库门文字屏。"
     },
     {
       "id": "tb-gate",
@@ -94,7 +126,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "笔记库的库门,一块文字输入屏。"
+      "description": "库门的文字输入屏。"
     },
     {
       "id": "tb-shelf",
@@ -103,65 +135,97 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书架侧面的标签屏。"
+      "description": "书架侧面的标签屏,黑着。"
     },
     {
-      "id": "tb-desk",
-      "title": "书桌",
+      "id": "tb-wall",
+      "title": "守库人的墙",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "空书桌等着建成仪式。"
+      "description": "灯光够到的墙面,贴着两张便签。"
     },
     {
-      "id": "tb-ticket",
-      "title": "藏书票",
+      "id": "tb-note-wall1",
+      "title": "便签 · 口令",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "一枚烫金藏书票。"
+      "description": "守库人的字。"
+    },
+    {
+      "id": "tb-note-wall2",
+      "title": "便签 · 标签",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "守库人的字。"
+    },
+    {
+      "id": "tb-letter-final",
+      "title": "接任书",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "折成方胜的一页信纸。"
     }
   ],
   "level": {
     "id": "level-demo-toolbox",
     "title": "春日工具箱 · 守库人的遗愿",
-    "premise": "2025 年 4 月的春夜,你接手了守库人的旧书房。他留下一句话:『这间屋子的灯,是我亲手弄坏的——修好它,你就看得见我想让你看见的东西。库门只认原话,替我把这座库建成。』",
-    "objective": "读懂守库人的皱便签,把台灯的线接回各自的家;灯亮之后,顺着光显出的便签推导库门口令与书架标签,把藏书票插上书桌——替他把这座库建成。",
-    "targetMinutes": 12,
+    "premise": "2025 年 4 月的春夜,你接手了守库人的旧书房。屋里只点着一盏昏灯——台灯的线被人剪断了,剪口很整齐,像是有意的。素材夹里是他攒下的卡片,夹层里还掉出两张撕碎的纸片。他留过一句话:库门只认原话。",
+    "objective": "把撕碎的信拼起来,按信里的话把三根线接回各自的家;灯亮之后,跟着光去墙上找口令的规则,开库门、点书架,最后把台历翻到今天——接下他的委托。",
+    "targetMinutes": 14,
     "selectedItemIds": [
       "tb-clip",
       "tb-card-obs",
       "tb-card-js",
-      "tb-note-folded",
+      "tb-paper1",
+      "tb-paper2",
+      "tb-letter",
+      "tb-desk",
       "tb-lamp",
       "tb-panelbase",
-      "tb-note-wall1",
-      "tb-note-wall2",
+      "tb-calendar",
+      "tb-front",
       "tb-gate",
       "tb-shelf",
-      "tb-desk",
-      "tb-ticket"
+      "tb-wall",
+      "tb-note-wall1",
+      "tb-note-wall2",
+      "tb-letter-final"
     ],
     "containers": [
       {
         "id": "tb-clip",
         "name": "素材夹",
-        "desc": "牛皮纸夹里滑出几张打印卡和一张皱便签。点击打开素材夹。",
+        "desc": "牛皮纸夹里滑出几张打印卡,夹层里还掉出两张撕碎的纸片。点击打开素材夹。",
         "hidden": false
+      },
+      {
+        "id": "tb-desk",
+        "name": "书桌",
+        "desc": "书房正中的旧书桌,台面被擦得干干净净。点击走近书桌。",
+        "hidden": false
+      },
+      {
+        "id": "tb-front",
+        "name": "正门",
+        "desc": "笔记库的正门,门上是库门文字屏,侧边嵌着书架顶层标签屏。点击走近正门。",
+        "hidden": false
+      },
+      {
+        "id": "tb-wall",
+        "name": "守库人的墙",
+        "desc": "灯光够到的墙面——上面贴着两张便签,都是守库人的字。点击走近看。",
+        "hidden": true
       }
     ],
     "items": [
-      {
-        "id": "tb-clip",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "素材夹",
-        "sceneName": "素材夹",
-        "reason": "牛皮纸夹里滑出几张打印卡和一张皱便签。点击打开素材夹,都翻一遍。",
-        "hidden": false
-      },
       {
         "id": "tb-card-obs",
         "role": "clue",
@@ -178,19 +242,39 @@
         "roleLabel": "线索",
         "title": "宣传卡 · 语言书",
         "sceneName": "宣传卡 · 语言书",
-        "reason": "【网页内容】卡上印着:主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。背面空白——皱便签上找不着它的名字。",
+        "reason": "【网页内容】卡上印着:主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。背面空白——信里没提这张卡。",
         "hidden": true,
         "container": "tb-clip"
       },
       {
-        "id": "tb-note-folded",
+        "id": "tb-paper1",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "皱便签",
-        "sceneName": "皱便签",
-        "reason": "守库人的字,折了又折:『灯是我亲手弄坏的。三根线垂着,可每根线都有家——接回它钟面上的家,灯就亮。你看得见我想让你看见的东西。』",
+        "title": "纸片 · 上",
+        "sceneName": "纸片 · 上",
+        "reason": "撕碎的纸片,锯齿边缘还对得上另一半。上半写着:『三根线,三个钟面——』",
         "hidden": true,
         "container": "tb-clip"
+      },
+      {
+        "id": "tb-paper2",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "纸片 · 下",
+        "sceneName": "纸片 · 下",
+        "reason": "撕碎的纸片。下半的字迹接着上头,末尾一行被撕去了一半,只看得出『……墙上』两个字。",
+        "hidden": true,
+        "container": "tb-clip"
+      },
+      {
+        "id": "tb-letter",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "完整的信",
+        "sceneName": "完整的信",
+        "reason": "『三根线,三个钟面。我把每个钟面都调过了——你只要把线接回它们的家。别问为什么剪,灯亮之前,这屋里不该被看穿。灯亮之后,替我去看看墙上。都开好了,把台历翻到今天。』",
+        "hidden": true,
+        "auto": true
       },
       {
         "id": "tb-lamp",
@@ -198,7 +282,7 @@
         "roleLabel": "锁",
         "title": "台灯",
         "sceneName": "台灯",
-        "reason": "书桌上的旧台灯。底座敞开着,红、蓝、黄三根线断在半空,线头还崭新——是剪断的,不是烧断的。",
+        "reason": "书桌上的台灯。底座敞着,红、蓝、黄三根线断在半空,线头崭新——是剪断的,不是烧断的。",
         "hidden": false
       },
       {
@@ -207,28 +291,17 @@
         "roleLabel": "线索",
         "title": "底座端子盘",
         "sceneName": "底座端子盘",
-        "reason": "台灯底座里的三色端子,每个旁边嵌着一枚小钟面:红端子的钟面指着 3 点方向,蓝的指着 7 点,黄的指着 11 点。钟面是手绘的,和皱便签一个笔迹。",
+        "reason": "台灯底座里的三色端子,每个旁边嵌着一枚手绘小钟面:红端子的钟面指着 3 点方向,蓝的指着 7 点,黄的指着 11 点。笔迹和撕碎的信是同一个人。",
         "hidden": false
       },
       {
-        "id": "tb-note-wall1",
+        "id": "tb-calendar",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "灯下便签 · 口令",
-        "sceneName": "灯下便签 · 口令",
-        "reason": "灯光够到的地方,墙上贴着一张便签:『口令 = 笔记库标语去掉第一个词。那句英文是我最信的一句话,就在夹子的蓝卡上。』",
-        "hidden": true,
-        "auto": true
-      },
-      {
-        "id": "tb-note-wall2",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "灯下便签 · 标语",
-        "sceneName": "灯下便签 · 标语",
-        "reason": "另一张便签,边角泛黄:『顶层标签 = 算法书标语的头一个词。整句我抄在这儿:动画图解、一键运行的数据结构与算法教程。』",
-        "hidden": true,
-        "auto": true
+        "title": "台历",
+        "sceneName": "台历",
+        "reason": "台历停在他离开的那天。今天的页面折了一个角,像在等谁伸手。",
+        "hidden": false
       },
       {
         "id": "tb-gate",
@@ -246,31 +319,43 @@
         "title": "书架标签屏",
         "sceneName": "书架标签屏",
         "reason": "书架侧面嵌着一块标签屏:请输入顶层标签。屋里亮起来,它才通电。",
-        "hidden": false
+        "hidden": true,
+        "auto": true
       },
       {
-        "id": "tb-desk",
-        "role": "transform",
-        "roleLabel": "结果",
-        "title": "书桌",
-        "sceneName": "书桌",
-        "reason": "空书桌等着建成仪式。把藏书票插上去,它就是笔记库的正门。",
-        "hidden": false
+        "id": "tb-note-wall1",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "便签 · 口令",
+        "sceneName": "便签 · 口令",
+        "reason": "『口令 = 笔记库标语去掉第一个词。那句英文是我最信的一句话——就在素材夹的蓝卡上。』",
+        "hidden": true,
+        "container": "tb-wall"
       },
       {
-        "id": "tb-ticket",
-        "role": "tool",
-        "roleLabel": "工具",
-        "title": "藏书票",
-        "sceneName": "藏书票",
-        "reason": "一枚烫金藏书票,票面上印着『我的第一座笔记库』——守库人留到最后的东西。该把它插上书桌了。",
+        "id": "tb-note-wall2",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "便签 · 标签",
+        "sceneName": "便签 · 标签",
+        "reason": "『顶层标签 = 算法书标语的头一个词。整句我抄在下面:动画图解、一键运行的数据结构与算法教程。都开好了,把书桌上的台历翻到今天。』",
+        "hidden": true,
+        "container": "tb-wall"
+      },
+      {
+        "id": "tb-letter-final",
+        "role": "reward",
+        "roleLabel": "奖励",
+        "title": "接任书",
+        "sceneName": "接任书",
+        "reason": "折成方胜的一页信纸,展开来——『致接任人:这座库,从今晚起是你的了。书要一本一本读,灯要一晚一晚点。——守库人』",
         "hidden": true,
         "auto": true
       }
     ],
     "beats": [
       {
-        "id": "w1",
+        "id": "u1",
         "title": "打开素材夹",
         "action": "inspect",
         "uses": [
@@ -279,33 +364,67 @@
         "reveals": [
           "tb-card-obs",
           "tb-card-js",
-          "tb-note-folded"
+          "tb-paper1",
+          "tb-paper2"
         ]
       },
       {
-        "id": "w2",
-        "title": "读皱便签",
-        "action": "inspect",
+        "id": "u2",
+        "title": "把撕碎的信拼起来",
+        "action": "combine",
         "uses": [
-          "tb-note-folded"
+          "tb-paper1",
+          "tb-paper2"
         ],
         "requires": [
-          "w1"
+          "u1"
+        ],
+        "resultOn": "tb-paper1",
+        "product": "完整的信",
+        "consume": [
+          "tb-paper2"
+        ],
+        "reveals": [
+          "tb-letter"
         ]
       },
       {
-        "id": "w3",
+        "id": "u3",
+        "title": "读完整的信",
+        "action": "inspect",
+        "uses": [
+          "tb-letter"
+        ],
+        "requires": [
+          "u2"
+        ]
+      },
+      {
+        "id": "u4",
+        "title": "走近书桌",
+        "action": "inspect",
+        "uses": [
+          "tb-desk"
+        ],
+        "reveals": [
+          "tb-lamp",
+          "tb-panelbase",
+          "tb-calendar"
+        ]
+      },
+      {
+        "id": "u5",
         "title": "看底座端子盘",
         "action": "inspect",
         "uses": [
           "tb-panelbase"
         ],
         "requires": [
-          "w2"
+          "u4"
         ]
       },
       {
-        "id": "w4",
+        "id": "u6",
         "title": "把线接回钟面上的家",
         "action": "angle",
         "uses": [
@@ -323,40 +442,55 @@
           "黄线"
         ],
         "requires": [
-          "w2",
-          "w3"
+          "u3",
+          "u5"
         ],
         "resultOn": "tb-lamp",
         "product": "亮起的台灯",
+        "reveals": [
+          "tb-wall",
+          "tb-shelf"
+        ]
+      },
+      {
+        "id": "u7",
+        "title": "走到守库人的墙前",
+        "action": "inspect",
+        "uses": [
+          "tb-wall"
+        ],
+        "requires": [
+          "u6"
+        ],
         "reveals": [
           "tb-note-wall1",
           "tb-note-wall2"
         ]
       },
       {
-        "id": "w5",
-        "title": "读灯下便签·口令",
+        "id": "u8",
+        "title": "读便签·口令",
         "action": "inspect",
         "uses": [
           "tb-note-wall1"
         ],
         "requires": [
-          "w4"
+          "u7"
         ]
       },
       {
-        "id": "w6",
-        "title": "读灯下便签·标语",
+        "id": "u9",
+        "title": "读便签·标签",
         "action": "inspect",
         "uses": [
           "tb-note-wall2"
         ],
         "requires": [
-          "w4"
+          "u7"
         ]
       },
       {
-        "id": "w7",
+        "id": "u10",
         "title": "输入库门口令",
         "action": "password",
         "uses": [
@@ -364,17 +498,13 @@
         ],
         "expected": "your thinking",
         "requires": [
-          "w5",
-          "w1"
+          "u8"
         ],
         "resultOn": "tb-gate",
-        "product": "敞开的库门",
-        "reveals": [
-          "tb-ticket"
-        ]
+        "product": "敞开的库门"
       },
       {
-        "id": "w8",
+        "id": "u11",
         "title": "输入书架顶层标签",
         "action": "password",
         "uses": [
@@ -382,54 +512,56 @@
         ],
         "expected": "动画图解",
         "requires": [
-          "w6"
-        ]
+          "u9"
+        ],
+        "resultOn": "tb-shelf",
+        "product": "亮起顶层标签的书架"
       },
       {
-        "id": "w9",
-        "title": "插上藏书票",
-        "action": "combine",
+        "id": "u12",
+        "title": "把台历翻到今天",
+        "action": "inspect",
         "uses": [
-          "tb-ticket",
-          "tb-desk"
+          "tb-calendar"
         ],
         "requires": [
-          "w7",
-          "w8"
+          "u10",
+          "u11"
         ],
-        "resultOn": "tb-desk",
-        "product": "建成的笔记库",
-        "consume": [
-          "tb-ticket"
+        "resultOn": "tb-calendar",
+        "product": "翻到今天的台历",
+        "reveals": [
+          "tb-letter-final"
         ]
       },
       {
-        "id": "w10",
-        "title": "替守库人落成",
+        "id": "u13",
+        "title": "接下守库人的委托",
         "action": "deliver",
         "uses": [
-          "result:w9"
+          "tb-letter-final"
         ],
         "requires": [
-          "w9"
+          "u12"
         ]
       }
     ],
     "hints": [
-      "素材夹里的皱便签要展开读——台灯为什么坏,答案在里面。",
-      "底座端子盘上的小钟面,是每根线的『家』的方向。",
-      "红线 3 点、蓝线 7 点、黄线 11 点——钟面方向换算成表盘角度。",
-      "灯亮之后别急着走,光够得到的墙上多看两眼。",
-      "库门口令从笔记库卡的原话里取,取法在灯下便签上。",
+      "素材夹的夹层里掉了东西——两张纸片,锯齿对得上。",
+      "拼好的信里有灯的线索:线要接回『钟面上的家』。",
+      "书桌上就有那盏被剪断的台灯,端子盘上的小钟面是数据。",
+      "灯亮之后先别走——墙和标签屏,都会有反应。",
+      "库门口令从笔记库卡的原话里取,取法在便签上。",
       "书架标签的头一个词,守库人替你抄好了整句。",
-      "藏书票插上书桌,替他把这座库建成。"
+      "两把锁都开好了,就把台历翻到今天——信的最后一句。"
     ],
     "mechanics": [
       "inspect",
-      "angle(钟点→角度接线)",
-      "灯光显形(auto×2)",
+      "拼合(combine)",
+      "angle(钟面接线)",
+      "灯光后文(auto×2)",
       "password-text×2",
-      "combine"
+      "台历接任"
     ]
   }
 }

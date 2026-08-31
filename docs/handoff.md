@@ -7,6 +7,32 @@
 
 # 第一部分 · v7 架构(2026-08-27 深夜,当前生效)
 
+## 最新:2026-08-31 出口改「结束」:挂在交付物旁、点击即通关
+
+需求方两项反馈合并落地:①根节点处不要独立出口节点,把出口挂在出口交付物下,点击即完成;
+②文案换「结束/成功」——谜题已不局限于房间。
+
+- **编译期锚定**(engine.js):出口节点 parent 改为 deliver 步的目标物件节点
+  (uses[0] 为 result: 引用时解析到产物素材),坐标锚在其旁(+11,+9);解析失败退回
+  根层固定位。文案:名字「结束」、hint「所有步骤完成后,点击结束本次冒险」。
+- **三处揭示点收敛为 restDone 唯一口径**:revealAllRooms 不再随房间发现亮出出口;
+  levelStart 非 scenes 分支不再开场点亮出口(需求方实测 sample-puzzles 关卡开局
+  仍见出口的根因);restore 恢复时按 restDone 对齐出口可见性(不再无条件亮出)。
+  「结束」只在只剩交付步时出现在交付物旁,伴随出现动画。
+- **点击即结算**:compiledHandle 出口分支——done→ending;未 done 但其余步骤全部
+  完成时,点击直接补交 delivers 规则(clue、产物离场、finishIfDone→ending),
+  不再要求把产物拖到出口(compiledUse 的拖拽交付路径保留兼容)。
+- **连带修复(飞入动画拦截点击)**:watchman 回归暴露——节点飞入动画(.arrive)
+  期间位置未定却可被点击,开局连点会把点击落在恰好飞过目标槽位的别的节点上
+  (第一步 inspect 被路过节点吞掉)。修复:.node.arrive { pointer-events:none }
+  + room02 在 animationend(arrive)时摘除 DOM 上的 .arrive 类(类此前滞留到
+  下次重渲染);配套把 verify_prison/verify_bear/verify_regression_watchman 的
+  click/drag 助手加上落定等待。
+- 验证:监狱关全流程——开局无「结束」、全步完成时它出现在解锁的指纹锁旁、
+  点击即 done=true;教程关(常驻存档)开局同样无出口。回归:prison 42/42、
+  bear 30/30、watchman 20/20(两次)、smoke 全过。
+
+
 ## 最新:2026-08-31 移除「试玩固定样本」,只留新手教程
 
 - 主页 `homeFixedTest` 按钮、`loadSamplePuzzle` 函数及其 `__favoriteRoomHome` 导出全部

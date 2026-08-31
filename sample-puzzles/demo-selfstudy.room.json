@@ -211,6 +211,12 @@
         "name": "还书车 · 下层",
         "desc": "还书车的下层书架,也塞着书。点击翻一翻。",
         "hidden": false
+      },
+      {
+        "id": "rc-desk",
+        "name": "借阅台",
+        "desc": "借阅台空着,台面收拾得整整齐齐。点击走近借阅台。",
+        "hidden": false
       }
     ],
     "items": [
@@ -230,7 +236,8 @@
         "title": "守馆手册",
         "sceneName": "守馆手册",
         "reason": "【流程页】今晚归还批次:贴绿标的三本。流程:逐本放上扫描台——机器会出校验题,答案都在书自己的卡片里,答对才算受理。受理次序就是学习的次序:概述在前,主课程在中,算法进阶在后。全部受理后系统响铃,值班员自然会来。备注:章不外借,但他那个人,只认热茶。",
-        "hidden": true
+        "hidden": true,
+        "container": "rc-desk"
       },
       {
         "id": "rc-book1",
@@ -308,17 +315,9 @@
         "roleLabel": "工具",
         "title": "扫描台",
         "sceneName": "扫描台",
-        "reason": "借阅台旁的扫描台,指示灯待机闪烁。把书平放上去就能扫——但每扫一本,它都要先考你一道题。",
-        "hidden": false
-      },
-      {
-        "id": "rc-desk",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "借阅台",
-        "sceneName": "借阅台",
-        "reason": "借阅台空着,台面收拾得整整齐齐,后面虚掩着一扇小门,门缝里透出一点灯光。",
-        "hidden": false
+        "reason": "借阅台上的扫描台,指示灯待机闪烁。把书平放上去就能扫——但每扫一本,它都要先考你一道题。",
+        "hidden": true,
+        "container": "rc-desk"
       },
       {
         "id": "rc-npc",
@@ -336,8 +335,9 @@
         "roleLabel": "工具",
         "title": "保温壶",
         "sceneName": "保温壶",
-        "reason": "还书车旁的保温壶,摸着还温。守馆人走前泡的茶,一口没动。",
-        "hidden": false
+        "reason": "挂在下层书架车把上的保温壶,摸着还温。守馆人走前泡的茶,一口没动。",
+        "hidden": true,
+        "container": "rc-shelfb"
       },
       {
         "id": "rc-stamp",
@@ -356,7 +356,8 @@
         "title": "提货单",
         "sceneName": "提货单",
         "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交出去。",
-        "hidden": true
+        "hidden": true,
+        "container": "rc-desk"
       }
     ],
     "beats": [
@@ -368,11 +369,9 @@
           "rc-door"
         ],
         "reveals": [
-          "rc-manual",
-          "rc-scanner",
-          "rc-desk",
-          "rc-kettle",
-          "rc-ticket"
+          "rc-shelfa",
+          "rc-shelfb",
+          "rc-desk"
         ]
       },
       {
