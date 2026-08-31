@@ -4,6 +4,7 @@
    错误组合有反馈,依赖未满足时检查给出线索——密室而不是任务清单。 */
 (function () {
   let compiled = null;
+  const ROLE_OK = ['clue', 'tool', 'lock', 'transform', 'reward', 'red_herring'];
   /* 东八区显示(2026-08-31):+8h 后读 ISO,与机器时区无关;存储保持 ISO UTC */
   const whenLabel = (iso) => {
     const d = new Date(iso);
@@ -715,7 +716,7 @@
               id: 'compiled-item-' + item.id,
               kind:
                 'collectible compiled-item role-' +
-                item.role +
+                (ROLE_OK.includes(item.role) ? item.role : 'clue') +
                 (isHidden ? ' compiled-hidden-item' : ''),
               name: item.sceneName || item.title,
               hint: '',
@@ -782,7 +783,7 @@
           id: 'compiled-item-' + item.id,
           kind:
             'collectible compiled-item role-' +
-            item.role +
+            (ROLE_OK.includes(item.role) ? item.role : 'clue') +
             (isHidden ? ' compiled-hidden-item' : ''),
           name: item.sceneName || item.title,
           hint: '',

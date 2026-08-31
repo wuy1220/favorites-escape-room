@@ -798,6 +798,25 @@ function originOf(n) {
   return null;
 }
 
+/* XSS 加固(review.md P1,2026-08-31):导入关卡可携带任意 id/name/url——
+   全量 HTML 转义 + 外链仅允许 http(s);节点模板与弹窗一律经此输出 */
+function htmlEsc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[c]);
+}
+function safeUrl(u) {
+  const s = String(u == null ? '' : u).trim();
+  return /^(https?:|https?:\/\/|\/\/)/i.test(s) ? s : '';
+}
+function safeClass(s) {
+  return String(s == null ? '' : s).replace(/[^A-Za-z0-9 _-]/g, '');
+}
+
 function roomRender() {
   const box = $('nodes');
   box.innerHTML = state.nodes
@@ -808,9 +827,10 @@ function roomRender() {
       const spent = (n.compiledItem || n.compiledResult) && n.used ? ' compiled-spent' : '';
       /* 变化过渡(2026-08-30):原位变身的这一帧加 .changed 脉冲,玩家能看见"哪个物件变了" */
       const changedCls = n.justChanged ? ' changed' : '';
-      const kindCls =
-        n.compiledHidden && !n.revealed ? v.kind : v.kind.replace(' compiled-hidden-item', '');
-      const webMark = v.url ? '<span class="web-mark" title="收藏网页">↗</span>' : '';
+      const kindCls = safeClass(
+        n.compiledHidden && !n.revealed ? v.kind : v.kind.replace(' compiled-hidden-item', ''),
+      );
+      const webMark = safeUrl(v.url) ? '<span class="web-mark" title="收藏网页">↗</span>' : '';
       /* 角色角标(2026-08-29):卡片上直接标出素材身份,卡片不再只有一行名字。
          2026-08-31 伪装(需求方反馈):干扰项印着「干扰」等于明牌——它必须
          看似与主线相关的线索,角标与色条都按线索显示,真假由玩家自己甄别 */
@@ -821,17 +841,17 @@ function roomRender() {
         : '';
       let pop = '';
       if (state.activePop === n.id) {
-        const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-        const detail = esc(v.detail || v.hint || '').replace(/\n/g, '<br>');
-        const link = v.url
+        const detail = htmlEsc(v.detail || v.hint || '').replace(/\n/g, '<br>');
+        const url = safeUrl(v.url);
+        const link = url
           ? '<a class="np-link" href="' +
-            esc(v.url) +
+            htmlEsc(url) +
             '" target="_blank" rel="noreferrer">打开原收藏 ↗</a>'
           : '';
         /* 位置由 placePops 在渲染后按遮挡情况四向避让,这里不预设方向 */
         pop =
           '<div class="node-pop"><button class="np-close" type="button" title="关闭">×</button><div class="np-title">' +
-          esc(name) +
+          htmlEsc(name) +
           '</div><div class="np-copy">' +
           detail +
           '</div>' +
@@ -841,7 +861,7 @@ function roomRender() {
       /* pop-open(2026-08-30 修复):详情卡是节点的子元素,z-index 只在父节点的
          层叠上下文内生效——DOM 靠后的兄弟节点会整片盖住打开的详情卡。
          打开时把宿主节点抬到普通节点(4)与 hover(6)之上,盖回它的卡才不会被打断 */
-      return `<div class="node ${kindCls}${spent}${n.justArrived ? ' arrive' : ''}${changedCls}${state.activePop === n.id ? ' pop-open' : ''}" data-id="${n.id}" style="left:${n.x}%;top:${n.y}%" role="button" tabindex="0">${webMark}<span class="node-main">${typeHtml}<span class="name">${name}</span></span>${pop}</div>`;
+      return `<div class="node ${htmlEsc(kindCls)}${spent}${n.justArrived ? ' arrive' : ''}${changedCls}${state.activePop === n.id ? ' pop-open' : ''}" data-id="${htmlEsc(n.id)}" style="left:${Number(n.x) || 0}%;top:${Number(n.y) || 0}%" role="button" tabindex="0">${webMark}<span class="node-main">${typeHtml}<span class="name">${htmlEsc(name)}</span></span>${pop}</div>`;
     })
     .join('');
   /* 展开起点(11.13 #3):容器/父物件的内容物从父节点位置飞入自己的槽位,
@@ -864,7 +884,7 @@ function roomRender() {
       el.style.setProperty('--fx', dx + 'px');
       el.style.setProperty('--fy', dy + 'px');
     }
-    el.style.setProperty('--fd', arriveIdx * 70 + 'ms');
+    el.style.setProperty('--fd', Math.min(arriveIdx * 70, 280) + 'ms'); /* 封顶:缩短 .arrive 不可点窗口(review.md P1) */
     arriveIdx++;
   });
   /* 新物件显形时收起线索便签浮层(2026-08-31):浮层悬在画布右上,
@@ -1430,8 +1450,8 @@ function inspect(n) {
   if (it) it.textContent = v.name;
   if (ic) ic.textContent = v.detail || v.hint || '';
   if (sr) {
-    sr.hidden = !v.url;
-    sr.href = v.url || '#';
+    sr.hidden = !safeUrl(v.url);
+    sr.href = safeUrl(v.url) || '#';
   }
   /* 详情唯一出口 = 节点就地详情卡(node-pop,2026-08-30 定稿):
      曾加画布角落 detailFloat 造成一节点两套详情"随机弹出",已撤——

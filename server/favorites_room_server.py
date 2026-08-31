@@ -18,6 +18,9 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # silently fall back to account-balance billing.
 STEP_URL = "https://api.stepfun.com/step_plan/v1/chat/completions"
 STEP_TIMEOUT = 300
+GLM_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+GLM_TIMEOUT = 600
+MAX_BODY = 20 * 1024 * 1024  # 请求体上限(review.md:统一限制,超限 413)
 # 2026-08-28 安全改造:密钥不再内嵌前端,由本服务持有(环境变量优先,其次同目录
 # STEP_API_KEY.local 文件,该文件已 gitignore)。前端无密钥时,上游 Authorization
 # 由此处注入;前端显式携带的 key(直连第三方供应商场景)原样透传。
@@ -342,18 +345,20 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
 
     def _serve_llm_config(self):
-        # 设计赛马的备用供应商配置(GLM):key 由本地文件持有,不入库、不出现在前端源码。
+        # review.md P1(2026-08-31):GLM key 不再下发到浏览器——前端拿到的是
+        # 本服务代理端点 /api/glm,转发时由服务端注入密钥;其它本机页面也
+        # 无法再经此接口读取密钥明文。
         cfg = {}
         key_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "GLM_API_KEY.local")
         if os.path.exists(key_file):
             cfg = {
-                "endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+                "endpoint": "/api/glm",
                 "model": "glm-5.3-flash",
-                "apiKey": open(key_file, encoding="utf-8").read().strip(),
                 "thinking": {"type": "enabled"},
                 "reasoningEffort": "low",
                 "designTimeout": 600000,
                 "label": "glm",
+                "proxy": True,
             }
         self._reply_json(cfg)
 
@@ -379,25 +384,104 @@ class Handler(SimpleHTTPRequestHandler):
         输入: {"urls": ["...", ...], "timeout": 8}
         输出: {"results": {url: {"title": str, "desc": str, "status": int|str}}}
         单条失败不影响其他条目 —— 这层是内容层, 行为层(URL/时间戳)始终可靠。"""
+        ok, raw_body = self._read_body()
+        if not ok:
+            return
         try:
-            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
+            body = json.loads(raw_body)
+            if not isinstance(body, dict):
+                raise ValueError("body must be an object")
             urls = [u for u in (body.get("urls") or []) if isinstance(u, str) and u.startswith("http")][:20]
             timeout = min(10, max(3, int(body.get("timeout", 6))))
         except (ValueError, TypeError):
-            urls, timeout = [], 6
+            self._reply_json({"error": {"message": "invalid request body"}}, 400)
+            return
         with ThreadPoolExecutor(max_workers=6) as pool:
             results = dict(pool.map(lambda u: (u, fetch_one(u, timeout)), urls))
         self._reply_json({"results": results})
+
+    def _read_body(self):
+        """统一读取请求体(review.md:限制大小,非法请求返回 400 而不是断连)。"""
+        try:
+            size = int(self.headers.get("Content-Length", "0") or "0")
+        except (TypeError, ValueError):
+            self._reply_json({"error": {"message": "invalid Content-Length"}}, 400)
+            return False, None
+        if size <= 0:
+            self._reply_json({"error": {"message": "empty request body"}}, 400)
+            return False, None
+        if size > MAX_BODY:
+            self._reply_json({"error": {"message": "request body too large"}}, 413)
+            return False, None
+        try:
+            return True, self.rfile.read(size)
+        except Exception:
+            self._reply_json({"error": {"message": "failed to read request body"}}, 400)
+            return False, None
+
+    def handle_glm_proxy(self):
+        """review.md P1:GLM 服务端代理——浏览器不持有 key,转发时注入。"""
+        ok, raw_body = self._read_body()
+        if not ok:
+            return
+        try:
+            data = json.loads(raw_body)
+        except (ValueError, TypeError):
+            self._reply_json({"error": {"message": "invalid JSON body"}}, 400)
+            return
+        if not isinstance(data, dict):
+            self._reply_json({"error": {"message": "JSON body must be an object"}}, 400)
+            return
+        key_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "GLM_API_KEY.local")
+        api_key = ""
+        if os.path.exists(key_file):
+            api_key = open(key_file, encoding="utf-8").read().strip()
+        if not api_key:
+            self._reply_json({"error": {"message": "GLM key not configured"}}, 503)
+            return
+        data["stream"] = False
+        request = Request(
+            GLM_URL,
+            data=json.dumps(data).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Connection": "close",
+                "Authorization": "Bearer " + api_key,
+            },
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=GLM_TIMEOUT) as response:
+                payload = response.read()
+                status = response.status
+        except HTTPError as error:
+            self._reply_json(error.read(), status=error.code)
+            return
+        except URLError as error:
+            self._reply_json({"error": {"message": str(error.reason)}}, 502)
+            return
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Connection", "close")
+        self.end_headers()
+        self.wfile.write(payload)
 
     def do_POST(self):
         if self.path == "/fetch-meta":
             self.handle_fetch_meta()
             return
+        if self.path == "/api/glm":
+            # review.md P1(2026-08-31):GLM 服务端代理——浏览器不再持有 key,
+            # 转发时由本服务注入 GLM_API_KEY.local 的密钥。
+            self.handle_glm_proxy()
+            return
         if self.path != "/api/step":
             self.send_error(404)
             return
-        size = int(self.headers.get("Content-Length", "0"))
-        raw_body = self.rfile.read(size)
+        ok, raw_body = self._read_body()
+        if not ok:
+            return
         headers = {"Content-Type": "application/json", "Connection": "close"}
         authorization = (self.headers.get("Authorization") or "").strip()
         # 密钥持有方是本服务:客户端未携带有效 key 时注入 STEP_API_KEY;
@@ -415,6 +499,10 @@ class Handler(SimpleHTTPRequestHandler):
             data = json.loads(raw_body)
         except (ValueError, TypeError):
             data = None
+        # review.md 健壮性:JSON 顶层不是对象(如数组)→ 400,不再抛 AttributeError
+        if data is not None and not isinstance(data, dict):
+            self._reply_json({"error": {"message": "JSON body must be an object"}}, 400)
+            return
         direct = False
         if isinstance(data, dict):
             # 清洗快车道(2026-08-28):客户端可对单个任务显式带 router_force:false

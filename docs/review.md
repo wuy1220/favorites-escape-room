@@ -50,3 +50,11 @@
 - 通过：`verify_reset_lifecycle.py` 13/13
 - 失败：`verify_clockwork.py`（飞入动画期间节点不可操作）
 - 备注：直接运行 `pytest` 会在收集阶段遇到测试脚本主动 `SystemExit`，因此不能作为总测试入口。
+
+## 修复状态（2026-08-31）
+
+- XSS：已增加统一 HTML 转义、节点 class/id 白名单和 `http(s)` 外链校验。
+- API key：已改为 `/api/glm` 服务端代理，`/api/llm-config` 不再返回密钥。
+- 导入校验：已增加关卡字段、数组、枚举、ID 及引用归一化校验。
+- 动画回归：已缩短飞入延迟并补齐 clockwork 回归等待；`verify_clockwork.py` 39/39 通过。
+- 服务端健壮性：已统一请求体大小、JSON 类型和 `Content-Length` 校验，非法请求返回 400/413。

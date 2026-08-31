@@ -1733,24 +1733,106 @@
     refreshSaved();
     setStatus('已删除存档「' + name + '」。', 'good');
   }
-  /* 导入关卡加固(2026-08-28 审查 11.1.3):导入文件是外部输入,字符串字段
-     去除尖括号并限长,阻断经 innerHTML 渲染路径的注入;完整 schema 校验留待后续批次。 */
+  /* 导入关卡加固(review.md P1,2026-08-31):完整 schema 校验——
+     id 白名单化+去重、role/action 枚举、数组字段形状、引用同步映射;
+     畸形数据(uses:{}/null beat/非对象 items)在此拦截并给出可理解的错误,
+     不再等到挂载阶段才抛异常。 */
+  const IMPORT_ACTIONS = [
+    'inspect',
+    'combine',
+    'revisit',
+    'sequence',
+    'deliver',
+    'password',
+    'angle',
+    'morse',
+    'knock',
+  ];
+  const IMPORT_ROLES = ['clue', 'tool', 'lock', 'transform', 'reward', 'red_herring'];
   function sanitizeImportedDraft(draft) {
     const cap = (v, n) => String(v == null ? '' : v).replace(/[<>]/g, '').slice(0, n);
     const lv = draft && draft.level;
-    if (!lv || !Array.isArray(lv.items) || !lv.items.length) return draft;
-    lv.title = cap(lv.title, 200);
-    lv.premise = cap(lv.premise, 2000);
-    lv.objective = cap(lv.objective, 2000);
-    lv.items.forEach((it) => {
+    if (!lv || typeof lv !== 'object') throw new Error('导入文件缺少 level 对象');
+    if (!Array.isArray(lv.items) || !lv.items.length)
+      throw new Error('导入文件缺少 level.items');
+    if (!Array.isArray(lv.beats) || !lv.beats.length)
+      throw new Error('导入文件缺少 level.beats');
+    /* id 白名单化 + 去重;beats 引用同步映射 */
+    const idMap = new Map(),
+      usedIds = new Set();
+    const cleanId = (v, i) => {
+      let id = String(v == null ? '' : v).replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 80);
+      while (!id || usedIds.has(id)) id = (id || 'id') + '_' + i;
+      usedIds.add(id);
+      return id;
+    };
+    const strArr = (v, n) =>
+      Array.isArray(v)
+        ? v.map((x) => String(x == null ? '' : x)).filter(Boolean).slice(0, n)
+        : [];
+    lv.items = lv.items.filter((it) => it && typeof it === 'object');
+    lv.items.forEach((it, i) => {
+      const newId = cleanId(it.id, i);
+      idMap.set(String(it.id), newId);
+      it.id = newId;
+      it.role = IMPORT_ROLES.includes(it.role) ? it.role : 'clue';
       it.title = cap(it.title, 200);
       it.sceneName = cap(it.sceneName, 120);
       it.reason = cap(it.reason, 800);
+      if (it.url != null) it.url = String(it.url).trim();
+      it.hidden = it.hidden === true;
     });
-    (lv.beats || []).forEach((b) => {
+    if (!lv.items.length) throw new Error('导入文件没有有效的 level.items');
+    lv.beats = lv.beats.filter((b) => b && typeof b === 'object');
+    const beatIdMap = new Map();
+    lv.beats.forEach((b, i) => {
+      const rawId = String(b.id == null ? '' : b.id);
+      const newId = cleanId(rawId, i);
+      beatIdMap.set(rawId, newId);
+      b.id = newId;
+    });
+    lv.beats.forEach((b) => {
+      b.action = IMPORT_ACTIONS.includes(b.action) ? b.action : 'inspect';
+      const mapItemRef = (x) => {
+        const s = String(x);
+        if (s.startsWith('result:')) return 'result:' + (beatIdMap.get(s.slice(7)) || s.slice(7));
+        return idMap.get(s) || s;
+      };
+      b.uses = strArr(b.uses, 12).map(mapItemRef);
+      b.requires = strArr(b.requires, 12).map((x) => beatIdMap.get(x) || x);
+      b.reveals = strArr(b.reveals, 12).map(mapItemRef);
+      b.consume = strArr(b.consume, 12).map(mapItemRef);
+      b.deriveFrom = strArr(b.deriveFrom, 12).map(mapItemRef);
       b.title = cap(b.title, 200);
       b.product = cap(b.product, 200);
+      /* expected 双轨(2026-08-31):纯数字=密码盘剥到 6 位;含非数字=语义锁文字答案
+         (textMode 比较),原样保留仅去尖括号限长——此前一刀切剥数字把『压轴』『your thinking』清空 */
+      const rawExpected = String(b.expected == null ? '' : b.expected);
+      b.expected = /^[0-9]+$/.test(rawExpected.trim())
+        ? rawExpected.replace(/[^0-9]/g, '').slice(0, 6)
+        : rawExpected.replace(/[<>]/g, '').slice(0, 40);
+      if (b.action === 'angle')
+        b.angles = Array.isArray(b.angles)
+          ? b.angles.map(Number).filter(Number.isFinite).slice(0, 3)
+          : [];
+      if (b.resultOn != null) b.resultOn = idMap.get(String(b.resultOn)) || '';
     });
+    if (!lv.beats.length) throw new Error('导入文件没有有效的 level.beats');
+    if (Array.isArray(lv.scenes))
+      lv.scenes = lv.scenes
+        .filter((s) => s && typeof s === 'object')
+        .map((s) => {
+          s.id = String(s.id == null ? '' : s.id).replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 40);
+          s.title = cap(s.title, 80);
+          s.description = cap(s.description, 300);
+          s.focus = cap(s.focus, 120);
+          if (Array.isArray(s.itemIds)) s.itemIds = s.itemIds.map((x) => idMap.get(String(x)) || x);
+          return s;
+        });
+    lv.title = cap(lv.title, 200);
+    lv.premise = cap(lv.premise, 2000);
+    lv.objective = cap(lv.objective, 2000);
+    if (typeof lv.theme !== 'string') lv.theme = '';
     return draft;
   }
   async function loadLevelText(txt) {
@@ -1961,10 +2043,12 @@
         const timer = setTimeout(() => controller.abort(), 60000);
         const res = await fetch(glm.endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + glm.apiKey,
-          },
+          headers: glm.apiKey
+            ? {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + glm.apiKey,
+              }
+            : { 'Content-Type': 'application/json' }, /* 代理端点(review.md P1):key 由服务端注入 */
           body: JSON.stringify(body),
           signal: controller.signal,
         });

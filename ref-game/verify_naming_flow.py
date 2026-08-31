@@ -77,7 +77,8 @@ with sync_playwright() as p:
                 {"titles": ["直白式标题", "隐喻式标题", "意识流式标题"]})}}]}))
 
     page.route("**/api/step**", stub)
-    page.route("**open.bigmodel.cn**", titles_stub)
+    # review.md P1:GLM key 不再下发,命名候选走服务端代理 /api/glm
+    page.route("**/api/glm**", titles_stub)
     page.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
     page.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
 

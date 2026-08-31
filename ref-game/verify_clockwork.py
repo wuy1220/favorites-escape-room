@@ -130,6 +130,7 @@ def main():
         inv_txt = page.evaluate("() => document.getElementById('inventory') ? document.getElementById('inventory').innerText : ''")
         check("已发现面板不再列出已消耗的发条", "生锈的发条" not in inv_txt, inv_txt.replace("\n"," | "))
         no_result_nodes(page, "接钟摆")
+        time.sleep(0.8)  # review.md P1:settle——飞入动画期间节点不可点(与 prison/bear 一致)
         drag(page, '[data-id="compiled-item-cw-pend"]', '[data-id="compiled-item-cw-clock"]')
         check("挂钟再次原位变身「走动的挂钟」", node_name(page, '[data-id="compiled-item-cw-clock"]') == "走动的挂钟",
               node_name(page, '[data-id="compiled-item-cw-clock"]'))
