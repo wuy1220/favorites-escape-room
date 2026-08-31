@@ -810,8 +810,8 @@
     nodes.push({
       id: 'compiled-exit',
       kind: 'action compiled-exit',
-      name: '关卡出口',
-      hint: '把最终结果拖到这里',
+      name: '结束',
+      hint: '所有步骤完成后,点击结束本次冒险',
       x: 76,
       y: 78,
       parent: levelId,
@@ -819,7 +819,7 @@
       startHidden: true,
       spawned: true,
       compiledExit: true,
-      detail: '完成所有必要步骤后，把最后改变过状态的物件拖到这里交付。出口不会提示你还差什么。',
+      detail: '终点标记,长在最终产物旁。还差步骤时点击不会有回应;全部完成后,点击「结束」即可完成本关。',
     });
     state.nodes.push(...nodes);
     /* 空间分区摆位(2026-08-29):所有槽位——含隐藏物、容器物件、导入组——
@@ -873,6 +873,31 @@
         n.x = Math.max(2, Math.min(92, src.x + slot[0]));
         n.y = Math.max(4, Math.min(90, src.y + slot[1]));
       });
+    }
+    /* 出口锚定(2026-08-31 需求方反馈):出口不再是根层的独立节点——谜题早已不局限于
+       房间,终点应长在最终产物上。挂到「出口交付物」(deliver 步的目标物件)之下,
+       文案改「结束」;deliver 结构异常解析失败时退回根层固定位。 */
+    {
+      const exitN = nodes.find((n) => n.compiledExit);
+      const deliverBeat = (level.beats || []).find((b) => b && b.action === 'deliver');
+      if (exitN && deliverBeat) {
+        let tid = String((deliverBeat.uses || [])[0] || '');
+        if (tid.startsWith('result:')) {
+          const pb = (level.beats || []).find((b) => String(b.id) === tid.slice(7));
+          tid = String((pb && (pb.resultOn || (pb.uses || []).slice(-1)[0])) || '');
+          if (tid.startsWith('result:')) tid = '';
+        }
+        const byId2 = {};
+        nodes.forEach(function (n) {
+          byId2[n.id] = n;
+        });
+        const tn = tid ? byId2['compiled-item-' + tid] : null;
+        if (tn && tn.id !== exitN.id) {
+          exitN.parent = tn.id;
+          exitN.x = Math.max(2, Math.min(92, tn.x + 11));
+          exitN.y = Math.max(4, Math.min(90, tn.y + 9));
+        }
+      }
     }
     ensureRevisitButton();
     compiled = {
@@ -1132,18 +1157,8 @@
           log('新的房间亮出:「' + (sc.title || '') + '」——点开看看。', 'good');
       }
     });
-    /* 出口:最后一个房间发现后亮出 */
-    const lastSc = scenes[scenes.length - 1];
-    if (lastSc) {
-      const lz = levelNode('compiled-scene-' + (lastSc.id || scenes.length - 1));
-      const exit = levelNode('compiled-exit');
-      if (lz && !lz.hidden && exit && exit.hidden) {
-        exit.hidden = false;
-        exit.spawned = true;
-        exit.justArrived = true;
-        changed = true;
-      }
-    }
+    /* 出口不再随房间发现亮出(2026-08-31):「结束」长在交付物节点旁,
+       只在 finishIfDone 的 restDone(只剩交付未做)时出现 */
     if (changed || isFirst === true) {
       action();
       update();
@@ -1333,10 +1348,38 @@
     if (n.compiledExit) {
       if (compiled.done) {
         ending();
-      } else {
-        toast('出口还没有回应。有步骤还没完成。');
-        log('出口没有响应。回想哪条素材还没有被正确使用。', 'warn');
+        return true;
       }
+      /* 点击即结算(2026-08-31 需求方反馈):「结束」长在交付物旁,其余步骤全完成时,
+         点击直接完成交付并终局——不再要求把产物拖到出口(拖拽路径仍兼容保留) */
+      const dRule = compiled.rules.delivers.find(function (r) {
+        return beatReady(r.need) && !state.clues.has(r.clue);
+      });
+      if (dRule) {
+        let tId = String(dRule.item || '');
+        if (tId.startsWith('result:')) {
+          const pb = (compiled.level.beats || []).find((b) => String(b.id) === tId.slice(7));
+          tId = String((pb && pb.resultOn) || '');
+        }
+        const item = tId ? levelNode('compiled-item-' + tId) : null;
+        if (item) {
+          item.used = true;
+          item.hidden = true; /* 交付后结果离场,避免 spent 节点遮挡「结束」 */
+        }
+        state.clues.add(dRule.clue);
+        log('结束步骤完成:' + (dRule.title || '素材已经交付。'), 'good');
+        triggerReveals(dRule.need);
+        finishIfDone();
+        action();
+        update();
+        compiledObjective();
+        roomRender();
+        if (compiled.done) ending();
+        return true;
+      }
+      toast('还差一些步骤。「结束」要等谜题全部走完才会有回应。');
+      log('还没有走到终点。回想哪条素材还没有被正确使用。', 'warn');
+      action();
       return true;
     }
     if (!n.compiledItem && !n.compiledResult) return false;
@@ -2019,11 +2062,15 @@
     const restDone = beats
       .filter((b) => b.action !== 'deliver')
       .every((b) => state.clues.has('beat-' + b.id));
-    if (exit && restDone && !compiled.done) exit.hidden = false;
+    if (exit && restDone && !compiled.done) {
+      exit.hidden = false;
+      exit.spawned = true;
+      exit.justArrived = true; /* 「结束」出现在交付物旁也有出现动画 */
+    }
     if (allDone && !compiled.done) {
       compiled.done = true;
-      toast('关卡出口已开放。');
-      log('所有步骤都完成了。出口亮起。', 'good');
+      toast('所有步骤完成——点击「结束」完成本次冒险。');
+      log('所有步骤都完成了。「结束」已亮起。', 'good');
       frontier('final');
     }
   }
