@@ -2,22 +2,28 @@
   "records": [],
   "controlledIds": [
     "rc-door",
+    "rc-desk",
     "rc-manual",
+    "rc-scanner",
+    "rc-ticket",
     "rc-shelfa",
     "rc-shelfb",
     "rc-book1",
     "rc-book2",
     "rc-book3",
     "rc-book4",
-    "rc-q1",
-    "rc-q2",
-    "rc-q3",
-    "rc-scanner",
-    "rc-desk",
-    "rc-npc",
     "rc-kettle",
-    "rc-stamp",
-    "rc-ticket"
+    "rc-o1a",
+    "rc-o1b",
+    "rc-o1c",
+    "rc-o2a",
+    "rc-o2b",
+    "rc-o2c",
+    "rc-o3a",
+    "rc-o3b",
+    "rc-o3c",
+    "rc-npc",
+    "rc-stamp"
   ],
   "items": [
     {
@@ -30,6 +36,15 @@
       "description": "资料室的门虚掩着。点击推门进去。"
     },
     {
+      "id": "rc-desk",
+      "title": "借阅台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅台空着。"
+    },
+    {
       "id": "rc-manual",
       "title": "守馆手册",
       "domain": "demo",
@@ -39,13 +54,31 @@
       "description": "借阅台上的手册,翻开着。"
     },
     {
+      "id": "rc-scanner",
+      "title": "扫描台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅台上的扫描台。"
+    },
+    {
+      "id": "rc-ticket",
+      "title": "提货单",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅系统的提货单。"
+    },
+    {
       "id": "rc-shelfa",
       "title": "还书车 · 上层",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "还书车的上层书架,塞着几本书。"
+      "description": "还书车的上层书架。"
     },
     {
       "id": "rc-shelfb",
@@ -54,7 +87,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "还书车的下层书架,也塞着书。"
+      "description": "还书车的下层书架。"
     },
     {
       "id": "rc-book1",
@@ -63,7 +96,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊贴着绿色书标。"
+      "description": "绿标书。"
     },
     {
       "id": "rc-book2",
@@ -72,7 +105,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊贴着绿色书标。"
+      "description": "绿标书。"
     },
     {
       "id": "rc-book3",
@@ -81,7 +114,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊贴着绿色书标。"
+      "description": "绿标书。"
     },
     {
       "id": "rc-book4",
@@ -90,52 +123,97 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊贴着红色书标。"
+      "description": "红标书。"
     },
     {
-      "id": "rc-q1",
-      "title": "校验题 · 一",
+      "id": "rc-kettle",
+      "title": "保温壶",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "扫描台吐出的第一道题。"
+      "description": "挂在车把上的保温壶。"
     },
     {
-      "id": "rc-q2",
-      "title": "校验题 · 二",
+      "id": "rc-o1a",
+      "title": "备选 · JavaScript 参考",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "第二道题。"
+      "description": "一张答案标签。"
     },
     {
-      "id": "rc-q3",
-      "title": "校验题 · 三",
+      "id": "rc-o1b",
+      "title": "备选 · JavaScript 教程",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "第三道题。"
+      "description": "一张答案标签。"
     },
     {
-      "id": "rc-scanner",
-      "title": "扫描台",
+      "id": "rc-o1c",
+      "title": "备选 · W3School 百科",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "借阅台旁的扫描台。"
+      "description": "一张答案标签。"
     },
     {
-      "id": "rc-desk",
-      "title": "借阅台",
+      "id": "rc-o2a",
+      "title": "备选 · 2 部分",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "借阅台空着。"
+      "description": "一张答案标签。"
+    },
+    {
+      "id": "rc-o2b",
+      "title": "备选 · 3 部分",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一张答案标签。"
+    },
+    {
+      "id": "rc-o2c",
+      "title": "备选 · 5 部分",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一张答案标签。"
+    },
+    {
+      "id": "rc-o3a",
+      "title": "备选 · 线性结构",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一张答案标签。"
+    },
+    {
+      "id": "rc-o3b",
+      "title": "备选 · 非线性结构",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一张答案标签。"
+    },
+    {
+      "id": "rc-o3c",
+      "title": "备选 · 图状结构",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一张答案标签。"
     },
     {
       "id": "rc-npc",
@@ -147,15 +225,6 @@
       "description": "值夜班的学长。"
     },
     {
-      "id": "rc-kettle",
-      "title": "保温壶",
-      "domain": "demo",
-      "dateAdded": "",
-      "url": "",
-      "urlPath": "",
-      "description": "还书车旁的保温壶。"
-    },
-    {
       "id": "rc-stamp",
       "title": "借阅章",
       "domain": "demo",
@@ -163,60 +232,60 @@
       "url": "",
       "urlPath": "",
       "description": "黄铜借阅章。"
-    },
-    {
-      "id": "rc-ticket",
-      "title": "提货单",
-      "domain": "demo",
-      "dateAdded": "",
-      "url": "",
-      "urlPath": "",
-      "description": "借阅系统的提货单。"
     }
   ],
   "level": {
     "id": "level-demo-selfstudy",
     "title": "秋末自学计划 · 闭馆前的资料室",
     "premise": "2025 年 11 月的傍晚,资料室快闭馆了。还书车上堆着今天回流的书,提货单还没盖章,值班员不知道躲去了哪儿——借阅台后面只留着一壶还温着的茶。窗外天色暗得很快。",
-    "objective": "按守馆手册的流程把本批图书逐本扫描、答对校验题;全部受理后找到值班员,把章要出来盖在提货单上,赶在闭馆前交单出室。",
+    "objective": "按守馆手册的流程把本批图书逐本扫描、答对机器的校验题;全部受理后找到值班员,把章要出来盖在提货单上,赶在闭馆前交单出室。",
     "targetMinutes": 15,
     "selectedItemIds": [
       "rc-door",
+      "rc-desk",
       "rc-manual",
+      "rc-scanner",
+      "rc-ticket",
       "rc-shelfa",
       "rc-shelfb",
       "rc-book1",
       "rc-book2",
       "rc-book3",
       "rc-book4",
-      "rc-q1",
-      "rc-q2",
-      "rc-q3",
-      "rc-scanner",
-      "rc-desk",
-      "rc-npc",
       "rc-kettle",
-      "rc-stamp",
-      "rc-ticket"
+      "rc-o1a",
+      "rc-o1b",
+      "rc-o1c",
+      "rc-o2a",
+      "rc-o2b",
+      "rc-o2c",
+      "rc-o3a",
+      "rc-o3b",
+      "rc-o3c",
+      "rc-npc",
+      "rc-stamp"
     ],
     "containers": [
       {
         "id": "rc-shelfa",
         "name": "还书车 · 上层",
         "desc": "还书车的上层书架。点击翻一翻,书就滑出来。",
-        "hidden": false
+        "hidden": false,
+        "auto": true
       },
       {
         "id": "rc-shelfb",
         "name": "还书车 · 下层",
         "desc": "还书车的下层书架,也塞着书。点击翻一翻。",
-        "hidden": false
+        "hidden": false,
+        "auto": true
       },
       {
         "id": "rc-desk",
         "name": "借阅台",
         "desc": "借阅台空着,台面收拾得整整齐齐。点击走近借阅台。",
-        "hidden": false
+        "hidden": false,
+        "auto": true
       }
     ],
     "items": [
@@ -235,7 +304,27 @@
         "roleLabel": "线索",
         "title": "守馆手册",
         "sceneName": "守馆手册",
-        "reason": "【流程页】今晚归还批次:贴绿标的三本。流程:逐本放上扫描台——机器会出校验题,答案都在书自己的卡片里,答对才算受理。受理次序就是学习的次序:概述在前,主课程在中,算法进阶在后。全部受理后系统响铃,值班员自然会来。备注:章不外借,但他那个人,只认热茶。",
+        "reason": "【流程页】今晚归还批次:贴绿标的三本。流程:逐本放上扫描台——机器会出校验题,并弹出三张备选标签;把对的那张拖到扫描台上,才算受理。答案都在书自己的卡片里。受理次序就是学习的次序:概述在前,主课程在中,算法进阶在后。全部受理后系统响铃,值班员自然会来。备注:章不外借,但他那个人,只认热茶。",
+        "hidden": true,
+        "container": "rc-desk"
+      },
+      {
+        "id": "rc-scanner",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "扫描台",
+        "sceneName": "扫描台",
+        "reason": "借阅台上的扫描台,指示灯待机闪烁。把书平放上去就能扫——但每扫一本,它都要先考你一道题。",
+        "hidden": true,
+        "container": "rc-desk"
+      },
+      {
+        "id": "rc-ticket",
+        "role": "transform",
+        "roleLabel": "结果",
+        "title": "提货单",
+        "sceneName": "提货单",
+        "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交出去。",
         "hidden": true,
         "container": "rc-desk"
       },
@@ -255,7 +344,7 @@
         "roleLabel": "线索",
         "title": "绿标书 · Hello 算法",
         "sceneName": "绿标书 · Hello 算法",
-        "reason": "【网页内容·书脊】3.1 数据结构分类——动画图解、一键运行的数据结构与算法教程。书里把数组、链表、栈、队列都归了类。想通过校验?打开原收藏,翻到 3.1 节,看看它们归进哪一类。",
+        "reason": "【网页内容·书脊】3.1 数据结构分类——动画图解、一键运行的数据结构与算法教程。书里把数组、链表、栈、队列都归了类。想核对答案?打开原收藏,翻到 3.1 节。",
         "hidden": true,
         "container": "rc-shelfa"
       },
@@ -280,44 +369,104 @@
         "container": "rc-shelfb"
       },
       {
-        "id": "rc-q1",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "校验题 · 一",
-        "sceneName": "校验题 · 一",
-        "reason": "【校验题·概述】这本《JavaScript 指南》说:想深入了解语言特性的详细信息,该去参阅什么?把答案输进扫描台。",
-        "hidden": true,
-        "auto": true
-      },
-      {
-        "id": "rc-q2",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "校验题 · 二",
-        "sceneName": "校验题 · 二",
-        "reason": "【校验题·主课程】你扫的这门主课程,包含几个部分?把数字输进扫描台。",
-        "hidden": true,
-        "auto": true
-      },
-      {
-        "id": "rc-q3",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "校验题 · 三",
-        "sceneName": "校验题 · 三",
-        "reason": "【校验题·进阶】打开这本书的原收藏,翻到 3.1 节——书里把数组、链表、栈、队列归进哪一类?把类名输进扫描台。",
-        "hidden": true,
-        "auto": true
-      },
-      {
-        "id": "rc-scanner",
+        "id": "rc-kettle",
         "role": "tool",
         "roleLabel": "工具",
-        "title": "扫描台",
-        "sceneName": "扫描台",
-        "reason": "借阅台上的扫描台,指示灯待机闪烁。把书平放上去就能扫——但每扫一本,它都要先考你一道题。",
+        "title": "保温壶",
+        "sceneName": "保温壶",
+        "reason": "挂在下层书架车把上的保温壶,摸着还温。守馆人走前泡的茶,一口没动。",
         "hidden": true,
-        "container": "rc-desk"
+        "container": "rc-shelfb"
+      },
+      {
+        "id": "rc-o1a",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · JavaScript 参考",
+        "sceneName": "备选 · JavaScript 参考",
+        "reason": "一张可拖动的答案标签,出自《JavaScript 指南》的指引。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o1b",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · JavaScript 教程",
+        "sceneName": "备选 · JavaScript 教程",
+        "reason": "一张可拖动的答案标签。看着眼熟,但未必是这本指南说的那个。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o1c",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · W3School 百科",
+        "sceneName": "备选 · W3School 百科",
+        "reason": "一张可拖动的答案标签。和指南没什么关系,凑数的味道。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o2a",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 2 部分",
+        "sceneName": "备选 · 2 部分",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o2b",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 3 部分",
+        "sceneName": "备选 · 3 部分",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o2c",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 5 部分",
+        "sceneName": "备选 · 5 部分",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o3a",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 线性结构",
+        "sceneName": "备选 · 线性结构",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o3b",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 非线性结构",
+        "sceneName": "备选 · 非线性结构",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-o3c",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "备选 · 图状结构",
+        "sceneName": "备选 · 图状结构",
+        "reason": "一张可拖动的答案标签。",
+        "hidden": true,
+        "auto": true
       },
       {
         "id": "rc-npc",
@@ -330,16 +479,6 @@
         "auto": true
       },
       {
-        "id": "rc-kettle",
-        "role": "tool",
-        "roleLabel": "工具",
-        "title": "保温壶",
-        "sceneName": "保温壶",
-        "reason": "挂在下层书架车把上的保温壶,摸着还温。守馆人走前泡的茶,一口没动。",
-        "hidden": true,
-        "container": "rc-shelfb"
-      },
-      {
         "id": "rc-stamp",
         "role": "tool",
         "roleLabel": "工具",
@@ -348,16 +487,6 @@
         "reason": "黄铜借阅章,章面刻着『已归架』,把手上缠着防滑绳。值班员塞给你的。",
         "hidden": true,
         "auto": true
-      },
-      {
-        "id": "rc-ticket",
-        "role": "transform",
-        "roleLabel": "结果",
-        "title": "提货单",
-        "sceneName": "提货单",
-        "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交出去。",
-        "hidden": true,
-        "container": "rc-desk"
       }
     ],
     "beats": [
@@ -412,7 +541,8 @@
         ],
         "reveals": [
           "rc-book2",
-          "rc-book4"
+          "rc-book4",
+          "rc-kettle"
         ]
       },
       {
@@ -461,27 +591,32 @@
           "c5"
         ],
         "resultOn": "rc-scanner",
-        "product": "出题中的扫描台",
-        "consume": [
-          "rc-book1"
-        ],
+        "product": "校验中:该参阅什么?",
         "reveals": [
-          "rc-q1"
+          "rc-o1a",
+          "rc-o1b",
+          "rc-o1c"
         ]
       },
       {
         "id": "c9",
-        "title": "答概述校验题",
-        "action": "password",
+        "title": "拖入正确备选(一)",
+        "action": "combine",
         "uses": [
+          "rc-o1a",
           "rc-scanner"
         ],
-        "expected": "JavaScript 参考",
         "requires": [
           "c8"
         ],
         "resultOn": "rc-scanner",
-        "product": "扫描台 · 已受理 1/3"
+        "product": "扫描台 · 已受理 1/3",
+        "consume": [
+          "rc-o1a",
+          "rc-o1b",
+          "rc-o1c",
+          "rc-book1"
+        ]
       },
       {
         "id": "c10",
@@ -496,27 +631,32 @@
           "c6"
         ],
         "resultOn": "rc-scanner",
-        "product": "出题中的扫描台",
-        "consume": [
-          "rc-book2"
-        ],
+        "product": "校验中:这门课分几部分?",
         "reveals": [
-          "rc-q2"
+          "rc-o2a",
+          "rc-o2b",
+          "rc-o2c"
         ]
       },
       {
         "id": "c11",
-        "title": "答主课程校验题",
-        "action": "password",
+        "title": "拖入正确备选(二)",
+        "action": "combine",
         "uses": [
+          "rc-o2a",
           "rc-scanner"
         ],
-        "expected": "2",
         "requires": [
           "c10"
         ],
         "resultOn": "rc-scanner",
-        "product": "扫描台 · 已受理 2/3"
+        "product": "扫描台 · 已受理 2/3",
+        "consume": [
+          "rc-o2a",
+          "rc-o2b",
+          "rc-o2c",
+          "rc-book2"
+        ]
       },
       {
         "id": "c12",
@@ -531,27 +671,32 @@
           "c7"
         ],
         "resultOn": "rc-scanner",
-        "product": "出题中的扫描台",
-        "consume": [
-          "rc-book3"
-        ],
+        "product": "校验中:它们归哪一类?",
         "reveals": [
-          "rc-q3"
+          "rc-o3a",
+          "rc-o3b",
+          "rc-o3c"
         ]
       },
       {
         "id": "c13",
-        "title": "答算法校验题",
-        "action": "password",
+        "title": "拖入正确备选(三)",
+        "action": "combine",
         "uses": [
+          "rc-o3a",
           "rc-scanner"
         ],
-        "expected": "线性",
         "requires": [
           "c12"
         ],
         "resultOn": "rc-scanner",
         "product": "扫描台 · 已受理 3/3",
+        "consume": [
+          "rc-o3a",
+          "rc-o3b",
+          "rc-o3c",
+          "rc-book3"
+        ],
         "reveals": [
           "rc-npc"
         ]
@@ -617,21 +762,22 @@
       }
     ],
     "hints": [
-      "推门之后,借阅台上翻开着的手册就是今晚的流程说明。",
+      "推门进去,三个位置都会亮出来:两辆还书车和一张借阅台。",
       "还书车的两层都要翻——书会自己滑出来,认准绿色书标。",
       "红标那本和今晚无关;扫描的次序是学习的次序:概述、主课程、算法。",
-      "机器出的每道题,答案都在书的卡片原话里——读仔细。",
-      "第三道题要翻开原页面才能答:书卡上写了回访的任务。",
+      "扫描后书不会被收走——它就是答案的参照物,卡片读仔细。",
+      "机器弹出三张备选标签,把对的拖到扫描台上;拖错的它不理你。",
+      "第三题拿不准,就打开那本书的原收藏翻到 3.1 节。",
       "全部受理后系统会响铃——等等看,会有人出现。",
-      "值班员的话里有话:他缺的东西,还书车旁边正好有一只。",
+      "值班员的话里有话:他缺的东西,还书车车把上正好挂着。",
       "章到手,盖单,赶在闭馆前出门。"
     ],
     "mechanics": [
       "inspect",
       "容器弹书×2",
-      "扫描校验题×3(卡片原话+回访原页面)",
+      "选择题扫描×3(拖备选到题干,书留作参照)",
       "NPC(现身/对话/交易)",
-      "auto显形×4"
+      "auto显形"
     ]
   }
 }

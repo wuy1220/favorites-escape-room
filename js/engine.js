@@ -772,7 +772,7 @@
       /* 物件编译上限 18(2026-08-31:旧值 12 曾把第 13+ 个物件整个裁掉——C 关 14 物件,
          借阅章/提货单无声消失。摆板后位置由 roomLayoutBoard 分区管理,原 3×4 网格坐标
          公式只是初值,不再约束容量) */
-      level.items.slice(0, 24).forEach(function (item, index) {
+      level.items.slice(0, 28).forEach(function (item, index) {
         const source = draft.items.find((x) => x.id === item.id) || {};
         const isHidden = item.hidden === true;
         /* 信息前置+三层详情(同 scenes 分支):facts 行承载谜面引用的事实 */

@@ -264,13 +264,13 @@ def run_b(page, tag):
 
 
 def run_c(page, tag):
-    """C v3:三个容器房间(书架×2+借阅台)→扫描校验题→NPC→盖章交单"""
+    """C v5:推门 auto 亮三房间→弹书→选择题扫描(书留参照,拖备选到题干)→NPC→交单"""
     click(page, '[data-id="compiled-item-rc-door"]')  # c1 推门
-    click(page, '[data-id="root"]')  # 环顾:三个房间
-    wait_visible(page, '[data-id="compiled-container-rc-shelfa"]', f"[{tag}] 推门见书架×2+借阅台")
+    # 推门=视线进入,三个房间 auto 直接亮出(无需环顾)
+    wait_visible(page, '[data-id="compiled-container-rc-shelfa"]', f"[{tag}] 推门后书架/借阅台直接亮出(auto)")
+    wait_visible(page, '[data-id="compiled-container-rc-desk"]', f"[{tag}] 借阅台亮出")
     gone(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 值班员未现身")
     gone(page, '[data-id="compiled-item-rc-book1"]', f"[{tag}] 书未翻出(容器内)")
-    gone(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 手册未翻出(借阅台容器内)")
     click(page, '[data-id="compiled-container-rc-desk"]')  # 走近借阅台
     wait_visible(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 借阅台上手册/扫描台/提货单")
     click(page, '[data-id="compiled-item-rc-manual"]')  # c2 读手册
@@ -293,58 +293,54 @@ def run_c(page, tag):
     )
     drag(page, '[data-id="compiled-item-rc-book1"]', '[data-id="compiled-item-rc-scanner"]')  # c8 扫概述
     check(
-        f"[{tag}] 扫描台变身「出题中的扫描台」",
-        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "出题中的扫描台",
+        f"[{tag}] 扫描台变身题干「校验中:该参阅什么?」",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "校验中:该参阅什么?",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
-    wait_visible(page, '[data-id="compiled-item-rc-q1"]', f"[{tag}] 校验题一吐出(auto)")
-    click(page, '[data-id="compiled-item-rc-scanner"]')  # c9 答题
-    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 校验题输入面板弹出", 5000)
-    check(f"[{tag}] 校验题走文字输入框", page.locator("#keypadText").is_visible())
-    keypad_text(page, "JavaScript 教程")  # 错误答案
+    wait_visible(page, '[data-id="compiled-item-rc-o1a"]', f"[{tag}] 三张备选标签弹出(auto)")
+    check(
+        f"[{tag}] 扫描后书留作参照(不消耗)",
+        page.locator('[data-id="compiled-item-rc-book1"]').is_visible(),
+    )
+    drag(page, '[data-id="compiled-item-rc-o1b"]', '[data-id="compiled-item-rc-scanner"]')  # 错误备选
     s = snap(page)
-    check(f"[{tag}] 错误答案被拒", s and "beat-c9" not in s.get("clues", []))
-    keypad_text(page, "JavaScript 参考")  # 卡片原话
+    check(f"[{tag}] 错误备选拖入无反应", s and "beat-c9" not in s.get("clues", []))
+    drag(page, '[data-id="compiled-item-rc-o1a"]', '[data-id="compiled-item-rc-scanner"]')  # c9 正确备选
     check(
         f"[{tag}] 受理 1/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 1/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
+    gone(page, '[data-id="compiled-item-rc-o1a"]', f"[{tag}] 作答后备选与书一起归架(consume)")
     drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # c10
-    wait_visible(page, '[data-id="compiled-item-rc-q2"]', f"[{tag}] 校验题二吐出(auto)")
-    click(page, '[data-id="compiled-item-rc-scanner"]')  # c11
-    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 第二题面板弹出", 5000)
-    keypad_digits(page, "3")  # 错误数字
+    wait_visible(page, '[data-id="compiled-item-rc-o2a"]', f"[{tag}] 第二题备选弹出(auto)")
+    drag(page, '[data-id="compiled-item-rc-o2b"]', '[data-id="compiled-item-rc-scanner"]')  # 错误
     s = snap(page)
-    check(f"[{tag}] 错误数字被拒", s and "beat-c11" not in s.get("clues", []))
-    keypad_digits(page, "2")  # 主课程包含 2 部分
+    check(f"[{tag}] 第二题错误备选无反应", s and "beat-c11" not in s.get("clues", []))
+    drag(page, '[data-id="compiled-item-rc-o2a"]', '[data-id="compiled-item-rc-scanner"]')  # c11
     check(
         f"[{tag}] 受理 2/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 2/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
     drag(page, '[data-id="compiled-item-rc-book3"]', '[data-id="compiled-item-rc-scanner"]')  # c12
-    wait_visible(page, '[data-id="compiled-item-rc-q3"]', f"[{tag}] 校验题三吐出(auto)")
-    click(page, '[data-id="compiled-item-rc-scanner"]')  # c13
-    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 第三题面板弹出", 5000)
-    keypad_text(page, "非线性")  # 错误类名
+    wait_visible(page, '[data-id="compiled-item-rc-o3a"]', f"[{tag}] 第三题备选弹出(auto)")
+    drag(page, '[data-id="compiled-item-rc-o3b"]', '[data-id="compiled-item-rc-scanner"]')  # 错误(非线性)
     s = snap(page)
-    check(f"[{tag}] 错误类名被拒", s and "beat-c13" not in s.get("clues", []))
-    keypad_text(page, "线性")  # 原页面 3.1 节
+    check(f"[{tag}] 第三题错误备选无反应", s and "beat-c13" not in s.get("clues", []))
+    drag(page, '[data-id="compiled-item-rc-o3a"]', '[data-id="compiled-item-rc-scanner"]')  # c13 正确
     check(
         f"[{tag}] 受理 3/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 3/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
     wait_visible(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 铃响后值班员现身(auto)")
-    time.sleep(1.2)  # 现身动画落定再点击
+    time.sleep(1.2)  # 现身动画落定
     click(page, '[data-id="compiled-item-rc-npc"]')  # c14 对话
     s = snap(page)
-    check(f"[{tag}] 对话完成(c14)", s and "beat-c14" in s.get("clues", []), f"clues={s and s.get('clues')}")
+    check(f"[{tag}] 对话完成(c14)", s and "beat-c14" in s.get("clues", []))
     time.sleep(1.2)
     drag(page, '[data-id="compiled-item-rc-kettle"]', '[data-id="compiled-item-rc-npc"]')  # c15 交易
-    s = snap(page)
-    check(f"[{tag}] 交易完成(c15)", s and "beat-c15" in s.get("clues", []), f"clues={s and s.get('clues')}")
     check(
         f"[{tag}] 值班员变身「捧着热茶的值班员」",
         node_name(page, '[data-id="compiled-item-rc-npc"]') == "捧着热茶的值班员",
