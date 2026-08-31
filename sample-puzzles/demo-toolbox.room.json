@@ -1,7 +1,6 @@
 {
   "records": [],
   "controlledIds": [
-    "tb-clip",
     "tb-card-obs",
     "tb-card-algo",
     "tb-card-js",
@@ -12,15 +11,6 @@
     "tb-note"
   ],
   "items": [
-    {
-      "id": "tb-clip",
-      "title": "素材夹",
-      "domain": "demo",
-      "dateAdded": "",
-      "url": "",
-      "urlPath": "",
-      "description": "牛皮纸夹里滑出几张打印卡。点击打开素材夹。"
-    },
     {
       "id": "tb-card-obs",
       "title": "宣传卡 · 笔记库",
@@ -101,7 +91,6 @@
     "objective": "打开素材夹,读宣传卡与入库规则卡,推导库门口令与书架标签,取出藏书票插上书桌,建成你的笔记库。",
     "targetMinutes": 12,
     "selectedItemIds": [
-      "tb-clip",
       "tb-card-obs",
       "tb-card-algo",
       "tb-card-js",
@@ -120,15 +109,6 @@
       }
     ],
     "items": [
-      {
-        "id": "tb-clip",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "素材夹",
-        "sceneName": "素材夹",
-        "reason": "牛皮纸夹里滑出几张打印卡。点击打开素材夹,把卡都翻一遍。",
-        "hidden": false
-      },
       {
         "id": "tb-card-obs",
         "role": "clue",

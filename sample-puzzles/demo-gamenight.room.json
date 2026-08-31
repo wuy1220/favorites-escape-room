@@ -1,7 +1,6 @@
 {
   "records": [],
   "controlledIds": [
-    "ra-cabinet",
     "ra-archive",
     "ra-manual",
     "ra-tape",
@@ -11,15 +10,6 @@
     "ra-disc"
   ],
   "items": [
-    {
-      "id": "ra-cabinet",
-      "title": "怀旧游戏柜",
-      "domain": "demo",
-      "dateAdded": "",
-      "url": "",
-      "urlPath": "",
-      "description": "玻璃柜里躺着卡带和几张卡纸。点击打开玻璃柜,取出里面的东西。"
-    },
     {
       "id": "ra-archive",
       "title": "唱片档案卡",
@@ -91,7 +81,6 @@
     "objective": "打开怀旧柜,读档案卡与检修手册,把卡带装进点唱机,再按手册的规则调准两个面板,取出压轴光碟投递出去。",
     "targetMinutes": 10,
     "selectedItemIds": [
-      "ra-cabinet",
       "ra-archive",
       "ra-manual",
       "ra-tape",
@@ -109,15 +98,6 @@
       }
     ],
     "items": [
-      {
-        "id": "ra-cabinet",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "怀旧游戏柜",
-        "sceneName": "怀旧游戏柜",
-        "reason": "玻璃柜里躺着卡带和几张卡纸。点击打开玻璃柜,再点一次取出里面的东西。",
-        "hidden": false
-      },
       {
         "id": "ra-archive",
         "role": "clue",

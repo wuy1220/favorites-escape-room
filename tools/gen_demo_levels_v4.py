@@ -49,7 +49,6 @@ def li(id, role, roleLabel, title, reason, hidden=False, container=None):
 
 # ============ A 深秋游戏之夜 · 末班点播台(计量合成) ============
 items_a = [
-    card("ra-cabinet", "怀旧游戏柜", "玻璃柜里躺着卡带和几张卡纸。点击打开玻璃柜,取出里面的东西。"),
     card("ra-archive", "唱片档案卡", "卡片印着这首歌的实时档案:播放量与弹幕总量。数字右下角还有一行小注。"),
     card("ra-manual", "检修手册", "手册第 7 页写着点播台的调谐规则:一个数管频率,一个数管音轨。"),
     card("ra-tape", "卡带 A · Never Gonna Give You Up", "卡带标签磨得发白,还能看清歌名。装进点唱机,它才肯开口。"),
@@ -74,7 +73,6 @@ level_a = {
         }
     ],
     "items": [
-        li("ra-cabinet", "clue", "线索", "怀旧游戏柜", "玻璃柜里躺着卡带和几张卡纸。点击打开玻璃柜,再点一次取出里面的东西。"),
         li("ra-archive", "clue", "线索", "唱片档案卡",
            "【网页内容·数据条】卡片印着这首歌的实时档案:视频播放量 104610374,弹幕总量 148416。数字右下角还有一行小注:『以档案为准。』",
            hidden=True, container="ra-cabinet"),
@@ -119,7 +117,6 @@ level_a = {
 
 # ============ B 春日工具箱 · 知识库建成之夜(语义文字) ============
 items_b = [
-    card("tb-clip", "素材夹", "牛皮纸夹里滑出几张打印卡。点击打开素材夹。"),
     card("tb-card-obs", "宣传卡 · 笔记库", "卡上印着一句英文标语,下面还有一行中文小字。"),
     card("tb-card-algo", "宣传卡 · 算法书", "卡上印着算法教程的标语,角落画着一个会动的小人。"),
     card("tb-card-js", "宣传卡 · 语言书", "卡上印着语言课程的介绍,背面空白,像还有下文。"),
@@ -145,7 +142,6 @@ level_b = {
         }
     ],
     "items": [
-        li("tb-clip", "clue", "线索", "素材夹", "牛皮纸夹里滑出几张打印卡。点击打开素材夹,把卡都翻一遍。"),
         li("tb-card-obs", "clue", "线索", "宣传卡 · 笔记库",
            "【网页内容】卡上印着那句英文标语:Sharpen your thinking。下面还有一行中文小字:把思想磨得更锋利。",
            hidden=True, container="tb-clip"),
@@ -256,6 +252,7 @@ level_c = {
     "mechanics": ["inspect", "sequence", "combine"],
 }
 
+# 容器 id 约定(与教程关一致):只出现在 level.containers,不进 items/controlledIds/selectedItemIds
 for fname, items, level in (
     ("demo-gamenight.room.json", items_a, level_a),
     ("demo-toolbox.room.json", items_b, level_b),

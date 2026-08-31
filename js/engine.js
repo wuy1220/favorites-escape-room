@@ -133,10 +133,18 @@
       };
     });
     $('keyClear').onclick = function () {
-      if (keypadCtx) {
-        keypadCtx.buf = [];
-        keypadRender();
+      if (!keypadCtx) return;
+      /* 文字语义锁:清除 = 清空文本输入并聚焦(此前只清数字缓冲,文字模式下按钮形同禁用) */
+      if (keypadCtx.textMode) {
+        const kt2 = document.getElementById('keypadText');
+        if (kt2) {
+          kt2.value = '';
+          kt2.focus();
+        }
+        return;
       }
+      keypadCtx.buf = [];
+      keypadRender();
     };
     $('keyCancel').onclick = function () {
       $('keypadModal').classList.add('hidden');
@@ -155,7 +163,7 @@
       });
   }
   function keypadPress(d) {
-    if (!keypadCtx) return;
+    if (!keypadCtx || keypadCtx.textMode) return; /* 文字模式:数字盘已隐藏,按键兜底失效 */
     if (!keypadCtx.textMode && keypadCtx.buf.length >= keypadCtx.digits) return;
     keypadCtx.buf.push(d);
     keypadRender();
@@ -256,6 +264,12 @@
       textInput.style.display = textMode ? '' : 'none';
       if (textMode) textInput.focus();
     }
+    /* 语义锁(2026-08-31):文字答案不该看到数字键盘——位数圆点还会泄露答案长度
+       (实测截图:输入"动画图解"的锁面挂着 1-9 数字盘和 4 个圆点,"清除"也只清数字缓冲) */
+    const disp = $('codeDisplay'),
+      pad = $('keypad');
+    if (disp) disp.style.display = textMode ? 'none' : '';
+    if (pad) pad.style.display = textMode ? 'none' : '';
     const card = $('keypadModal');
     const kicker = card.querySelector('.kicker'),
       h2 = card.querySelector('h2'),
