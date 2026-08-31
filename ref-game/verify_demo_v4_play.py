@@ -241,52 +241,85 @@ def run_b(page, tag):
 
 
 def run_c(page, tag):
-    """C 借阅族:容器弹书→顺序扫描(链式组合)→NPC 现身/对话/交易→盖章交单"""
+    """C 借阅族 v4:容器弹书→扫描出题→卡片原话/回访页面答题→NPC 现身/对话/交易→盖章交单"""
     click(page, '[data-id="compiled-item-rc-door"]')  # c1 推门
     click(page, '[data-id="root"]')  # 环顾
-    wait_visible(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 推门见手册/书架/扫描台/提货单")
+    wait_visible(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 推门见手册/扫描台/提货单")
     gone(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 值班员未现身")
     gone(page, '[data-id="compiled-item-rc-book1"]', f"[{tag}] 书未翻出(容器内)")
-    click(page, '[data-id="compiled-item-rc-manual"]')  # c2 读手册
+    # 书架不依赖手册即可点击(P74 修订:c3/c4 只挂推门前置)
     click(page, '[data-id="compiled-container-rc-shelfa"]')  # c3 翻上层
     wait_visible(page, '[data-id="compiled-item-rc-book1"]', f"[{tag}] 上层滑出两本绿标书")
     click(page, '[data-id="compiled-container-rc-shelfb"]')  # c4 翻下层
     wait_visible(page, '[data-id="compiled-item-rc-book2"]', f"[{tag}] 下层滑出绿标+红标")
-    click(page, '[data-id="compiled-item-rc-book1"]')  # c5 看 Z-02
-    click(page, '[data-id="compiled-item-rc-book2"]')  # c6 看 Z-05
-    click(page, '[data-id="compiled-item-rc-book3"]')  # c7 看 Z-09
+    # 容器去重:书架节点应只有一个
+    n_shelf = page.evaluate(
+        "() => document.querySelectorAll('[data-id=\"compiled-container-rc-shelfa\"],[data-id=\"compiled-item-rc-shelfa\"]').length"
+    )
+    check(f"[{tag}] 上层书架无重复节点", n_shelf == 1, f"count={n_shelf}")
+    click(page, '[data-id="compiled-item-rc-manual"]')  # c2 读手册
+    click(page, '[data-id="compiled-item-rc-book1"]')  # c5 看 MDN 卡
+    click(page, '[data-id="compiled-item-rc-book2"]')  # c6 看教程卡
+    click(page, '[data-id="compiled-item-rc-book3"]')  # c7 看算法卡
     time.sleep(1.2)  # 书飞入落定
     drag(page, '[data-id="compiled-item-rc-book4"]', '[data-id="compiled-item-rc-scanner"]')  # 红标书乱扫
     s = snap(page)
     check(f"[{tag}] 红标书扫描无受理", s and "beat-c8" not in s.get("clues", []))
-    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # 乱序:先扫 Z-05
+    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # 乱序:先扫主课程
     s = snap(page)
     check(
-        f"[{tag}] 乱序扫描被拒(索书号次序 enforce)",
-        s and "beat-c8" not in s.get("clues", []) and "beat-c9" not in s.get("clues", []),
+        f"[{tag}] 乱序扫描被拒(概述在前)",
+        s and "beat-c8" not in s.get("clues", []) and "beat-c10" not in s.get("clues", []),
     )
-    drag(page, '[data-id="compiled-item-rc-book1"]', '[data-id="compiled-item-rc-scanner"]')  # c8 Z-02
+    drag(page, '[data-id="compiled-item-rc-book1"]', '[data-id="compiled-item-rc-scanner"]')  # c8 扫概述
     check(
-        f"[{tag}] 扫描台受理 1/3",
+        f"[{tag}] 扫描台变身「出题中的扫描台」",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "出题中的扫描台",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]'),
+    )
+    wait_visible(page, '[data-id="compiled-item-rc-q1"]', f"[{tag}] 校验题一吐出(auto)")
+    click(page, '[data-id="compiled-item-rc-scanner"]')  # c9 答题
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 校验题输入面板弹出", 5000)
+    check(f"[{tag}] 校验题走文字输入框", page.locator("#keypadText").is_visible())
+    keypad_text(page, "JavaScript 教程")  # 错误答案必须被拒
+    s = snap(page)
+    check(f"[{tag}] 错误答案被拒", s and "beat-c9" not in s.get("clues", []))
+    keypad_text(page, "JavaScript 参考")  # 卡片原话
+    check(
+        f"[{tag}] 受理 1/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 1/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
-    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # c9 Z-05
+    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # c10 扫主课程
+    wait_visible(page, '[data-id="compiled-item-rc-q2"]', f"[{tag}] 校验题二吐出(auto)")
+    click(page, '[data-id="compiled-item-rc-scanner"]')  # c11 答题
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 第二题面板弹出", 5000)
+    keypad_digits(page, "3")  # 错误数字
+    s = snap(page)
+    check(f"[{tag}] 错误数字被拒", s and "beat-c11" not in s.get("clues", []))
+    keypad_digits(page, "2")  # 主课程包含 2 部分
     check(
-        f"[{tag}] 扫描台受理 2/3",
+        f"[{tag}] 受理 2/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 2/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
-    drag(page, '[data-id="compiled-item-rc-book3"]', '[data-id="compiled-item-rc-scanner"]')  # c10 Z-09
+    drag(page, '[data-id="compiled-item-rc-book3"]', '[data-id="compiled-item-rc-scanner"]')  # c12 扫算法
+    wait_visible(page, '[data-id="compiled-item-rc-q3"]', f"[{tag}] 校验题三吐出(auto)")
+    click(page, '[data-id="compiled-item-rc-scanner"]')  # c13 答题
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 第三题面板弹出", 5000)
+    keypad_text(page, "非线性")  # 错误类名
+    s = snap(page)
+    check(f"[{tag}] 错误类名被拒", s and "beat-c13" not in s.get("clues", []))
+    keypad_text(page, "线性")  # 原页面 3.1 节的分类
     check(
-        f"[{tag}] 扫描台受理 3/3",
+        f"[{tag}] 受理 3/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 3/3",
         node_name(page, '[data-id="compiled-item-rc-scanner"]'),
     )
     wait_visible(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 铃响后值班员现身(auto 巧合事件)")
-    click(page, '[data-id="compiled-item-rc-npc"]')  # c11 对话
+    click(page, '[data-id="compiled-item-rc-npc"]')  # c14 对话
     time.sleep(1.2)
-    drag(page, '[data-id="compiled-item-rc-kettle"]', '[data-id="compiled-item-rc-npc"]')  # c12 交易
+    drag(page, '[data-id="compiled-item-rc-kettle"]', '[data-id="compiled-item-rc-npc"]')  # c15 交易
     check(
         f"[{tag}] 值班员变身「捧着热茶的值班员」",
         node_name(page, '[data-id="compiled-item-rc-npc"]') == "捧着热茶的值班员",
@@ -294,13 +327,13 @@ def run_c(page, tag):
     )
     wait_visible(page, '[data-id="compiled-item-rc-stamp"]', f"[{tag}] 借阅章递出(auto)")
     time.sleep(1.2)
-    drag(page, '[data-id="compiled-item-rc-stamp"]', '[data-id="compiled-item-rc-ticket"]')  # c13
+    drag(page, '[data-id="compiled-item-rc-stamp"]', '[data-id="compiled-item-rc-ticket"]')  # c16
     check(
         f"[{tag}] 提货单变身「盖章的提货单」",
         node_name(page, '[data-id="compiled-item-rc-ticket"]') == "盖章的提货单",
         node_name(page, '[data-id="compiled-item-rc-ticket"]'),
     )
-    drag(page, '[data-id="compiled-item-rc-ticket"]', '[data-id="compiled-exit"]')  # c14
+    drag(page, '[data-id="compiled-item-rc-ticket"]', '[data-id="compiled-exit"]')  # c17
     time.sleep(0.4)
     click(page, '[data-id="compiled-exit"]')
     time.sleep(0.6)

@@ -234,24 +234,28 @@ level_b = {
     "mechanics": ["inspect", "angle(钟点→角度接线)", "灯光显形(auto×2)", "password-text×2", "combine"],
 }
 
-# ============ C 秋末自学计划·闭馆前的资料室(借阅族:弹书+顺序扫描+NPC) ============
-# 机制族(与 A/B 零重叠):①容器弹书——两个书架共弹出 4 本,绿标 3 本是本批,红标 1 本是干扰;
-#   ②顺序扫描——链式组合 enforce 索书号升序(前一本没扫,后一本拖上去无反应,真顺序而非提示);
-#   ③NPC——全部受理后广播响起,值班员从借阅台那头现身(节点树另一端的巧合事件,auto);
-#   点击他=对话,递保温壶=交易(m4 神秘人语法),换来借阅章。
+# ============ C 秋末自学计划·闭馆前的资料室(借阅族:弹书+扫描校验题+NPC) ============
+# 机制族(与 A/B 零重叠):①容器弹书(绿标 3+红标干扰);②扫描校验题——收书后机器出题,
+#   答案来自书的卡片原话(MDN『参阅 JavaScript 参考』/教程简介『2 部分』)与**原页面**
+#   (hello-algo 3.1 节的线性/非线性分类,经回访任务引导打开原收藏——产品核心循环);
+#   受理次序=学习次序(概述→主课程→算法),链式组合+密码校验 enforce;
+#   ③NPC 三件套:全部受理后广播响,值班员 auto 现身,对话+热茶交易换章。
 items_c = [
     card("rc-door", "资料室门", "资料室的门虚掩着。点击推门进去。"),
     card("rc-manual", "守馆手册", "借阅台上的手册,翻开着。"),
     card("rc-shelfa", "还书车 · 上层", "还书车的上层书架,塞着几本书。"),
     card("rc-shelfb", "还书车 · 下层", "还书车的下层书架,也塞着书。"),
-    card("rc-book1", "绿标书 · 现代JavaScript教程", "书脊贴着绿色书标:Z-02。"),
-    card("rc-book2", "绿标书 · JavaScript指南", "书脊贴着绿色书标:Z-05。"),
-    card("rc-book3", "绿标书 · Hello 算法", "书脊贴着绿色书标:Z-09。"),
-    card("rc-book4", "红标书 · 五三题库", "书脊贴着红色书标:R-13。"),
-    card("rc-scanner", "扫描台", "借阅台旁的扫描台,指示灯待机闪烁。"),
-    card("rc-desk", "借阅台", "借阅台空着,后面虚掩着一扇小门。"),
-    card("rc-npc", "值班员", "值夜班的学长,抱着一只茶杯。"),
-    card("rc-kettle", "保温壶", "还书车旁的保温壶,摸着还温。"),
+    card("rc-book1", "绿标书 · JavaScript指南", "书脊贴着绿色书标。"),
+    card("rc-book2", "绿标书 · 现代JavaScript教程", "书脊贴着绿色书标。"),
+    card("rc-book3", "绿标书 · Hello 算法", "书脊贴着绿色书标。"),
+    card("rc-book4", "红标书 · 五三题库", "书脊贴着红色书标。"),
+    card("rc-q1", "校验题 · 一", "扫描台吐出的第一道题。"),
+    card("rc-q2", "校验题 · 二", "第二道题。"),
+    card("rc-q3", "校验题 · 三", "第三道题。"),
+    card("rc-scanner", "扫描台", "借阅台旁的扫描台。"),
+    card("rc-desk", "借阅台", "借阅台空着。"),
+    card("rc-npc", "值班员", "值夜班的学长。"),
+    card("rc-kettle", "保温壶", "还书车旁的保温壶。"),
     card("rc-stamp", "借阅章", "黄铜借阅章。"),
     card("rc-ticket", "提货单", "借阅系统的提货单。"),
 ]
@@ -259,34 +263,41 @@ level_c = {
     "id": "level-demo-selfstudy",
     "title": "秋末自学计划 · 闭馆前的资料室",
     "premise": "2025 年 11 月的傍晚,资料室快闭馆了。还书车上堆着今天回流的书,提货单还没盖章,值班员不知道躲去了哪儿——借阅台后面只留着一壶还温着的茶。窗外天色暗得很快。",
-    "objective": "按守馆手册的流程把本批图书逐本扫描归架,等系统受理;找到值班员把章要出来,盖在提货单上,赶在闭馆前交单出室。",
-    "targetMinutes": 14,
+    "objective": "按守馆手册的流程把本批图书逐本扫描、答对校验题;全部受理后找到值班员,把章要出来盖在提货单上,赶在闭馆前交单出室。",
+    "targetMinutes": 15,
     "selectedItemIds": [it["id"] for it in items_c],
     "containers": [
-        {"id": "rc-shelfa", "name": "还书车 · 上层", "desc": "还书车的上层书架。点击翻一翻。", "hidden": False},
-        {"id": "rc-shelfb", "name": "还书车 · 下层", "desc": "还书车的下层书架。点击翻一翻。", "hidden": False},
+        {"id": "rc-shelfa", "name": "还书车 · 上层", "desc": "还书车的上层书架。点击翻一翻,书就滑出来。", "hidden": False},
+        {"id": "rc-shelfb", "name": "还书车 · 下层", "desc": "还书车的下层书架,也塞着书。点击翻一翻。", "hidden": False},
     ],
     "items": [
         li("rc-door", "clue", "线索", "资料室门", "资料室的门虚掩着,门缝里漏出旧纸的味道。点击推门进去。"),
         li("rc-manual", "clue", "线索", "守馆手册",
-           "【流程页】今晚归还批次:贴绿标的三本。归架流程:按索书号从小到大,逐本放上扫描台;全部受理后系统会响铃——值班员自然会来找你。备注:章不外借,但他那个人,只认热茶。",
+           "【流程页】今晚归还批次:贴绿标的三本。流程:逐本放上扫描台——机器会出校验题,答案都在书自己的卡片里,答对才算受理。受理次序就是学习的次序:概述在前,主课程在中,算法进阶在后。全部受理后系统响铃,值班员自然会来。备注:章不外借,但他那个人,只认热茶。",
            hidden=True),
-        li("rc-shelfa", "clue", "线索", "还书车 · 上层", "还书车的上层书架,塞着几本书。点击翻一翻,书就滑出来。"),
-        li("rc-book1", "clue", "线索", "绿标书 · 现代JavaScript教程",
-           "【网页内容·书脊】绿标 Z-02。主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。",
+        li("rc-book1", "clue", "线索", "绿标书 · JavaScript指南",
+           "【网页内容·书脊】JavaScript 指南——向你介绍如何使用 JavaScript,并且给出了语言概述。想深入了解语言特性的详细信息?它让你去参阅 JavaScript 参考。",
            hidden=True, container="rc-shelfa"),
         li("rc-book3", "clue", "线索", "绿标书 · Hello 算法",
-           "【网页内容·书脊】绿标 Z-09。动画图解、一键运行的数据结构与算法教程。",
+           "【网页内容·书脊】3.1 数据结构分类——动画图解、一键运行的数据结构与算法教程。书里把数组、链表、栈、队列都归了类。想通过校验?打开原收藏,翻到 3.1 节,看看它们归进哪一类。",
            hidden=True, container="rc-shelfa"),
-        li("rc-shelfb", "clue", "线索", "还书车 · 下层", "还书车的下层书架,也塞着书。点击翻一翻。"),
-        li("rc-book2", "clue", "线索", "绿标书 · JavaScript指南",
-           "【网页内容·书脊】绿标 Z-05。JavaScript 指南——讲语言在浏览器里的用法。",
+        li("rc-book2", "clue", "线索", "绿标书 · 现代JavaScript教程",
+           "【网页内容·书脊】主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。还有一些额外的主题文章系列。",
            hidden=True, container="rc-shelfb"),
         li("rc-book4", "clue", "线索", "红标书 · 五三题库",
-           "红标 R-13。《五年高考·三年模拟》。和这个房间格格不入,像是谁忘在这儿的。手册说今晚只收绿标。",
+           "红标。《五年高考·三年模拟》。和这个房间格格不入,像是谁忘在这儿的。手册说今晚只收绿标。",
            hidden=True, container="rc-shelfb"),
+        li("rc-q1", "clue", "线索", "校验题 · 一",
+           "【校验题·概述】这本《JavaScript 指南》说:想深入了解语言特性的详细信息,该去参阅什么?把答案输进扫描台。",
+           hidden=True, auto=True),
+        li("rc-q2", "clue", "线索", "校验题 · 二",
+           "【校验题·主课程】你扫的这门主课程,包含几个部分?把数字输进扫描台。",
+           hidden=True, auto=True),
+        li("rc-q3", "clue", "线索", "校验题 · 三",
+           "【校验题·进阶】打开这本书的原收藏,翻到 3.1 节——书里把数组、链表、栈、队列归进哪一类?把类名输进扫描台。",
+           hidden=True, auto=True),
         li("rc-scanner", "tool", "工具", "扫描台",
-           "借阅台旁的扫描台,指示灯待机闪烁。把书平放上去就能扫——但系统有它认的次序。"),
+           "借阅台旁的扫描台,指示灯待机闪烁。把书平放上去就能扫——但每扫一本,它都要先考你一道题。"),
         li("rc-desk", "clue", "线索", "借阅台",
            "借阅台空着,台面收拾得整整齐齐,后面虚掩着一扇小门,门缝里透出一点灯光。"),
         li("rc-npc", "clue", "线索", "值班员",
@@ -301,42 +312,50 @@ level_c = {
     ],
     "beats": [
         {"id": "c1", "title": "推开资料室", "action": "inspect", "uses": ["rc-door"],
-         "reveals": ["rc-manual", "rc-shelfa", "rc-shelfb", "rc-scanner", "rc-desk", "rc-kettle", "rc-ticket"]},
+         "reveals": ["rc-manual", "rc-scanner", "rc-desk", "rc-kettle", "rc-ticket"]},
         {"id": "c2", "title": "读守馆手册", "action": "inspect", "uses": ["rc-manual"], "requires": ["c1"]},
         {"id": "c3", "title": "翻上层书架", "action": "inspect", "uses": ["rc-shelfa"],
-         "requires": ["c2"], "reveals": ["rc-book1", "rc-book3"]},
+         "requires": ["c1"], "reveals": ["rc-book1", "rc-book3"]},
         {"id": "c4", "title": "翻下层书架", "action": "inspect", "uses": ["rc-shelfb"],
-         "requires": ["c2"], "reveals": ["rc-book2", "rc-book4"]},
-        {"id": "c5", "title": "看 Z-02 书脊", "action": "inspect", "uses": ["rc-book1"], "requires": ["c3"]},
-        {"id": "c6", "title": "看 Z-05 书脊", "action": "inspect", "uses": ["rc-book2"], "requires": ["c4"]},
-        {"id": "c7", "title": "看 Z-09 书脊", "action": "inspect", "uses": ["rc-book3"], "requires": ["c3"]},
-        {"id": "c8", "title": "扫描第一本(Z-02)", "action": "combine", "uses": ["rc-book1", "rc-scanner"],
-         "requires": ["c2", "c5"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 1/3",
-         "consume": ["rc-book1"]},
-        {"id": "c9", "title": "扫描第二本(Z-05)", "action": "combine", "uses": ["rc-book2", "rc-scanner"],
-         "requires": ["c8", "c6"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 2/3",
-         "consume": ["rc-book2"]},
-        {"id": "c10", "title": "扫描第三本(Z-09)", "action": "combine", "uses": ["rc-book3", "rc-scanner"],
-         "requires": ["c9", "c7"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 3/3",
-         "consume": ["rc-book3"], "reveals": ["rc-npc"]},
-        {"id": "c11", "title": "和值班员搭话", "action": "inspect", "uses": ["rc-npc"], "requires": ["c10"]},
-        {"id": "c12", "title": "把保温壶递给他", "action": "combine", "uses": ["rc-kettle", "rc-npc"],
-         "requires": ["c11"], "resultOn": "rc-npc", "product": "捧着热茶的值班员",
+         "requires": ["c1"], "reveals": ["rc-book2", "rc-book4"]},
+        {"id": "c5", "title": "看《JavaScript 指南》卡片", "action": "inspect", "uses": ["rc-book1"], "requires": ["c3"]},
+        {"id": "c6", "title": "看《现代JavaScript教程》卡片", "action": "inspect", "uses": ["rc-book2"], "requires": ["c4"]},
+        {"id": "c7", "title": "看《Hello 算法》卡片", "action": "inspect", "uses": ["rc-book3"], "requires": ["c3"]},
+        {"id": "c8", "title": "扫描第一本(概述)", "action": "combine", "uses": ["rc-book1", "rc-scanner"],
+         "requires": ["c2", "c5"], "resultOn": "rc-scanner", "product": "出题中的扫描台",
+         "consume": ["rc-book1"], "reveals": ["rc-q1"]},
+        {"id": "c9", "title": "答概述校验题", "action": "password", "uses": ["rc-scanner"], "expected": "JavaScript 参考",
+         "requires": ["c8"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 1/3"},
+        {"id": "c10", "title": "扫描第二本(主课程)", "action": "combine", "uses": ["rc-book2", "rc-scanner"],
+         "requires": ["c9", "c6"], "resultOn": "rc-scanner", "product": "出题中的扫描台",
+         "consume": ["rc-book2"], "reveals": ["rc-q2"]},
+        {"id": "c11", "title": "答主课程校验题", "action": "password", "uses": ["rc-scanner"], "expected": "2",
+         "requires": ["c10"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 2/3"},
+        {"id": "c12", "title": "扫描第三本(算法)", "action": "combine", "uses": ["rc-book3", "rc-scanner"],
+         "requires": ["c11", "c7"], "resultOn": "rc-scanner", "product": "出题中的扫描台",
+         "consume": ["rc-book3"], "reveals": ["rc-q3"]},
+        {"id": "c13", "title": "答算法校验题", "action": "password", "uses": ["rc-scanner"], "expected": "线性",
+         "requires": ["c12"], "resultOn": "rc-scanner", "product": "扫描台 · 已受理 3/3",
+         "reveals": ["rc-npc"]},
+        {"id": "c14", "title": "和值班员搭话", "action": "inspect", "uses": ["rc-npc"], "requires": ["c13"]},
+        {"id": "c15", "title": "把保温壶递给他", "action": "combine", "uses": ["rc-kettle", "rc-npc"],
+         "requires": ["c14"], "resultOn": "rc-npc", "product": "捧着热茶的值班员",
          "consume": ["rc-kettle"], "reveals": ["rc-stamp"]},
-        {"id": "c13", "title": "盖归架章", "action": "combine", "uses": ["rc-stamp", "rc-ticket"],
-         "requires": ["c12"], "resultOn": "rc-ticket", "product": "盖章的提货单", "consume": ["rc-stamp"]},
-        {"id": "c14", "title": "闭馆前交单", "action": "deliver", "uses": ["result:c13"], "requires": ["c13"]},
+        {"id": "c16", "title": "盖归架章", "action": "combine", "uses": ["rc-stamp", "rc-ticket"],
+         "requires": ["c15"], "resultOn": "rc-ticket", "product": "盖章的提货单", "consume": ["rc-stamp"]},
+        {"id": "c17", "title": "闭馆前交单", "action": "deliver", "uses": ["result:c16"], "requires": ["c16"]},
     ],
     "hints": [
         "推门之后,借阅台上翻开着的手册就是今晚的流程说明。",
         "还书车的两层都要翻——书会自己滑出来,认准绿色书标。",
-        "红标那本和今晚无关,手册说了只收绿标。",
-        "扫描有次序:按索书号从小到大,一本一本放上台。",
+        "红标那本和今晚无关;扫描的次序是学习的次序:概述、主课程、算法。",
+        "机器出的每道题,答案都在书的卡片原话里——读仔细。",
+        "第三道题要翻开原页面才能答:书卡上写了回访的任务。",
         "全部受理后系统会响铃——等等看,会有人出现。",
         "值班员的话里有话:他缺的东西,还书车旁边正好有一只。",
         "章到手,盖单,赶在闭馆前出门。",
     ],
-    "mechanics": ["inspect", "容器弹书×2", "顺序扫描(链式组合×3,索书号升序)", "NPC(现身/对话/交易)", "auto显形×2"],
+    "mechanics": ["inspect", "容器弹书×2", "扫描校验题×3(卡片原话+回访原页面)", "NPC(现身/对话/交易)", "auto显形×4"],
 }
 
 for fname, items, level in (
@@ -359,7 +378,7 @@ for fname, items, level in (
 answers = {
     "demo-gamenight": ["1046", "461", "104610374", "148416"],
     "demo-toolbox": ["your thinking", "动画图解", "90", "210", "330"],  # 口令/标签/接线角度
-    "demo-selfstudy": ["Z-02", "Z-05", "Z-09", "z-02"],  # 索书号只出现在书脊数据卡,手册不得写明顺序
+    "demo-selfstudy": ["JavaScript 参考", "线性"],  # 答案只在书卡原话/原页面;『2』太通用不查
 }
 leaks = []
 for fname, keys in (
@@ -383,15 +402,14 @@ for fname, keys in (
         for k in keys:
             if k in h:
                 leaks.append((fname, "hints泄漏", "", k))
-# 顺序答案泄漏检查(P74 同源):排序规则的表述里不得出现具体书号次序
+# 校验题泄漏检查(P67 同源):答案不得出现在题目卡/手册/机器上;『线性』只许来自原页面
 lv_c = json.load(open(os.path.join(OUT, "demo-selfstudy.room.json"), encoding="utf-8"))["level"]
 for it in lv_c["items"]:
-    blob = (it.get("reason") or "")
-    if "Z-02" in blob and ("先" in blob or "第一" in blob or "从小到大" in blob and "Z-05" in blob):
-        leaks.append(("demo-selfstudy", "顺序泄漏", it["id"], "具体次序"))
-    for k in ("Z-02", "Z-05", "Z-09"):
-        if k in blob and it["id"] in ("rc-manual", "rc-scanner", "rc-desk", "rc-npc", "rc-kettle", "rc-stamp", "rc-ticket", "rc-door"):
-            leaks.append(("demo-selfstudy", "索书号出现在非书脊物件", it["id"], k))
+    blob = (it.get("reason") or "") + (it.get("title") or "")
+    if "线性" in blob:
+        leaks.append(("demo-selfstudy", "校验答案出现在文案里", it["id"], "线性"))
+    if "JavaScript 参考" in blob and it["id"] != "rc-book1":
+        leaks.append(("demo-selfstudy", "答案出现在非数据卡", it["id"], "JavaScript 参考"))
 # 敲击可供性检查(P74):文案只许暗示质感,不许给动作指令或次数
 for fname in ("demo-gamenight", "demo-toolbox", "demo-selfstudy"):
     lv = json.load(open(os.path.join(OUT, fname + ".room.json"), encoding="utf-8"))["level"]

@@ -1032,21 +1032,22 @@
         log('关卡开始。你站在第一个场景里。解开它,才能继续深入。', 'good');
       }
     } else {
-      /* 散落在房间里的物件+出口直接可见;容器是关闭的——点开容器才显形里面的东西;
-         JSON 标记 hidden 的容器(如监狱的书架/大铁箱/门)开场不存在,要等回访发现 */
+      /* 散落在房间里的物件直接可见;容器是关闭的——点开容器才显形里面的东西;
+         JSON 标记 hidden 的容器(如监狱的书架/大铁箱/门)开场不存在,要等回访发现。
+         2026-08-31:出口不再开场亮出——「结束」长在交付物旁,只在只剩交付步时出现 */
       state.nodes.forEach(function (n) {
         if (n.compiledContainer && !n.compiledHidden) {
           n.hidden = false;
           n.spawned = true;
           n.justArrived = true; /* 关卡开场:可打开的容器逐个亮出 */
         }
-        if (!(n.compiledItem || n.compiledExit)) return;
+        if (!n.compiledItem) return; /* compiledExit 除外:见 finishIfDone 的 restDone 点亮 */
         const inContainer =
           typeof n.parent === 'string' && n.parent.indexOf('compiled-container-') === 0;
         if (!inContainer && !(n.compiledHidden && !n.revealed)) {
           n.hidden = false;
           n.spawned = true;
-          n.justArrived = true; /* 散落物件/出口开场显形也有出现动画 */
+          n.justArrived = true; /* 散落物件开场显形也有出现动画 */
         }
       });
       log('关卡开始。房间里的东西触手可及；能打开的地方还要自己动手。', 'good');
@@ -2244,6 +2245,15 @@
               return; /* 未走进的房间:物件保持藏着 */
             n.hidden = false;
           });
+        /* 「结束」可见性与进度对齐(2026-08-31):出口挂在交付物旁后,
+           恢复存档不能无条件亮出——只有只剩交付步(restDone)时才出现 */
+        const exNode = levelNode('compiled-exit');
+        if (exNode) {
+          const restDone = (compiled.level.beats || [])
+            .filter((b) => b.action !== 'deliver')
+            .every((b) => state.clues.has('beat-' + b.id));
+          exNode.hidden = !restDone;
+        }
         if (compiled.rootMode) {
           const lv = levelNode('compiled-level');
           if (lv) lv.hidden = true;
