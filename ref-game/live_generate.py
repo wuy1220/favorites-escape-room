@@ -9,7 +9,7 @@ import sys
 import time
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+CHROME = None
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIXTURE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "fixtures", "sample10-bookmarks.html")
 THEME = sys.argv[2] if len(sys.argv) > 2 else ""

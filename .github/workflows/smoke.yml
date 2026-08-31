@@ -1,0 +1,23 @@
+name: smoke
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Run solver smoke test
+        shell: bash
+        run: |
+          python server/favorites_room_server.py &
+          server_pid=$!
+          trap 'kill $server_pid' EXIT
+          python ref-game/test_solver.py

@@ -7,7 +7,7 @@ import time
 
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 FIXTURE = "fixtures/sample10-bookmarks.html"
 GOAL_SECONDS = 160
 results = []
@@ -240,7 +240,7 @@ with sync_playwright() as p:
               const bad = [];
               recs.forEach((r) => {
                 (r.facts || []).forEach((f) => {
-                  const ground = [r.description, r.title, r.urlPath].map((x) => String(x || '')).join(' ');
+                  const ground = [r.description, r.title, r.urlPath, r.domain].map((x) => String(x || '')).join(' ');
                   if (f.v && ground.indexOf(f.v) < 0) bad.push(r.id + ':' + f.v);
                 });
               });

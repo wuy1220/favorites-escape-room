@@ -4,7 +4,7 @@
 import json, time, math, sys
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 
 def play_through(page, path):
     room = json.load(open(path, encoding="utf-8"))

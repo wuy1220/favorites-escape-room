@@ -2,6 +2,8 @@
 
 > 🏆 黑客松评委请看：[PITCH.md —— 一页项目简介](PITCH.md)
 
+发布与密钥安全说明见 [SECURITY.md](SECURITY.md)。
+
 读取 Chrome 收藏夹导出（HTML/JSON），经本地清洗与 LLM 设计管线（范例模仿设计师 →
 编译 → 求解器验证 → 自修复回路）生成一个按 beat 执行的节点式密室。
 不依赖 LLM 的部分（Room 02 固定房间、关卡导入试玩）可独立运行。
@@ -28,9 +30,29 @@
 
 ## 运行
 
+### 评委快速试玩（无需 API key）
+
+安装 Python 3.9+ 后运行：
+
 ```powershell
 python server/favorites_room_server.py
 # 打开 http://127.0.0.1:8128/
+```
+
+然后在“已保存关卡”中打开常驻“新手关卡”，或导入 `sample-puzzles/prison.room.json`、
+`sample-puzzles/clockwork.room.json` 等样例。样例关卡和固定房间不需要网络或 LLM key。
+
+### 启用生成
+
+生成流程需要网络和 Step API key。将 key 放在未提交的 `server/STEP_API_KEY.local`
+文件中，或设置 `STEP_API_KEY` 环境变量；GLM 为可选备用供应商，配置在
+`server/GLM_API_KEY.local`。没有 key 时仍可完整试玩样例，但不能运行在线生成。
+
+### 测试依赖
+
+```powershell
+python -m pip install -r requirements.txt
+python -m playwright install chromium
 ```
 
 该服务器同时提供静态页面与 `/api/step`（Step Plan → deepseek advisor 代理）。

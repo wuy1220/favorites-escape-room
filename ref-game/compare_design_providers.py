@@ -103,7 +103,7 @@ print("designs saved: " + ", ".join(f"{k}={'有' if v else '无'}" for k, v in d
 # 可解性验证:每份设计喂进 compileLevel+solveLevel
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 with sync_playwright() as p:
     b = p.chromium.launch(headless=True, executable_path=CHROME)
     page = b.new_page()

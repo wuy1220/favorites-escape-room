@@ -8,13 +8,15 @@
              在自己槽位正上方 → 从顶上飞出。
 同时记录连接线端点,看线是"生长"还是"淡入"。
 """
+from pathlib import Path
 import json
+from pathlib import Path
 import time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-PUZZLE = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\sample-puzzles\prison.room.json"
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "prison.room.json")
+CHROME = None
 
 SAMPLER = r"""
 () => {

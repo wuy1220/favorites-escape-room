@@ -15,7 +15,7 @@ import sys
 import time
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+CHROME = None
 PUZZLE = sys.argv[1] if len(sys.argv) > 1 else "sample-puzzles/generated-live.room.json"
 BASE = sys.argv[2] if len(sys.argv) > 2 else "http://127.0.0.1:8128/"
 DEBUG = os.environ.get("AUTO_DEBUG") == "1"

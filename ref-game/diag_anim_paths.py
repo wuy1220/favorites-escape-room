@@ -6,13 +6,15 @@
  B. 编译关卡(监狱):点 root(全房间显形) / 点柜子(容器开启就地显形) / 点场景回访
 输出每次 roomRender 后 DOM 中的 .arrive 节点,以及逐帧采样的动画状态。
 """
+from pathlib import Path
 import json
+from pathlib import Path
 import time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-PUZZLE = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\sample-puzzles\prison.room.json"
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "prison.room.json")
+CHROME = None
 
 HOOK = r"""
 () => {

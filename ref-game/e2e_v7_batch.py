@@ -5,7 +5,7 @@
 import json, time, math, os, sys
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 # 输出目录锚定脚本自身位置,与启动 cwd 无关(2026-08-28 从 ref-game/ 内启动时曾因相对路径崩溃)
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "llm_out")
 # 可选:经环境变量切换 LLM 供应商做 A/B(默认走页面内置 step 配置)。

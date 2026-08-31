@@ -8,12 +8,13 @@
 4. 消耗品:发条接完钟摆后消失(consume),不可再拖;
 5. 回访机制:断钟摆/发条/金钥匙须回访所属容器才出现;点根节点只现形根的直接子节点,不越级。
 """
+from pathlib import Path
 import sys, time, math
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-PUZZLE = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\sample-puzzles\clockwork.room.json"
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "clockwork.room.json")
+CHROME = None
 
 results = []
 def check(name, ok, detail=""):

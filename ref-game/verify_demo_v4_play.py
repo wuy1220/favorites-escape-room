@@ -4,14 +4,17 @@
 A 计量+检索+敲击 / B 电与光族(角度接线→灯光显形→语义锁) / C 借阅族(弹书→顺序扫描→NPC)。
 含错误答案被拒、乱序被拒、红标干扰、归一化、计数、auto/回访两种显形语法的断言。
 """
+from pathlib import Path
 import math
+from pathlib import Path
 import sys
+from pathlib import Path
 import time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-ROOT = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room"
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+ROOT = str(Path(__file__).resolve().parents[1])
+CHROME = None
 
 results = []
 

@@ -9,7 +9,7 @@ import time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 
 out = sys.argv[1] if len(sys.argv) > 1 else "ref-game/shots"
 os.makedirs(out, exist_ok=True)

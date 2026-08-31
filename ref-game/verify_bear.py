@@ -8,12 +8,13 @@
 4. 回访机制:终端/钥匙须回访容器;全程零 compiled-result- 新节点;
 5. consume:钥匙开门后消失。
 """
+from pathlib import Path
 import sys, time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-PUZZLE = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\sample-puzzles\bear-code.room.json"
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "bear-code.room.json")
+CHROME = None
 
 results = []
 def check(name, ok, detail=""):

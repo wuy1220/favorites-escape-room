@@ -5,12 +5,13 @@
 - beat 触发后目标节点原位变身(名字更新),画布不出现 compiled-result- 新节点;
 - 变身后的产物节点跨场景保留(跟随玩家),可继续组合/交付。
 """
+from pathlib import Path
 import sys, time
 from playwright.sync_api import sync_playwright
 
 URL = "http://127.0.0.1:8128/"
-PUZZLE = r"C:\Users\30807\Documents\Codex\2026-08-20\superpowers-brainstorming-c-users-30807-codex-2\projects\favorites-escape-room\sample-puzzles\watchman.json"
-CHROME = r"C:\Users\30807\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe"
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "watchman.json")
+CHROME = None
 
 results = []
 def check(name, ok, detail=""):

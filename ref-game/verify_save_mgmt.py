@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """存档管理端到端验证:导入关卡 -> 列表三按钮 -> 导出下载 -> 删除清空。"""
+from pathlib import Path
 import json, time
 from playwright.sync_api import sync_playwright
 URL = "http://127.0.0.1:8128/"
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
-PUZZLE = r"C:/Users/30807/Documents/Codex/2026-08-20/superpowers-brainstorming-c-users-30807-codex-2/projects/favorites-escape-room/ref-game/llm_out/gen_s0.room.json"
+CHROME = None
+PUZZLE = str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "prison.room.json")
 results = []
 def check(name, ok, detail=""):
     results.append((name, bool(ok), detail)); print(f"[{'PASS' if ok else 'FAIL'}] {name}" + (f"  — {detail}" if detail else ""))

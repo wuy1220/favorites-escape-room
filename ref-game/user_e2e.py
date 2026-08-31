@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """用户素材端到端(最终代码):design→compile→solve→DOM 通关。
 用法: python user_e2e.py <导出的 room.json>(取其 cleaning.records 做 6 条受控素材)"""
+from pathlib import Path
 import json, time, math, sys
 from playwright.sync_api import sync_playwright
 
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
-src = json.load(open(sys.argv[1] if len(sys.argv) > 1 else r"C:/Users/30807/Downloads/收藏夹密室：复古电脑谜题.room.json", encoding="utf-8"))
+CHROME = None
+src = json.load(open(sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).resolve().parents[1] / "sample-puzzles" / "prison.room.json"), encoding="utf-8"))
 REC = src["cleaning"]["records"][:6]
 IDS = [r["id"] for r in REC]
 WIN = src["level"].get("timeWindow") or {"label": "", "count": 6, "mood": "深夜"}

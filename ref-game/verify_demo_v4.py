@@ -9,7 +9,7 @@ import os
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-CHROME = r"C:/Users/30807/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+CHROME = None
 FILES = ["demo-gamenight", "demo-toolbox", "demo-selfstudy"]
 results = []
 
