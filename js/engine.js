@@ -185,15 +185,39 @@
     }
     disp.innerHTML = inner;
   }
+  /* 无效交互反馈(2026-08-30 修订):旧版对整个 #stage 做 0.35s ±7px 全屏震动,
+     高频触发(连输密码/连试组合)令人难受——改为局部轻推(摇弹窗卡片或涉及的
+     两张物件卡),全局限频 ≥900ms 一次,prefers-reduced-motion 时不播。 */
+  let lastNudgeAt = 0;
+  function nudge(targets) {
+    const list = (Array.isArray(targets) ? targets : [targets]).filter(Boolean);
+    if (!list.length) return;
+    const now = Date.now();
+    if (now - lastNudgeAt < 900) return;
+    lastNudgeAt = now;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    list.forEach((el) => {
+      el.classList.remove('shake-soft');
+      void el.offsetWidth;
+      el.classList.add('shake-soft');
+    });
+  }
+  function nodeEl(id) {
+    try {
+      return document.querySelector(
+        '[data-id="' + (window.CSS && CSS.escape ? CSS.escape(String(id)) : String(id)) + '"]',
+      );
+    } catch (_) {
+      return null;
+    }
+  }
   function keypadCommit() {
     const c = keypadCtx;
     if (!c) return;
     /* 文字语义锁:答案取自文本输入框(数字锁仍走按键缓冲) */
     const got = c.textMode && $('keypadText') ? $('keypadText').value : c.buf.join('');
     if (!c.textMode && got.length < c.digits) {
-      $('stage').classList.remove('shake');
-      void $('stage').offsetWidth;
-      $('stage').classList.add('shake');
+      nudge([$('keypadModal') && $('keypadModal').querySelector('.modal-card')]);
       return;
     }
     const norm = (x) =>
@@ -208,9 +232,7 @@
     } else {
       c.buf = [];
       keypadRender();
-      $('stage').classList.remove('shake');
-      void $('stage').offsetWidth;
-      $('stage').classList.add('shake');
+      nudge([$('keypadModal') && $('keypadModal').querySelector('.modal-card')]);
       if (c.onFail) c.onFail();
       toast('密码不对。机关没有反应。');
     }
@@ -457,9 +479,7 @@
     } else {
       c.buf = [];
       morseRender();
-      $('stage').classList.remove('shake');
-      void $('stage').offsetWidth;
-      $('stage').classList.add('shake');
+      nudge([$('morseModal') && $('morseModal').querySelector('.modal-card')]);
       if (c.onFail) c.onFail();
       toast('摩斯码不对。');
     }
@@ -1506,10 +1526,8 @@
       drawLinks();
       return true;
     }
-    /* --- 错误组合:可恢复反馈 --- */
-    $('stage').classList.remove('shake');
-    void $('stage').offsetWidth;
-    $('stage').classList.add('shake');
+    /* --- 错误组合:可恢复反馈(局部轻推两张物件卡,不再全屏震动) --- */
+    nudge([nodeEl(a && a.id), nodeEl(b && b.id)]);
     toast('这两个东西放在一起没有反应。');
     log(
       '"' +

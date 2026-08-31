@@ -4,11 +4,11 @@
   "rc-book",
   "rc-manual",
   "rc-notes",
-  "rc-safe",
-  "rc-badge",
   "rc-card-1",
   "rc-card-2",
-  "rc-card-3"
+  "rc-card-3",
+  "rc-safe",
+  "rc-badge"
  ],
  "items": [
   {
@@ -94,11 +94,11 @@
    "rc-book",
    "rc-manual",
    "rc-notes",
-   "rc-safe",
-   "rc-badge",
    "rc-card-1",
    "rc-card-2",
-   "rc-card-3"
+   "rc-card-3",
+   "rc-safe",
+   "rc-badge"
   ],
   "containers": [],
   "items": [

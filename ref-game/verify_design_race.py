@@ -312,8 +312,9 @@ with sync_playwright() as p:
     )
     lane_rows4 = page4.evaluate("() => document.querySelectorAll('#wbLanes .wb-lane').length")
     check("自定义供应商:3 路稿纸就位", lane_rows4 == 3, f"lane_rows={lane_rows4}")
-    check("自定义供应商:两家端点都被调用(默认 %d / 自建 %d)" % (calls4["step"], calls4["custom"]),
-          calls4["step"] >= 1 and calls4["custom"] >= 1, json.dumps(calls4))
+    # 先胜后路不发:默认路可能还没发出就被跳过(step=0 是合法结果),自建路必须参与
+    check("自定义供应商:自建端点参与赛马(默认 %d / 自建 %d,跳过合法)" % (calls4["step"], calls4["custom"]),
+          calls4["custom"] >= 1, json.dumps(calls4))
     check("清洗路由:清洗走自建供应商(自建 %d 次,默认 %d 次)" % (calls4["customClean"], calls4["stepClean"]),
           calls4["customClean"] >= 1 and calls4["stepClean"] == 0, json.dumps(calls4))
     # ===== 单供应商多路:错峰起跑,先胜后路不发(设计调用应只有 1 次) =====

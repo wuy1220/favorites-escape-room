@@ -1,13 +1,14 @@
 {
  "records": [],
  "controlledIds": [
-  "tb-desk",
+  "tb-clip",
   "tb-note",
   "tb-tutorial",
+  "tb-desk",
+  "tb-lock1",
+  "tb-lock2",
   "tb-installer",
-  "tb-cloud",
-  "tb-chat",
-  "tb-lock"
+  "tb-badge"
  ],
  "items": [
   {
@@ -17,7 +18,16 @@
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "剪报的路径印着:/p/2026071811813"
+   "description": "【事实】剪报路径印着:/p/2026071811"
+  },
+  {
+   "id": "tb-note",
+   "title": "少数派效率卡",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "【事实】效率卡编号印着:/post/83763—"
   },
   {
    "id": "tb-tutorial",
@@ -26,7 +36,34 @@
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "菜鸟教程的 Obsidian 篇写着:基于 Ma"
+   "description": "【网页内容】菜鸟教程写着:Obsidian 基于"
+  },
+  {
+   "id": "tb-desk",
+   "title": "知识库底座",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "底座上有一个凹槽。把安装盘放进去,知识库就建成了"
+  },
+  {
+   "id": "tb-lock1",
+   "title": "年份锁",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "底座的年份锁:四位数字。剪报路径的开头就是答案。"
+  },
+  {
+   "id": "tb-lock2",
+   "title": "编号锁",
+   "domain": "demo",
+   "dateAdded": "",
+   "url": "",
+   "urlPath": "",
+   "description": "底座的编号锁:三位数字。效率卡的编号就是答案。"
   },
   {
    "id": "tb-installer",
@@ -35,59 +72,35 @@
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "银色安装盘,标签写着:Obsidian——Sha"
+   "description": "银色安装盘:Obsidian——Sharpen "
   },
   {
-   "id": "tb-cloud",
-   "title": "云端文档夹",
+   "id": "tb-badge",
+   "title": "金色档案盒",
    "domain": "demo",
    "dateAdded": "",
    "url": "",
    "urlPath": "",
-   "description": "云端文档的封面。不是本地文件——和底座凹槽对不上"
-  },
-  {
-   "id": "tb-chat",
-   "title": "聊天记录册",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "聊天记录的打印册。也不是底座要的东西。"
-  },
-  {
-   "id": "tb-lock",
-   "title": "年份锁",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "底座的年份锁:四位数字。剪报路径的开头就是答案。"
+   "description": "备份完成的金色档案盒。把它带出房间,交付给出口。"
   }
  ],
  "level": {
   "id": "level-demo-toolbox",
-  "title": "春日工具箱 · 知识库之夜",
-  "premise": "2025 年 4 月,你决定给自己的知识建一座房子。工具桌上摊着教程页和效率卡,旁边散落三个组件——但只有一个能装进底座:选错了就装不上。",
-  "objective": "认出正确组件(基于 Markdown 文件的个人知识库),拖到底座上组装,再用年份密码 2026 开锁交付。",
+  "title": "春日工具箱 · 知识库建成之夜",
+  "premise": "2025 年 4 月,你决定给自己的知识建一座房子。工具桌上摊着教程页和效率卡,底座上挂着两把密码锁——一个数字来自剪报的路径,一个来自效率卡的编号。",
+  "objective": "读剪报与效率卡拿数字;开年份锁取安装盘;装上 Obsidian 建成知识库;开编号锁完成备份;把备份档案拖到出口交付。",
   "targetMinutes": 8,
   "selectedItemIds": [
-   "tb-desk",
+   "tb-clip",
    "tb-note",
    "tb-tutorial",
+   "tb-desk",
+   "tb-lock1",
+   "tb-lock2",
    "tb-installer",
-   "tb-cloud",
-   "tb-chat",
-   "tb-lock"
+   "tb-badge"
   ],
-  "containers": [
-   {
-    "id": "tb-desk",
-    "name": "知识库底座",
-    "desc": "底座上有一个凹槽,形状像一块扁平的盘。旁边散落三个组件。",
-    "hidden": false
-   }
-  ],
+  "containers": [],
   "items": [
    {
     "id": "tb-clip",
@@ -95,7 +108,16 @@
     "roleLabel": "线索",
     "title": "知乎专栏剪报",
     "sceneName": "知乎专栏剪报",
-    "reason": "剪报的路径印着:/p/2026071811813643264——开头的年份,就是底座锁的密码。",
+    "reason": "【事实】剪报路径印着:/p/2026071811813643264——开头的年份 2026,是年份锁的密码。",
+    "hidden": false
+   },
+   {
+    "id": "tb-note",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "少数派效率卡",
+    "sceneName": "少数派效率卡",
+    "reason": "【事实】效率卡编号印着:/post/83763——后三位 763,是编号锁的密码。",
     "hidden": false
    },
    {
@@ -104,7 +126,34 @@
     "roleLabel": "线索",
     "title": "Obsidian 教程页",
     "sceneName": "Obsidian 教程页",
-    "reason": "菜鸟教程的 Obsidian 篇写着:基于 Markdown 文件的个人知识库,本地文件存储。装上它,知识就有了家。",
+    "reason": "【网页内容】菜鸟教程写着:Obsidian 基于 Markdown 文件构建个人知识库,本地存储。教程页就是安装指南。",
+    "hidden": false
+   },
+   {
+    "id": "tb-desk",
+    "role": "clue",
+    "roleLabel": "线索",
+    "title": "知识库底座",
+    "sceneName": "知识库底座",
+    "reason": "底座上有一个凹槽。把安装盘放进去,知识库就建成了。",
+    "hidden": false
+   },
+   {
+    "id": "tb-lock1",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "年份锁",
+    "sceneName": "年份锁",
+    "reason": "底座的年份锁:四位数字。剪报路径的开头就是答案。",
+    "hidden": false
+   },
+   {
+    "id": "tb-lock2",
+    "role": "lock",
+    "roleLabel": "锁",
+    "title": "编号锁",
+    "sceneName": "编号锁",
+    "reason": "底座的编号锁:三位数字。效率卡的编号就是答案。",
     "hidden": false
    },
    {
@@ -113,42 +162,23 @@
     "roleLabel": "工具",
     "title": "Obsidian 安装盘",
     "sceneName": "Obsidian 安装盘",
-    "reason": "银色安装盘,标签写着:Obsidian——Sharpen your thinking。它是基于 Markdown 文件的。",
+    "reason": "银色安装盘:Obsidian——Sharpen your thinking。装上教程页,知识库就建成了。",
     "hidden": true,
     "container": "tb-desk"
    },
    {
-    "id": "tb-cloud",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "云端文档夹",
-    "sceneName": "云端文档夹",
-    "reason": "云端文档的封面。不是本地文件——和底座凹槽对不上。",
-    "hidden": false
-   },
-   {
-    "id": "tb-chat",
-    "role": "tool",
-    "roleLabel": "工具",
-    "title": "聊天记录册",
-    "sceneName": "聊天记录册",
-    "reason": "聊天记录的打印册。也不是底座要的东西。",
-    "hidden": false
-   },
-   {
-    "id": "tb-lock",
-    "role": "lock",
-    "roleLabel": "锁",
-    "title": "年份锁",
-    "sceneName": "年份锁",
-    "reason": "底座的年份锁:四位数字。剪报路径的开头就是答案。",
-    "hidden": true,
-    "container": "tb-desk"
+    "id": "tb-badge",
+    "role": "reward",
+    "roleLabel": "结果",
+    "title": "金色档案盒",
+    "sceneName": "金色档案盒",
+    "reason": "备份完成的金色档案盒。把它带出房间,交付给出口。",
+    "hidden": true
    }
   ],
   "beats": [
    {
-    "id": "b1",
+    "id": "t1",
     "title": "读知乎剪报",
     "action": "inspect",
     "uses": [
@@ -158,7 +188,17 @@
     "product": "细读过的剪报"
    },
    {
-    "id": "b2",
+    "id": "t2",
+    "title": "读少数派效率卡",
+    "action": "inspect",
+    "uses": [
+     "tb-note"
+    ],
+    "requires": [],
+    "product": "细读过的效率卡"
+   },
+   {
+    "id": "t3",
     "title": "读 Obsidian 教程页",
     "action": "inspect",
     "uses": [
@@ -168,63 +208,68 @@
     "product": "读过的教程页"
    },
    {
-    "id": "b3",
-    "title": "打开工具桌",
-    "action": "inspect",
+    "id": "t4",
+    "title": "开年份锁",
+    "action": "password",
     "uses": [
-     "tb-desk"
+     "tb-lock1"
     ],
-    "requires": [],
+    "requires": [
+     "t1"
+    ],
+    "expected": "2026",
+    "deriveFrom": [
+     "tb-clip"
+    ],
+    "product": "开着的年份锁",
     "reveals": [
-     "tb-installer",
-     "tb-lock"
-    ],
-    "product": "敞开的工具桌"
+     "tb-installer"
+    ]
    },
    {
-    "id": "b4",
-    "title": "装上 Obsidian",
+    "id": "t5",
+    "title": "装上安装盘",
     "action": "combine",
     "uses": [
      "tb-installer",
      "tb-desk"
     ],
     "requires": [
-     "b2",
-     "b3"
+     "t3",
+     "t4"
     ],
     "consume": [
      "tb-installer"
     ],
     "resultOn": "tb-desk",
-    "product": "建成的知识库"
+    "product": "装好的底座"
    },
    {
-    "id": "b5",
-    "title": "开年份锁",
+    "id": "t6",
+    "title": "开编号锁",
     "action": "password",
     "uses": [
-     "tb-lock"
+     "tb-lock2"
     ],
     "requires": [
-     "b1",
-     "b4"
+     "t2",
+     "t5"
     ],
-    "expected": "2026",
+    "expected": "763",
     "deriveFrom": [
-     "tb-clip"
+     "tb-note"
     ],
-    "product": "解锁的知识库"
+    "product": "完成的备份"
    },
    {
-    "id": "b6",
+    "id": "t7",
     "title": "备份交付",
     "action": "deliver",
     "uses": [
-     "result:b5"
+     "result:t6"
     ],
     "requires": [
-     "b5"
+     "t6"
     ]
    }
   ],
@@ -236,9 +281,10 @@
    "deliver"
   ],
   "hints": [
-   "教程页写着:基于 Markdown 文件的个人知识库。",
-   "三个组件里只有一个能装进底座——选错了装不上。",
-   "剪报路径以 2026 开头;底座的年份锁要四位。"
+   "两张线索卡在明面上:剪报和效率卡。",
+   "剪报路径开头 2026 是年份锁密码;效率卡编号 763 是编号锁密码。",
+   "先开年份锁,取出安装盘;装上底座后,再开编号锁。",
+   "全部完成后,把备份档案拖到出口。"
   ],
   "validation": {
    "valid": true,

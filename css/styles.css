@@ -3425,3 +3425,18 @@ body {
   background: rgba(255, 255, 255, 0.7);
   min-width: 0;
 }
+
+/* ===== 无效交互局部轻推(2026-08-30):替代全屏震动 ===== */
+.shake-soft {
+  animation: shakeSoft 0.22s var(--ease);
+}
+@keyframes shakeSoft {
+  25% { transform: translateX(-3px); }
+  55% { transform: translateX(2.5px); }
+  85% { transform: translateX(-1.5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shake-soft {
+    animation: none;
+  }
+}
