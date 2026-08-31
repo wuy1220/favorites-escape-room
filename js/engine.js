@@ -22,6 +22,7 @@
       passwords: [],
       angles: [],
       morses: [],
+      knocks: [],
       beatCount: 0,
       reveals: {},
       beatMeta: {},
@@ -82,6 +83,17 @@
           clue: 'beat-' + beat.id,
           title: beat.title || '密码 ' + (index + 1),
           resultOn: ids[0],
+          product: String(beat.product || ''),
+        });
+      } else if (beat.action === 'knock' && ids.length >= 1) {
+        /* 连按计数机关:同一物件连敲 count 次完成,原作暗格/铁窗的等价物 */
+        rules.knocks.push({
+          item: ids[0],
+          count: Math.max(1, Number(beat.count) || 3),
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '敲击 ' + (index + 1),
+          resultOn: beat.resultOn || ids[0],
           product: String(beat.product || ''),
         });
       } else if (beat.action === 'angle' && ids.length >= 1) {
@@ -1670,6 +1682,42 @@
     }
     if ((n.compiledItem || n.compiledResult) && compiled.started) {
       const key = itemKey(n);
+      /* knock:连按计数机关(2026-08-31,原作 m4 铁窗 1-3-2 / m6 打火机暗格连按三次的等价物)——
+         前置就绪后连续点击同一物件 count 次,计满即完成:原位变身+显形(reveals)。
+         计数进度存 compiled.knockProgress,点别处不清零(区别于顺序锁的整组重来) */
+      const openKnock = (compiled.rules.knocks || []).find(function (r) {
+        return beatReady(r.need) && !state.clues.has(r.clue) && nodeKeys(n).includes(r.item);
+      });
+      if (openKnock) {
+        compiled.knockProgress = compiled.knockProgress || {};
+        const kKey = openKnock.clue;
+        compiled.knockProgress[kKey] = (compiled.knockProgress[kKey] || 0) + 1;
+        const done = compiled.knockProgress[kKey] >= openKnock.count;
+        if (!done) {
+          log(
+            '咚——(' +
+              compiled.knockProgress[kKey] +
+              '/' +
+              openKnock.count +
+              ')' +
+              (openKnock.title ? '「' + openKnock.title + '」' : ''),
+            'good',
+          );
+          action();
+          return true;
+        }
+        state.clues.add(openKnock.clue);
+        compiled.knockProgress[kKey] = 0;
+        morphNode(n, openKnock);
+        log('连敲了' + openKnock.count + '下:' + (openKnock.title || '有什么东西松动了。'), 'good');
+        triggerReveals(openKnock.need);
+        finishIfDone();
+        action();
+        update();
+        compiledObjective();
+        roomRender();
+        return true;
+      }
       /* password:点击密码盘物件 → 随时弹出密码盘(前置只影响线索可得性,不影响解锁——答案正确即通过) */
       const openPass = compiled.rules.passwords.find(function (r) {
         /* v7.4:全身份匹配——同一物件先被摩斯/角度变身后再上密码锁,变身后的 key 是 result:*,
@@ -2069,6 +2117,10 @@
           }
         });
         compiled.rules.sequences.forEach(function (r) {
+          if (state.clues.has(r.clue)) morphNode(levelNode('compiled-item-' + r.resultOn), r);
+        });
+        /* knock 完成的原位重放(与 combine/sequence 对齐,续游戏后变身不丢) */
+        (compiled.rules.knocks || []).forEach(function (r) {
           if (state.clues.has(r.clue)) morphNode(levelNode('compiled-item-' + r.resultOn), r);
         });
         /* S4 存档保真(审查 11.2.3):重放 password/angle/morse 的原位变身——

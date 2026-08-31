@@ -1,50 +1,72 @@
 {
   "records": [],
   "controlledIds": [
-    "ra-archive",
-    "ra-manual",
+    "ra-note",
+    "ra-drawer",
+    "ra-cleaner",
     "ra-tape",
-    "ra-machine",
+    "ra-fusebox",
+    "ra-terminal",
     "ra-panel",
-    "ra-trackpanel",
+    "ra-file-ngu",
+    "ra-memo",
+    "ra-base",
     "ra-disc"
   ],
   "items": [
     {
-      "id": "ra-archive",
-      "title": "唱片档案卡",
+      "id": "ra-note",
+      "title": "台长字条",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "卡片印着这首歌的实时档案:播放量与弹幕总量。数字右下角还有一行小注。"
+      "description": "钉在墙上的字条,交代了今晚的任务和几条行话规则。"
     },
     {
-      "id": "ra-manual",
-      "title": "检修手册",
+      "id": "ra-drawer",
+      "title": "工作台抽屉",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "手册第 7 页写着点播台的调谐规则:一个数管频率,一个数管音轨。"
+      "description": "工作台的抽屉半开着,里面似乎还有东西。"
+    },
+    {
+      "id": "ra-cleaner",
+      "title": "去污粉",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "一罐去污粉,标签写着:油垢克星。"
     },
     {
       "id": "ra-tape",
-      "title": "卡带 A · Never Gonna Give You Up",
+      "title": "旧磁带",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "卡带标签磨得发白,还能看清歌名。装进点唱机,它才肯开口。"
+      "description": "A 面标签磨得发白,数据条还看得清。"
     },
     {
-      "id": "ra-machine",
-      "title": "老点唱机",
+      "id": "ra-fusebox",
+      "title": "配电箱",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "点唱机的卡带舱积着灰,面板连着两个调谐盘:一个管频率,一个管音轨。"
+      "description": "配电箱的面板糊着一层油垢,看不清线路。"
+    },
+    {
+      "id": "ra-terminal",
+      "title": "检索台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "曲库检索台,屏幕黑着,指示灯灭。"
     },
     {
       "id": "ra-panel",
@@ -53,16 +75,34 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "点播台的频率面板,四位数字转盘。调准了,整座城市都能听见这首老歌。"
+      "description": "点播台的频率面板,四位数字转盘。"
     },
     {
-      "id": "ra-trackpanel",
-      "title": "音轨面板",
+      "id": "ra-file-ngu",
+      "title": "曲库档案·A面",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "音轨面板,三位数字转盘。频率调准后它才通电。"
+      "description": "曲库里这首歌的档案页。"
+    },
+    {
+      "id": "ra-memo",
+      "title": "检索结果·压轴",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "台长的一条检索备忘。"
+    },
+    {
+      "id": "ra-base",
+      "title": "点播台底座",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "点播台的木质底座,靠下沿有一块木板。"
     },
     {
       "id": "ra-disc",
@@ -71,70 +111,82 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "压轴的光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。"
+      "description": "压轴的光碟:重巡 Pola 的「Treasure」。"
     }
   ],
   "level": {
     "id": "level-demo-gamenight",
     "title": "深秋游戏之夜 · 末班点播台",
-    "premise": "2024 年 11 月的深夜,你在游戏堆里过了一整晚。今晚,你想把那段 Never Gonna Give You Up 点播给整座城市的失眠者,还要让压轴的 MMD 光碟一起出发。点播台的老机器只认数据——档案上印什么,它就要什么。",
-    "objective": "打开怀旧柜,读档案卡与检修手册,把卡带装进点唱机,再按手册的规则调准两个面板,取出压轴光碟投递出去。",
-    "targetMinutes": 10,
+    "premise": "2024 年 11 月的深夜,点播台忽然断了电。台长的字条钉在墙上:今晚的压轴必须由你手动播出——但检索台锁着数据,频率面板死活不亮,压轴的东西,他藏在了一个『只有你知道的地方』。",
+    "objective": "按字条的行话修好配电箱、查出台里曲库的档案,调准频率;再顺着档案里的线索找到台长藏压轴碟的地方,把它投递出去。",
+    "targetMinutes": 12,
     "selectedItemIds": [
-      "ra-archive",
-      "ra-manual",
+      "ra-note",
+      "ra-drawer",
+      "ra-cleaner",
       "ra-tape",
-      "ra-machine",
+      "ra-fusebox",
+      "ra-terminal",
       "ra-panel",
-      "ra-trackpanel",
+      "ra-file-ngu",
+      "ra-memo",
+      "ra-base",
       "ra-disc"
     ],
     "containers": [
       {
-        "id": "ra-cabinet",
-        "name": "怀旧游戏柜",
-        "desc": "玻璃柜里躺着卡带和几张卡纸。点击打开它,再点一次取出来。",
+        "id": "ra-drawer",
+        "name": "工作台抽屉",
+        "desc": "工作台的抽屉半开着。点击拉开它。",
         "hidden": false
       }
     ],
     "items": [
       {
-        "id": "ra-archive",
+        "id": "ra-note",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "唱片档案卡",
-        "sceneName": "唱片档案卡",
-        "reason": "【网页内容·数据条】卡片印着这首歌的实时档案:视频播放量 104610374,弹幕总量 148416。数字右下角还有一行小注:『以档案为准。』",
-        "hidden": true,
-        "container": "ra-cabinet"
+        "title": "台长字条",
+        "sceneName": "台长字条",
+        "reason": "『今晚压轴你来播。三件事记住:一、检索编号 = 曲目播放量的第 3 到第 5 位;二、热线频率 = 播放量的前四位;三、配电箱的闸被油垢糊死了,工作台抽屉里有去污粉。压轴的东西,我藏在只有你知道的地方。』",
+        "hidden": false
       },
       {
-        "id": "ra-manual",
-        "role": "clue",
-        "roleLabel": "线索",
-        "title": "检修手册",
-        "sceneName": "检修手册",
-        "reason": "【规则页】手册第 7 页写着:点播台的热线频率 = 播放量的前四位;音轨编号 = 弹幕总量的后三位。调错一位,机器都会沉默。",
+        "id": "ra-cleaner",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "去污粉",
+        "sceneName": "去污粉",
+        "reason": "一罐去污粉,标签写着:油垢克星。倒一点在糊死的面板上,擦掉就见真章。",
         "hidden": true,
-        "container": "ra-cabinet"
+        "container": "ra-drawer"
       },
       {
         "id": "ra-tape",
-        "role": "tool",
-        "roleLabel": "工具",
-        "title": "卡带 A · Never Gonna Give You Up",
-        "sceneName": "卡带 A · Never Gonna Give You Up",
-        "reason": "卡带标签磨得发白,还能看清歌名。把它装进点唱机,机器才肯工作。",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "旧磁带",
+        "sceneName": "旧磁带",
+        "reason": "【网页内容·数据条】A 面标签:Never Gonna Give You Up。数据条印着:视频播放量 104610374。侧面小字:曲库数据以检索台档案为准。",
         "hidden": true,
-        "container": "ra-cabinet"
+        "container": "ra-drawer"
       },
       {
-        "id": "ra-machine",
+        "id": "ra-fusebox",
         "role": "transform",
         "roleLabel": "结果",
-        "title": "老点唱机",
-        "sceneName": "老点唱机",
-        "reason": "点唱机的卡带舱积着灰,面板连着两个调谐盘:一个管频率,一个管音轨。先给它装上卡带。",
+        "title": "配电箱",
+        "sceneName": "配电箱",
+        "reason": "配电箱的面板糊着一层油垢,线路和总闸的位置都看不清。",
+        "hidden": false
+      },
+      {
+        "id": "ra-terminal",
+        "role": "lock",
+        "roleLabel": "锁",
+        "title": "检索台",
+        "sceneName": "检索台",
+        "reason": "曲库检索台,一块数字屏。通电后,输入编号就能调出曲库档案。",
         "hidden": false
       },
       {
@@ -147,13 +199,31 @@
         "hidden": false
       },
       {
-        "id": "ra-trackpanel",
-        "role": "lock",
-        "roleLabel": "锁",
-        "title": "音轨面板",
-        "sceneName": "音轨面板",
-        "reason": "音轨面板,三位数字转盘。频率调准后它才通电,盘面泛着幽幽的绿光。",
+        "id": "ra-file-ngu",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "曲库档案·A面",
+        "sceneName": "曲库档案·A面",
+        "reason": "【检索结果】A 面:Never Gonna Give You Up——播放量 104610374,弹幕总量 148416。备注:B 面是空的,压轴的碟不在曲库里,另想辙。",
         "hidden": true
+      },
+      {
+        "id": "ra-memo",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "检索结果·压轴",
+        "sceneName": "检索结果·压轴",
+        "reason": "【检索结果·压轴】台长的备忘:『压轴碟不在曲库,藏在点播台底座的暗格里。连敲三下,它就弹出来——别问我是怎么知道的。』",
+        "hidden": true
+      },
+      {
+        "id": "ra-base",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "点播台底座",
+        "sceneName": "点播台底座",
+        "reason": "点播台的木质底座。靠下沿有一块木板,敲起来咚咚响,比别处空。",
+        "hidden": false
       },
       {
         "id": "ra-disc",
@@ -161,65 +231,90 @@
         "roleLabel": "奖励",
         "title": "MMD 光碟 · Treasure",
         "sceneName": "MMD 光碟 · Treasure",
-        "reason": "压轴的光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签,像在催你快点。",
+        "reason": "暗格弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
         "hidden": true
       }
     ],
     "beats": [
       {
-        "id": "a1",
-        "title": "打开怀旧游戏柜",
+        "id": "n1",
+        "title": "读台长字条",
         "action": "inspect",
         "uses": [
-          "ra-cabinet"
+          "ra-note"
+        ]
+      },
+      {
+        "id": "n2",
+        "title": "拉开工作台抽屉",
+        "action": "inspect",
+        "uses": [
+          "ra-drawer"
         ],
         "reveals": [
-          "ra-archive",
-          "ra-manual",
+          "ra-cleaner",
           "ra-tape"
         ]
       },
       {
-        "id": "a2",
-        "title": "读唱片档案卡",
-        "action": "inspect",
-        "uses": [
-          "ra-archive"
-        ],
-        "requires": [
-          "a1"
-        ]
-      },
-      {
-        "id": "a3",
-        "title": "读检修手册",
-        "action": "inspect",
-        "uses": [
-          "ra-manual"
-        ],
-        "requires": [
-          "a1"
-        ]
-      },
-      {
-        "id": "a4",
-        "title": "把卡带装进点唱机",
+        "id": "n3",
+        "title": "用去污粉擦配电箱",
         "action": "combine",
         "uses": [
-          "ra-tape",
-          "ra-machine"
+          "ra-cleaner",
+          "ra-fusebox"
         ],
         "requires": [
-          "a1"
+          "n1"
         ],
-        "resultOn": "ra-machine",
-        "product": "就绪的点唱机",
+        "resultOn": "ra-fusebox",
+        "product": "擦亮的配电箱",
         "consume": [
-          "ra-tape"
+          "ra-cleaner"
         ]
       },
       {
-        "id": "a5",
+        "id": "n4",
+        "title": "合上总闸",
+        "action": "inspect",
+        "uses": [
+          "result:n3"
+        ],
+        "requires": [
+          "n3"
+        ],
+        "product": "通电的配电箱"
+      },
+      {
+        "id": "n5",
+        "title": "读旧磁带数据条",
+        "action": "inspect",
+        "uses": [
+          "ra-tape"
+        ],
+        "requires": [
+          "n2"
+        ]
+      },
+      {
+        "id": "n6",
+        "title": "检索曲目编号",
+        "action": "password",
+        "uses": [
+          "ra-terminal"
+        ],
+        "expected": "461",
+        "requires": [
+          "n1",
+          "n4",
+          "n5"
+        ],
+        "reveals": [
+          "ra-file-ngu"
+        ]
+      },
+      {
+        "id": "n7",
         "title": "调准频率面板",
         "action": "password",
         "uses": [
@@ -227,54 +322,67 @@
         ],
         "expected": "1046",
         "requires": [
-          "a2",
-          "a3",
-          "a4"
-        ],
-        "reveals": [
-          "ra-trackpanel"
+          "n6"
         ]
       },
       {
-        "id": "a6",
-        "title": "选定音轨编号",
+        "id": "n8",
+        "title": "检索『压轴』",
         "action": "password",
         "uses": [
-          "ra-trackpanel"
+          "ra-terminal"
         ],
-        "expected": "416",
+        "expected": "压轴",
         "requires": [
-          "a3",
-          "a5"
+          "n7"
         ],
+        "reveals": [
+          "ra-memo"
+        ]
+      },
+      {
+        "id": "n9",
+        "title": "连敲底座暗格",
+        "action": "knock",
+        "uses": [
+          "ra-base"
+        ],
+        "count": 3,
+        "requires": [
+          "n8"
+        ],
+        "resultOn": "ra-base",
+        "product": "撬开的底座",
         "reveals": [
           "ra-disc"
         ]
       },
       {
-        "id": "a7",
+        "id": "n10",
         "title": "投递压轴光碟",
         "action": "deliver",
         "uses": [
           "ra-disc"
         ],
         "requires": [
-          "a6"
+          "n9"
         ]
       }
     ],
     "hints": [
-      "怀旧游戏柜还没打开——柜子里的东西是这一切的起点。",
-      "档案卡和手册要都读一遍:一个给数据,一个给规则。",
-      "光有卡带不行,点唱机得先装上它才肯工作。",
-      "频率面板的数字要从档案卡里来,取法在手册上写着。",
-      "音轨面板在频率调准后才会通电——同样是档案上的数字,取法不同。",
-      "压轴光碟出现后,把它拖到出口投递。"
+      "墙上钉着台长的字条——行话规则都在上面,先读它。",
+      "抽屉里的两样东西各有用处:数据要看,粉末要用。",
+      "配电箱擦亮之后还差一步:把闸合上。",
+      "检索台吃的是编号——字条说了编号怎么从播放量里取。",
+      "档案的备注别跳过,『压轴』两个字本身就是一条检索词。",
+      "底座那块空响的木板,按台长备忘说的做。"
     ],
     "mechanics": [
       "inspect",
-      "combine",
-      "password×2"
+      "combine-显影",
+      "password×2(检索多问)",
+      "knock",
+      "deliver"
     ]
   }
 }

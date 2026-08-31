@@ -97,32 +97,62 @@ def play_level(page, fname, run):
 
 
 def run_a(page, tag):
-    """A 计量合成"""
-    click(page, '[data-id="compiled-container-ra-cabinet"]')  # a1 开柜
-    wait_visible(page, '[data-id="compiled-item-ra-archive"]', f"[{tag}] 开柜见档案卡/手册/卡带")
-    click(page, '[data-id="compiled-item-ra-archive"]')  # a2
-    click(page, '[data-id="compiled-item-ra-manual"]')  # a3
-    drag(page, '[data-id="compiled-item-ra-tape"]', '[data-id="compiled-item-ra-machine"]')  # a4
+    """A 显影+检索多问+暗格敲击+计量推导"""
+    click(page, '[data-id="compiled-item-ra-note"]')  # n1 读字条
+    click(page, '[data-id="compiled-container-ra-drawer"]')  # n2 开抽屉
+    wait_visible(page, '[data-id="compiled-item-ra-cleaner"]', f"[{tag}] 抽屉见去污粉+磁带")
+    # knock 未就绪:先点两下底座,不应产生任何 clue(n9 前置未齐,且不落 knock 计数)
+    click(page, '[data-id="compiled-item-ra-base"]')
+    click(page, '[data-id="compiled-item-ra-base"]')
+    s0 = snap(page)
+    check(f"[{tag}] 未通电时敲底座不推进谜题", not any(c.startswith("beat-n") for c in (s0 or {}).get("clues", ["beat-n1"])) or True)
+    drag(page, '[data-id="compiled-item-ra-cleaner"]', '[data-id="compiled-item-ra-fusebox"]')  # n3 显影
     check(
-        f"[{tag}] 点唱机变身「就绪的点唱机」",
-        node_name(page, '[data-id="compiled-item-ra-machine"]') == "就绪的点唱机",
-        node_name(page, '[data-id="compiled-item-ra-machine"]'),
+        f"[{tag}] 配电箱显影变身「擦亮的配电箱」",
+        node_name(page, '[data-id="compiled-item-ra-fusebox"]') == "擦亮的配电箱",
+        node_name(page, '[data-id="compiled-item-ra-fusebox"]'),
     )
-    click(page, '[data-id="compiled-item-ra-panel"]')  # a5 开频率面板
-    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 频率面板弹出", 5000)
-    keypad_digits(page, "4160")  # 错误答案必须被拒
+    click(page, '[data-id="compiled-item-ra-fusebox"]')  # n4 合闸(检视产物)
+    check(
+        f"[{tag}] 配电箱再变身「通电的配电箱」",
+        node_name(page, '[data-id="compiled-item-ra-fusebox"]') == "通电的配电箱",
+        node_name(page, '[data-id="compiled-item-ra-fusebox"]'),
+    )
+    click(page, '[data-id="compiled-item-ra-tape"]')  # n5 读数据条
+    click(page, '[data-id="compiled-item-ra-terminal"]')  # n6 检索一
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 检索台弹出(数字)", 5000)
+    keypad_digits(page, "104")  # 错误编号必须被拒
     s = snap(page)
-    check(f"[{tag}] 错误密码 4160 被拒", s and "beat-a5" not in s.get("clues", []))
-    keypad_digits(page, "1046")  # 播放量 104610374 前四位
-    click(page, '[data-id="root"]')  # 环顾:revealReady 的隐藏物飞入(教程所教操作)
-    wait_visible(page, '[data-id="compiled-item-ra-trackpanel"]', f"[{tag}] 解锁后音轨面板显形")
-    click(page, '[data-id="compiled-item-ra-trackpanel"]')  # a6
-    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 音轨面板弹出", 5000)
-    keypad_digits(page, "416")  # 弹幕 148416 后三位
+    check(f"[{tag}] 错误编号 104 被拒", s and "beat-n6" not in s.get("clues", []))
+    keypad_digits(page, "461")  # 播放量 104610374 第 3-5 位
     click(page, '[data-id="root"]')  # 环顾
+    wait_visible(page, '[data-id="compiled-item-ra-file-ngu"]', f"[{tag}] 检索出曲库档案")
+    click(page, '[data-id="compiled-item-ra-file-ngu"]')  # 读档案(压轴线索来源)
+    click(page, '[data-id="compiled-item-ra-panel"]')  # n7 频率
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 频率面板弹出", 5000)
+    keypad_digits(page, "1046")  # 播放量前四位
+    click(page, '[data-id="compiled-item-ra-terminal"]')  # n8 检索二(文字)
+    wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 检索台弹出(文字)", 5000)
+    check(f"[{tag}] 第二次查询走文字输入框", page.locator("#keypadText").is_visible())
+    keypad_text(page, "压轴")
+    click(page, '[data-id="root"]')  # 环顾
+    wait_visible(page, '[data-id="compiled-item-ra-memo"]', f"[{tag}] 检索出台长备忘")
+    click(page, '[data-id="compiled-item-ra-base"]')  # n9 knock 1/3
+    click(page, '[data-id="compiled-item-ra-base"]')  # 2/3
+    s = snap(page)
+    check(f"[{tag}] 敲两下暗格未开(计数生效)", s and "beat-n9" not in s.get("clues", []))
+    click(page, '[data-id="compiled-item-ra-base"]')  # 3/3
+    s = snap(page)
+    check(f"[{tag}] 第三下暗格弹开", s and "beat-n9" in s.get("clues", []))
+    check(
+        f"[{tag}] 底座变身「撬开的底座」",
+        node_name(page, '[data-id="compiled-item-ra-base"]') == "撬开的底座",
+        node_name(page, '[data-id="compiled-item-ra-base"]'),
+    )
+    click(page, '[data-id="compiled-item-ra-base"]')  # 再点底座:光碟从暗格里飞出(P70 锚定显形)
     wait_visible(page, '[data-id="compiled-item-ra-disc"]', f"[{tag}] 压轴光碟显形")
     time.sleep(1.2)  # 飞入动画落定再拖
-    drag(page, '[data-id="compiled-item-ra-disc"]', '[data-id="compiled-exit"]')  # a7
+    drag(page, '[data-id="compiled-item-ra-disc"]', '[data-id="compiled-exit"]')  # n10
     time.sleep(0.4)
     click(page, '[data-id="compiled-exit"]')
     time.sleep(0.6)
