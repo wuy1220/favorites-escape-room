@@ -11,6 +11,7 @@
     "ra-file-ngu",
     "ra-memo",
     "ra-base",
+    "ra-board",
     "ra-disc"
   ],
   "items": [
@@ -97,12 +98,21 @@
     },
     {
       "id": "ra-base",
-      "title": "空响的底板",
+      "title": "点播台底座",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "点播台底座的一块木板,敲起来和别处不一样。"
+      "description": "点播台的木质底座。"
+    },
+    {
+      "id": "ra-board",
+      "title": "松动的底板",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "底座侧面的一块木板,和别处声音不一样。"
     },
     {
       "id": "ra-disc",
@@ -131,6 +141,7 @@
       "ra-file-ngu",
       "ra-memo",
       "ra-base",
+      "ra-board",
       "ra-disc"
     ],
     "containers": [
@@ -205,7 +216,8 @@
         "title": "曲库档案·A面",
         "sceneName": "曲库档案·A面",
         "reason": "【检索结果】A 面:Never Gonna Give You Up——播放量 104610374,弹幕总量 148416。备注:B 面是空的,压轴的碟不在曲库里,另想辙。",
-        "hidden": true
+        "hidden": true,
+        "auto": true
       },
       {
         "id": "ra-memo",
@@ -218,12 +230,22 @@
       },
       {
         "id": "ra-base",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "点播台底座",
+        "sceneName": "点播台底座",
+        "reason": "点播台的木质底座,钉得结结实实。",
+        "hidden": false
+      },
+      {
+        "id": "ra-board",
         "role": "tool",
         "roleLabel": "工具",
-        "title": "空响的底板",
-        "sceneName": "空响的底板",
-        "reason": "点播台底座的一块木板,和别处声音不一样——里面是空的,边缘还有一道细缝。",
-        "hidden": false
+        "title": "松动的底板",
+        "sceneName": "松动的底板",
+        "reason": "被检索台的振动震松的木板——敲起来空空的,边缘有一道细缝,像被人撬开过又钉了回去。",
+        "hidden": true,
+        "auto": true
       },
       {
         "id": "ra-disc",
@@ -231,7 +253,7 @@
         "roleLabel": "奖励",
         "title": "MMD 光碟 · Treasure",
         "sceneName": "MMD 光碟 · Treasure",
-        "reason": "从底座暗格里弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
+        "reason": "从暗格里弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
         "hidden": true
       }
     ],
@@ -309,6 +331,7 @@
           "n4",
           "n5"
         ],
+        "product": "吐出档案的检索台",
         "reveals": [
           "ra-file-ngu"
         ]
@@ -336,8 +359,11 @@
         "requires": [
           "n7"
         ],
+        "resultOn": "ra-base",
+        "product": "嗡嗡作响的检索台",
         "reveals": [
-          "ra-memo"
+          "ra-memo",
+          "ra-board"
         ]
       },
       {
@@ -345,14 +371,14 @@
         "title": "底座暗格",
         "action": "knock",
         "uses": [
-          "ra-base"
+          "ra-board"
         ],
         "count": 3,
         "requires": [
           "n8"
         ],
-        "resultOn": "ra-base",
-        "product": "撬开的底座",
+        "resultOn": "ra-board",
+        "product": "撬开的暗格",
         "reveals": [
           "ra-disc"
         ]
@@ -375,7 +401,7 @@
       "配电箱擦亮之后还差一步:把闸合上。",
       "检索台吃的是编号——字条说了编号怎么从播放量里取。",
       "档案的备注别跳过,『压轴』两个字本身就是一条检索词。",
-      "底座那块木板敲起来是空心的——封进去的东西,试试让它出来。"
+      "台长说封在了底座里——再去看看底座,有什么东西和之前不一样了。"
     ],
     "mechanics": [
       "inspect",

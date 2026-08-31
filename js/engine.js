@@ -734,6 +734,7 @@
               compiledReason: item.reason || '',
               url: source.url,
               compiledHidden: isHidden,
+              compiledAuto: item.auto === true,
               detail: mystery,
             };
             if (ibid)
@@ -793,6 +794,7 @@
           compiledReason: item.reason || '',
           url: source.url,
           compiledHidden: isHidden,
+          compiledAuto: item.auto === true,
           detail: mystery,
         };
         if (ibid)
@@ -1954,23 +1956,37 @@
     const ids = (compiled.rules.reveals || {})[beatId];
     if (!ids || !ids.length) return;
     const places = [];
+    const autoMsgs = [];
     let readied = 0;
     ids.forEach(function (id) {
       const node = levelNode('compiled-item-' + id) || levelNode('compiled-container-' + id);
       if (!node) return;
-      node.revealReady = true;
-      readied++;
       let place = '';
       if (typeof node.parent === 'string' && node.parent.indexOf('compiled-') === 0) {
         const pc = levelNode(node.parent);
-        if (pc && pc !== node) place = '「' + (pc.name || '') + '」里';
+        if (pc && pc !== node) place = '「' + (pc.name || '') + '」旁';
       }
       if (!place && node.compiledScene) {
         const z = levelNode(node.compiledScene);
         if (z) place = '「' + (z.name || '') + '」里';
       }
+      /* auto:主动弹出(2026-08-31,需求方裁定)——机关运行的现实后果,新节点带着
+         飞入动画自己现身,不等回访;叙事因果由 beat 的 product 变身交代
+         (检索台→嗡嗡作响,底板被震得弹出)。其余维持「待发现」回访口径。 */
+      if (node.compiledAuto) {
+        const was = node.hidden;
+        node.hidden = false;
+        node.revealed = true;
+        node.spawned = true;
+        if (was) node.justArrived = true;
+        autoMsgs.push('「' + (node.name || id) + '」' + (place ? '从' + place : '') + '弹了出来');
+        return;
+      }
+      node.revealReady = true;
+      readied++;
       if (place && places.indexOf(place) < 0) places.push(place);
     });
+    if (autoMsgs.length) log(autoMsgs.join('，') + '。', 'good');
     if (readied)
       log(
         places.length

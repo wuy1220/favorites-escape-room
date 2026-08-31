@@ -32,7 +32,7 @@ def card(id, title, description):
     }
 
 
-def li(id, role, roleLabel, title, reason, hidden=False, container=None):
+def li(id, role, roleLabel, title, reason, hidden=False, container=None, auto=False):
     it = {
         "id": id,
         "role": role,
@@ -44,6 +44,8 @@ def li(id, role, roleLabel, title, reason, hidden=False, container=None):
     }
     if container:
         it["container"] = container
+    if auto:
+        it["auto"] = True
     return it
 
 
@@ -61,7 +63,8 @@ items_a = [
     card("ra-panel", "频率面板", "点播台的频率面板,四位数字转盘。"),
     card("ra-file-ngu", "曲库档案·A面", "曲库里这首歌的档案页。"),
     card("ra-memo", "检索结果·压轴", "台长的一条检索备忘。"),
-    card("ra-base", "空响的底板", "点播台底座的一块木板,敲起来和别处不一样。"),
+    card("ra-base", "点播台底座", "点播台的木质底座。"),
+    card("ra-board", "松动的底板", "底座侧面的一块木板,和别处声音不一样。"),
     card("ra-disc", "MMD 光碟 · Treasure", "压轴的光碟:重巡 Pola 的「Treasure」。"),
 ]
 level_a = {
@@ -96,14 +99,17 @@ level_a = {
            "点播台的频率面板,四位数字转盘。调准了,整座城市都能听见这首老歌。"),
         li("ra-file-ngu", "clue", "线索", "曲库档案·A面",
            "【检索结果】A 面:Never Gonna Give You Up——播放量 104610374,弹幕总量 148416。备注:B 面是空的,压轴的碟不在曲库里,另想辙。",
-           hidden=True),
+           hidden=True, auto=True),
         li("ra-memo", "clue", "线索", "检索结果·压轴",
            "【检索结果·压轴】台长的备忘:『压轴碟不在曲库——我把它封进了点播台底座。当年亲手封的,之后就再没打开过。』",
            hidden=True),
-        li("ra-base", "tool", "工具", "空响的底板",
-           "点播台底座的一块木板,和别处声音不一样——里面是空的,边缘还有一道细缝。"),
+        li("ra-base", "clue", "线索", "点播台底座",
+           "点播台的木质底座,钉得结结实实。"),
+        li("ra-board", "tool", "工具", "松动的底板",
+           "被检索台的振动震松的木板——敲起来空空的,边缘有一道细缝,像被人撬开过又钉了回去。",
+           hidden=True, auto=True),
         li("ra-disc", "reward", "奖励", "MMD 光碟 · Treasure",
-           "从底座暗格里弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
+           "从暗格里弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
            hidden=True),
     ],
     "beats": [
@@ -116,13 +122,14 @@ level_a = {
          "requires": ["n3"], "product": "通电的配电箱"},
         {"id": "n5", "title": "读旧磁带数据条", "action": "inspect", "uses": ["ra-tape"], "requires": ["n2"]},
         {"id": "n6", "title": "检索曲目编号", "action": "password", "uses": ["ra-terminal"], "expected": "461",
-         "requires": ["n1", "n4", "n5"], "reveals": ["ra-file-ngu"]},
+         "requires": ["n1", "n4", "n5"], "product": "吐出档案的检索台", "reveals": ["ra-file-ngu"]},
         {"id": "n7", "title": "调准频率面板", "action": "password", "uses": ["ra-panel"], "expected": "1046",
          "requires": ["n6"]},
         {"id": "n8", "title": "检索『压轴』", "action": "password", "uses": ["ra-terminal"], "expected": "压轴",
-         "requires": ["n7"], "reveals": ["ra-memo"]},
-        {"id": "n9", "title": "底座暗格", "action": "knock", "uses": ["ra-base"], "count": 3,
-         "requires": ["n8"], "resultOn": "ra-base", "product": "撬开的底座", "reveals": ["ra-disc"]},
+         "requires": ["n7"], "resultOn": "ra-base", "product": "嗡嗡作响的检索台",
+         "reveals": ["ra-memo", "ra-board"]},
+        {"id": "n9", "title": "底座暗格", "action": "knock", "uses": ["ra-board"], "count": 3,
+         "requires": ["n8"], "resultOn": "ra-board", "product": "撬开的暗格", "reveals": ["ra-disc"]},
         {"id": "n10", "title": "投递压轴光碟", "action": "deliver", "uses": ["ra-disc"], "requires": ["n9"]},
     ],
     "hints": [
@@ -131,7 +138,7 @@ level_a = {
         "配电箱擦亮之后还差一步:把闸合上。",
         "检索台吃的是编号——字条说了编号怎么从播放量里取。",
         "档案的备注别跳过,『压轴』两个字本身就是一条检索词。",
-        "底座那块木板敲起来是空心的——封进去的东西,试试让它出来。",
+        "台长说封在了底座里——再去看看底座,有什么东西和之前不一样了。",
     ],
     "mechanics": ["inspect", "combine-显影", "password×2(检索多问)", "knock", "deliver"],
 }
