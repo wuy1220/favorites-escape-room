@@ -1682,9 +1682,11 @@
     }
     if ((n.compiledItem || n.compiledResult) && compiled.started) {
       const key = itemKey(n);
-      /* knock:连按计数机关(2026-08-31,原作 m4 铁窗 1-3-2 / m6 打火机暗格连按三次的等价物)——
+      /* knock:连按计数机关(2026-08-31,原作 m4 裂缝/铁窗的等价物)——
          前置就绪后连续点击同一物件 count 次,计满即完成:原位变身+显形(reveals)。
-         计数进度存 compiled.knockProgress,点别处不清零(区别于顺序锁的整组重来) */
+         计数进度存 compiled.knockProgress,点别处不清零(区别于顺序锁的整组重来)。
+         反馈口径(P74 修订,需求方裁定):可发现性来自物件自身(『破碎的墙』这类标题/质感),
+         文案绝不提示次数——反馈用递进拟声+节点轻推,不显示 x/3 计数器 */
       const openKnock = (compiled.rules.knocks || []).find(function (r) {
         return beatReady(r.need) && !state.clues.has(r.clue) && nodeKeys(n).includes(r.item);
       });
@@ -1692,15 +1694,16 @@
         compiled.knockProgress = compiled.knockProgress || {};
         const kKey = openKnock.clue;
         compiled.knockProgress[kKey] = (compiled.knockProgress[kKey] || 0) + 1;
+        const knockLadder = [
+          '咚——它空空作响。',
+          '咚咚——有什么东西松动了。',
+          '咚咚咚——声音越来越实,它快掉了。',
+        ];
         const done = compiled.knockProgress[kKey] >= openKnock.count;
         if (!done) {
+          nudge([nodeEl(n.id)]);
           log(
-            '咚——(' +
-              compiled.knockProgress[kKey] +
-              '/' +
-              openKnock.count +
-              ')' +
-              (openKnock.title ? '「' + openKnock.title + '」' : ''),
+            knockLadder[Math.min(compiled.knockProgress[kKey] - 1, knockLadder.length - 1)],
             'good',
           );
           action();
@@ -1709,7 +1712,7 @@
         state.clues.add(openKnock.clue);
         compiled.knockProgress[kKey] = 0;
         morphNode(n, openKnock);
-        log('连敲了' + openKnock.count + '下:' + (openKnock.title || '有什么东西松动了。'), 'good');
+        log('最后一下——' + (openKnock.title || '它弹开了。'), 'good');
         triggerReveals(openKnock.need);
         finishIfDone();
         action();

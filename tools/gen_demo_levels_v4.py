@@ -61,7 +61,7 @@ items_a = [
     card("ra-panel", "频率面板", "点播台的频率面板,四位数字转盘。"),
     card("ra-file-ngu", "曲库档案·A面", "曲库里这首歌的档案页。"),
     card("ra-memo", "检索结果·压轴", "台长的一条检索备忘。"),
-    card("ra-base", "点播台底座", "点播台的木质底座,靠下沿有一块木板。"),
+    card("ra-base", "空响的底板", "点播台底座的一块木板,敲起来和别处不一样。"),
     card("ra-disc", "MMD 光碟 · Treasure", "压轴的光碟:重巡 Pola 的「Treasure」。"),
 ]
 level_a = {
@@ -98,12 +98,12 @@ level_a = {
            "【检索结果】A 面:Never Gonna Give You Up——播放量 104610374,弹幕总量 148416。备注:B 面是空的,压轴的碟不在曲库里,另想辙。",
            hidden=True),
         li("ra-memo", "clue", "线索", "检索结果·压轴",
-           "【检索结果·压轴】台长的备忘:『压轴碟不在曲库,藏在点播台底座的暗格里。连敲三下,它就弹出来——别问我是怎么知道的。』",
+           "【检索结果·压轴】台长的备忘:『压轴碟不在曲库——我把它封进了点播台底座。当年亲手封的,之后就再没打开过。』",
            hidden=True),
-        li("ra-base", "tool", "工具", "点播台底座",
-           "点播台的木质底座。靠下沿有一块木板,敲起来咚咚响,比别处空。"),
+        li("ra-base", "tool", "工具", "空响的底板",
+           "点播台底座的一块木板,和别处声音不一样——里面是空的,边缘还有一道细缝。"),
         li("ra-disc", "reward", "奖励", "MMD 光碟 · Treasure",
-           "暗格弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
+           "从底座暗格里弹出来的压轴光碟:重巡 Pola 的「Treasure」。光碟盒上贴着投递口的标签。",
            hidden=True),
     ],
     "beats": [
@@ -121,7 +121,7 @@ level_a = {
          "requires": ["n6"]},
         {"id": "n8", "title": "检索『压轴』", "action": "password", "uses": ["ra-terminal"], "expected": "压轴",
          "requires": ["n7"], "reveals": ["ra-memo"]},
-        {"id": "n9", "title": "连敲底座暗格", "action": "knock", "uses": ["ra-base"], "count": 3,
+        {"id": "n9", "title": "底座暗格", "action": "knock", "uses": ["ra-base"], "count": 3,
          "requires": ["n8"], "resultOn": "ra-base", "product": "撬开的底座", "reveals": ["ra-disc"]},
         {"id": "n10", "title": "投递压轴光碟", "action": "deliver", "uses": ["ra-disc"], "requires": ["n9"]},
     ],
@@ -131,7 +131,7 @@ level_a = {
         "配电箱擦亮之后还差一步:把闸合上。",
         "检索台吃的是编号——字条说了编号怎么从播放量里取。",
         "档案的备注别跳过,『压轴』两个字本身就是一条检索词。",
-        "底座那块空响的木板,按台长备忘说的做。",
+        "底座那块木板敲起来是空心的——封进去的东西,试试让它出来。",
     ],
     "mechanics": ["inspect", "combine-显影", "password×2(检索多问)", "knock", "deliver"],
 }
@@ -318,6 +318,14 @@ for fname, keys in (
         for k in keys:
             if k in h:
                 leaks.append((fname, "hints泄漏", "", k))
+# 敲击可供性检查(P74):文案只许暗示质感,不许给动作指令或次数
+for fname in ("demo-gamenight", "demo-toolbox", "demo-selfstudy"):
+    lv = json.load(open(os.path.join(OUT, fname + ".room.json"), encoding="utf-8"))["level"]
+    for it in lv["items"]:
+        blob = (it.get("reason") or "") + (it.get("title") or "")
+        for bad in ("连敲", "三下", "连按", "多敲"):
+            if bad in blob:
+                leaks.append((fname, "敲击指令泄漏", it["id"], bad))
 if leaks:
     print("泄漏自检 FAIL:")
     for l in leaks:
