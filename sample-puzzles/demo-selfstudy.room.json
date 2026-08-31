@@ -3,10 +3,16 @@
   "controlledIds": [
     "rc-door",
     "rc-manual",
-    "rc-book-js",
-    "rc-book-web",
-    "rc-book-algo",
-    "rc-shelf",
+    "rc-shelfa",
+    "rc-shelfb",
+    "rc-book1",
+    "rc-book2",
+    "rc-book3",
+    "rc-book4",
+    "rc-scanner",
+    "rc-desk",
+    "rc-npc",
+    "rc-kettle",
     "rc-stamp",
     "rc-ticket"
   ],
@@ -18,52 +24,106 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "资料室的门虚掩着,门缝里能看到书车。点击推门进去。"
+      "description": "资料室的门虚掩着。点击推门进去。"
     },
     {
       "id": "rc-manual",
-      "title": "排架规则卡",
+      "title": "守馆手册",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "资料室的排架次序按课程大纲来,只收一对书。"
+      "description": "借阅台上的手册,翻开着。"
     },
     {
-      "id": "rc-book-js",
-      "title": "语言书 · 现代JavaScript教程",
+      "id": "rc-shelfa",
+      "title": "还书车 · 上层",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊印着课程介绍:一部分讲语言本身,一部分讲浏览器。"
+      "description": "还书车的上层书架,塞着几本书。"
     },
     {
-      "id": "rc-book-web",
-      "title": "手册 · JavaScript指南",
+      "id": "rc-shelfb",
+      "title": "还书车 · 下层",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊印着『JavaScript 指南』,讲语言在浏览器里的用法。"
+      "description": "还书车的下层书架,也塞着书。"
     },
     {
-      "id": "rc-book-algo",
-      "title": "算法书 · Hello 算法",
+      "id": "rc-book1",
+      "title": "绿标书 · 现代JavaScript教程",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "书脊印着:动画图解、一键运行的数据结构与算法教程。"
+      "description": "书脊贴着绿色书标:Z-02。"
     },
     {
-      "id": "rc-shelf",
-      "title": "排架台",
+      "id": "rc-book2",
+      "title": "绿标书 · JavaScript指南",
       "domain": "demo",
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "排架台的凹槽刻着 ①② 两个位置,连着借阅系统。"
+      "description": "书脊贴着绿色书标:Z-05。"
+    },
+    {
+      "id": "rc-book3",
+      "title": "绿标书 · Hello 算法",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书脊贴着绿色书标:Z-09。"
+    },
+    {
+      "id": "rc-book4",
+      "title": "红标书 · 五三题库",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "书脊贴着红色书标:R-13。"
+    },
+    {
+      "id": "rc-scanner",
+      "title": "扫描台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅台旁的扫描台,指示灯待机闪烁。"
+    },
+    {
+      "id": "rc-desk",
+      "title": "借阅台",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "借阅台空着,后面虚掩着一扇小门。"
+    },
+    {
+      "id": "rc-npc",
+      "title": "值班员",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "值夜班的学长,抱着一只茶杯。"
+    },
+    {
+      "id": "rc-kettle",
+      "title": "保温壶",
+      "domain": "demo",
+      "dateAdded": "",
+      "url": "",
+      "urlPath": "",
+      "description": "还书车旁的保温壶,摸着还温。"
     },
     {
       "id": "rc-stamp",
@@ -72,7 +132,7 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "黄铜借阅章,章面刻着『已排架』。"
+      "description": "黄铜借阅章。"
     },
     {
       "id": "rc-ticket",
@@ -81,26 +141,45 @@
       "dateAdded": "",
       "url": "",
       "urlPath": "",
-      "description": "借阅系统的提货单,空白处等着盖章。"
+      "description": "借阅系统的提货单。"
     }
   ],
   "level": {
     "id": "level-demo-selfstudy",
-    "title": "秋末自学计划 · 资料室排架日",
-    "premise": "2025 年 11 月,你终于腾出一个下午整理自学资料。资料室的书车停在门口,排架台连着借阅系统——它只按排架规则认书:放对了,借阅章才会从台下弹出来。",
-    "objective": "推开资料室,读排架规则与书脊,把对的两本书按次序排上书架,取出借阅章盖在提货单上,交单出室。",
-    "targetMinutes": 10,
+    "title": "秋末自学计划 · 闭馆前的资料室",
+    "premise": "2025 年 11 月的傍晚,资料室快闭馆了。还书车上堆着今天回流的书,提货单还没盖章,值班员不知道躲去了哪儿——借阅台后面只留着一壶还温着的茶。窗外天色暗得很快。",
+    "objective": "按守馆手册的流程把本批图书逐本扫描归架,等系统受理;找到值班员把章要出来,盖在提货单上,赶在闭馆前交单出室。",
+    "targetMinutes": 14,
     "selectedItemIds": [
       "rc-door",
       "rc-manual",
-      "rc-book-js",
-      "rc-book-web",
-      "rc-book-algo",
-      "rc-shelf",
+      "rc-shelfa",
+      "rc-shelfb",
+      "rc-book1",
+      "rc-book2",
+      "rc-book3",
+      "rc-book4",
+      "rc-scanner",
+      "rc-desk",
+      "rc-npc",
+      "rc-kettle",
       "rc-stamp",
       "rc-ticket"
     ],
-    "containers": [],
+    "containers": [
+      {
+        "id": "rc-shelfa",
+        "name": "还书车 · 上层",
+        "desc": "还书车的上层书架。点击翻一翻。",
+        "hidden": false
+      },
+      {
+        "id": "rc-shelfb",
+        "name": "还书车 · 下层",
+        "desc": "还书车的下层书架。点击翻一翻。",
+        "hidden": false
+      }
+    ],
     "items": [
       {
         "id": "rc-door",
@@ -115,45 +194,104 @@
         "id": "rc-manual",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "排架规则卡",
-        "sceneName": "排架规则卡",
-        "reason": "【规则页】资料室只收一对书:凹槽①放那本『先讲语言本身』的书,凹槽②放那本『讲浏览器里的用法』的书。次序放反,书会滑回来。",
+        "title": "守馆手册",
+        "sceneName": "守馆手册",
+        "reason": "【流程页】今晚归还批次:贴绿标的三本。归架流程:按索书号从小到大,逐本放上扫描台;全部受理后系统会响铃——值班员自然会来找你。备注:章不外借,但他那个人,只认热茶。",
         "hidden": true
       },
       {
-        "id": "rc-book-js",
+        "id": "rc-shelfa",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "语言书 · 现代JavaScript教程",
-        "sceneName": "语言书 · 现代JavaScript教程",
-        "reason": "【网页内容·书脊】主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。第一部分讲语言本身,第二部分才讲浏览器。",
-        "hidden": true
+        "title": "还书车 · 上层",
+        "sceneName": "还书车 · 上层",
+        "reason": "还书车的上层书架,塞着几本书。点击翻一翻,书就滑出来。",
+        "hidden": false
       },
       {
-        "id": "rc-book-web",
+        "id": "rc-book1",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "手册 · JavaScript指南",
-        "sceneName": "手册 · JavaScript指南",
-        "reason": "【网页内容·书脊】JavaScript 指南——讲的是这门语言在浏览器里的用法,是语言书的下一站。",
-        "hidden": true
+        "title": "绿标书 · 现代JavaScript教程",
+        "sceneName": "绿标书 · 现代JavaScript教程",
+        "reason": "【网页内容·书脊】绿标 Z-02。主课程包含 2 部分,涵盖 JavaScript 作为一门编程语言和使用浏览器。",
+        "hidden": true,
+        "container": "rc-shelfa"
       },
       {
-        "id": "rc-book-algo",
+        "id": "rc-book3",
         "role": "clue",
         "roleLabel": "线索",
-        "title": "算法书 · Hello 算法",
-        "sceneName": "算法书 · Hello 算法",
-        "reason": "【网页内容·书脊】动画图解、一键运行的数据结构与算法教程。可惜排架规则只收一对书,它今天只能留在书车上。",
-        "hidden": true
+        "title": "绿标书 · Hello 算法",
+        "sceneName": "绿标书 · Hello 算法",
+        "reason": "【网页内容·书脊】绿标 Z-09。动画图解、一键运行的数据结构与算法教程。",
+        "hidden": true,
+        "container": "rc-shelfa"
       },
       {
-        "id": "rc-shelf",
+        "id": "rc-shelfb",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "还书车 · 下层",
+        "sceneName": "还书车 · 下层",
+        "reason": "还书车的下层书架,也塞着书。点击翻一翻。",
+        "hidden": false
+      },
+      {
+        "id": "rc-book2",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "绿标书 · JavaScript指南",
+        "sceneName": "绿标书 · JavaScript指南",
+        "reason": "【网页内容·书脊】绿标 Z-05。JavaScript 指南——讲语言在浏览器里的用法。",
+        "hidden": true,
+        "container": "rc-shelfb"
+      },
+      {
+        "id": "rc-book4",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "红标书 · 五三题库",
+        "sceneName": "红标书 · 五三题库",
+        "reason": "红标 R-13。《五年高考·三年模拟》。和这个房间格格不入,像是谁忘在这儿的。手册说今晚只收绿标。",
+        "hidden": true,
+        "container": "rc-shelfb"
+      },
+      {
+        "id": "rc-scanner",
         "role": "tool",
         "roleLabel": "工具",
-        "title": "排架台",
-        "sceneName": "排架台",
-        "reason": "排架台的凹槽刻着 ①② 两个位置。把书按次序放上去——点错了顺序,整组会重来。",
+        "title": "扫描台",
+        "sceneName": "扫描台",
+        "reason": "借阅台旁的扫描台,指示灯待机闪烁。把书平放上去就能扫——但系统有它认的次序。",
+        "hidden": false
+      },
+      {
+        "id": "rc-desk",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "借阅台",
+        "sceneName": "借阅台",
+        "reason": "借阅台空着,台面收拾得整整齐齐,后面虚掩着一扇小门,门缝里透出一点灯光。",
+        "hidden": false
+      },
+      {
+        "id": "rc-npc",
+        "role": "clue",
+        "roleLabel": "线索",
+        "title": "值班员",
+        "sceneName": "值班员",
+        "reason": "『都扫完啦?』值夜班的学长端着茶杯,从借阅台那头踱了过来。『归架章在我身上,不外借——除非……你懂的吧?这壶茶闻着正好。』",
+        "hidden": true,
+        "auto": true
+      },
+      {
+        "id": "rc-kettle",
+        "role": "tool",
+        "roleLabel": "工具",
+        "title": "保温壶",
+        "sceneName": "保温壶",
+        "reason": "还书车旁的保温壶,摸着还温。守馆人走前泡的茶,一口没动。",
         "hidden": false
       },
       {
@@ -162,8 +300,9 @@
         "roleLabel": "工具",
         "title": "借阅章",
         "sceneName": "借阅章",
-        "reason": "黄铜借阅章,章面刻着『已排架』。排架台认可之后,它才会从台下弹出来。",
-        "hidden": true
+        "reason": "黄铜借阅章,章面刻着『已归架』,把手上缠着防滑绳。值班员塞给你的。",
+        "hidden": true,
+        "auto": true
       },
       {
         "id": "rc-ticket",
@@ -171,7 +310,7 @@
         "roleLabel": "结果",
         "title": "提货单",
         "sceneName": "提货单",
-        "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交给出入口。",
+        "reason": "借阅系统的提货单,空白处等着盖章。盖了章的单子才能交出去。",
         "hidden": true
       }
     ],
@@ -185,15 +324,17 @@
         ],
         "reveals": [
           "rc-manual",
-          "rc-book-js",
-          "rc-book-web",
-          "rc-book-algo",
+          "rc-shelfa",
+          "rc-shelfb",
+          "rc-scanner",
+          "rc-desk",
+          "rc-kettle",
           "rc-ticket"
         ]
       },
       {
         "id": "c2",
-        "title": "读排架规则卡",
+        "title": "读守馆手册",
         "action": "inspect",
         "uses": [
           "rc-manual"
@@ -204,55 +345,165 @@
       },
       {
         "id": "c3",
-        "title": "查看语言书书脊",
+        "title": "翻上层书架",
         "action": "inspect",
         "uses": [
-          "rc-book-js"
+          "rc-shelfa"
         ],
         "requires": [
-          "c1"
+          "c2"
+        ],
+        "reveals": [
+          "rc-book1",
+          "rc-book3"
         ]
       },
       {
         "id": "c4",
-        "title": "查看手册书脊",
+        "title": "翻下层书架",
         "action": "inspect",
         "uses": [
-          "rc-book-web"
+          "rc-shelfb"
         ],
         "requires": [
-          "c1"
+          "c2"
+        ],
+        "reveals": [
+          "rc-book2",
+          "rc-book4"
         ]
       },
       {
         "id": "c5",
-        "title": "按次序排架",
-        "action": "sequence",
+        "title": "看 Z-02 书脊",
+        "action": "inspect",
         "uses": [
-          "rc-book-js",
-          "rc-book-web"
+          "rc-book1"
+        ],
+        "requires": [
+          "c3"
+        ]
+      },
+      {
+        "id": "c6",
+        "title": "看 Z-05 书脊",
+        "action": "inspect",
+        "uses": [
+          "rc-book2"
+        ],
+        "requires": [
+          "c4"
+        ]
+      },
+      {
+        "id": "c7",
+        "title": "看 Z-09 书脊",
+        "action": "inspect",
+        "uses": [
+          "rc-book3"
+        ],
+        "requires": [
+          "c3"
+        ]
+      },
+      {
+        "id": "c8",
+        "title": "扫描第一本(Z-02)",
+        "action": "combine",
+        "uses": [
+          "rc-book1",
+          "rc-scanner"
         ],
         "requires": [
           "c2",
-          "c3",
-          "c4"
+          "c5"
         ],
-        "resultOn": "rc-shelf",
-        "product": "排好架的一对书",
+        "resultOn": "rc-scanner",
+        "product": "扫描台 · 已受理 1/3",
+        "consume": [
+          "rc-book1"
+        ]
+      },
+      {
+        "id": "c9",
+        "title": "扫描第二本(Z-05)",
+        "action": "combine",
+        "uses": [
+          "rc-book2",
+          "rc-scanner"
+        ],
+        "requires": [
+          "c8",
+          "c6"
+        ],
+        "resultOn": "rc-scanner",
+        "product": "扫描台 · 已受理 2/3",
+        "consume": [
+          "rc-book2"
+        ]
+      },
+      {
+        "id": "c10",
+        "title": "扫描第三本(Z-09)",
+        "action": "combine",
+        "uses": [
+          "rc-book3",
+          "rc-scanner"
+        ],
+        "requires": [
+          "c9",
+          "c7"
+        ],
+        "resultOn": "rc-scanner",
+        "product": "扫描台 · 已受理 3/3",
+        "consume": [
+          "rc-book3"
+        ],
+        "reveals": [
+          "rc-npc"
+        ]
+      },
+      {
+        "id": "c11",
+        "title": "和值班员搭话",
+        "action": "inspect",
+        "uses": [
+          "rc-npc"
+        ],
+        "requires": [
+          "c10"
+        ]
+      },
+      {
+        "id": "c12",
+        "title": "把保温壶递给他",
+        "action": "combine",
+        "uses": [
+          "rc-kettle",
+          "rc-npc"
+        ],
+        "requires": [
+          "c11"
+        ],
+        "resultOn": "rc-npc",
+        "product": "捧着热茶的值班员",
+        "consume": [
+          "rc-kettle"
+        ],
         "reveals": [
           "rc-stamp"
         ]
       },
       {
-        "id": "c6",
-        "title": "盖借阅章",
+        "id": "c13",
+        "title": "盖归架章",
         "action": "combine",
         "uses": [
           "rc-stamp",
           "rc-ticket"
         ],
         "requires": [
-          "c5"
+          "c12"
         ],
         "resultOn": "rc-ticket",
         "product": "盖章的提货单",
@@ -261,29 +512,32 @@
         ]
       },
       {
-        "id": "c7",
-        "title": "交单出室",
+        "id": "c14",
+        "title": "闭馆前交单",
         "action": "deliver",
         "uses": [
-          "result:c6"
+          "result:c13"
         ],
         "requires": [
-          "c6"
+          "c13"
         ]
       }
     ],
     "hints": [
-      "资料室的门要自己推开——里面的书车和规则卡都会现身。",
-      "排架规则卡说明了次序,以及『只收一对书』。",
-      "两本书的书脊都读一读,才能分清哪本先讲语言、哪本讲浏览器。",
-      "排架台要按次序逐个点击,点错整组重来。",
-      "排对了,借阅章会从台下弹出来——把它盖到提货单上。",
-      "盖章的提货单才能交给出入口。"
+      "推门之后,借阅台上翻开着的手册就是今晚的流程说明。",
+      "还书车的两层都要翻——书会自己滑出来,认准绿色书标。",
+      "红标那本和今晚无关,手册说了只收绿标。",
+      "扫描有次序:按索书号从小到大,一本一本放上台。",
+      "全部受理后系统会响铃——等等看,会有人出现。",
+      "值班员的话里有话:他缺的东西,还书车旁边正好有一只。",
+      "章到手,盖单,赶在闭馆前出门。"
     ],
     "mechanics": [
       "inspect",
-      "sequence",
-      "combine"
+      "容器弹书×2",
+      "顺序扫描(链式组合×3,索书号升序)",
+      "NPC(现身/对话/交易)",
+      "auto显形×2"
     ]
   }
 }

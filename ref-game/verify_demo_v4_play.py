@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """三关 v4 真实 DOM 实玩:导入 → 点击/拖拽/输密码 → 通关(done=true)。
 
-覆盖全部三种理解动作:
-- A 计量:开柜→读档案/手册→装卡带→数字锁 1046→数字锁 416→投递光碟
-- B 语义:开夹→读卡/规则→文字锁 "your thinking"→读算法卡→文字锁 "动画图解"→藏书票上桌→交付
-- C 排序:推门→读规则/书脊→sequence 排架→借阅章盖章→交付提货单
-同时验证防自泄漏的镜像面:错误答案必须被拒(A 先输 4160 再输对)。
+A 计量+检索+敲击 / B 电与光族(角度接线→灯光显形→语义锁) / C 借阅族(弹书→顺序扫描→NPC)。
+含错误答案被拒、乱序被拒、红标干扰、归一化、计数、auto/回访两种显形语法的断言。
 """
+import math
 import sys
 import time
 from playwright.sync_api import sync_playwright
@@ -73,7 +71,6 @@ def snap(page):
 
 
 def keypad_digits(page, code):
-    """数字密码盘:补满位数自动提交"""
     for k in code:
         page.locator(f'#keypad [data-k="{k}"]').click()
         time.sleep(0.15)
@@ -81,10 +78,21 @@ def keypad_digits(page, code):
 
 
 def keypad_text(page, text):
-    """文字语义锁:#keypadText + Enter 提交"""
     page.fill("#keypadText", text)
     page.press("#keypadText", "Enter")
     time.sleep(0.5)
+
+
+def dial(page, i, angle):
+    """点按表盘上 angle° 的位置(0°=12点,顺时针)"""
+    svg = page.locator(f'.angle-dial[data-i="{i}"] .ad-face').first
+    b = svg.bounding_box()
+    assert b, f"表盘 {i} 不可见"
+    cx, cy = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
+    R = b["width"] * 0.38
+    rad = math.radians(angle)
+    page.mouse.click(cx + R * math.sin(rad), cy - R * math.cos(rad))
+    time.sleep(0.25)
 
 
 def play_level(page, fname, run):
@@ -97,21 +105,20 @@ def play_level(page, fname, run):
 
 
 def run_a(page, tag):
-    """A 显影+检索多问+暗格敲击+计量推导"""
-    # 可供性与知识分离(P74 修订):底座前期是惰性物件,早敲不推进
-    click(page, '[data-id="compiled-item-ra-base"]')
-    s0 = snap(page)
-    check(f"[{tag}] 开局底座惰性(无暗格暗示)", bool(s0) and "beat-n9" not in s0.get("clues", []))
+    """A 计量+检索多问+暗格敲击"""
     click(page, '[data-id="compiled-item-ra-note"]')  # n1 读字条
     click(page, '[data-id="compiled-container-ra-drawer"]')  # n2 开抽屉
     wait_visible(page, '[data-id="compiled-item-ra-cleaner"]', f"[{tag}] 抽屉见去污粉+磁带")
+    click(page, '[data-id="compiled-item-ra-base"]')  # 底座惰性:早敲不推进
+    s0 = snap(page)
+    check(f"[{tag}] 开局底座惰性(无暗格暗示)", bool(s0) and "beat-n9" not in s0.get("clues", []))
     drag(page, '[data-id="compiled-item-ra-cleaner"]', '[data-id="compiled-item-ra-fusebox"]')  # n3 显影
     check(
         f"[{tag}] 配电箱显影变身「擦亮的配电箱」",
         node_name(page, '[data-id="compiled-item-ra-fusebox"]') == "擦亮的配电箱",
         node_name(page, '[data-id="compiled-item-ra-fusebox"]'),
     )
-    click(page, '[data-id="compiled-item-ra-fusebox"]')  # n4 合闸(检视产物)
+    click(page, '[data-id="compiled-item-ra-fusebox"]')  # n4 合闸
     check(
         f"[{tag}] 配电箱再变身「通电的配电箱」",
         node_name(page, '[data-id="compiled-item-ra-fusebox"]') == "通电的配电箱",
@@ -124,13 +131,13 @@ def run_a(page, tag):
     s = snap(page)
     check(f"[{tag}] 错误编号 104 被拒", s and "beat-n6" not in s.get("clues", []))
     keypad_digits(page, "461")  # 播放量 104610374 第 3-5 位
-    wait_visible(page, '[data-id="compiled-item-ra-file-ngu"]', f"[{tag}] 档案从检索台主动弹出(auto)")
+    wait_visible(page, '[data-id="compiled-item-ra-file-ngu"]', f"[{tag}] 档案主动弹出(auto)")
     check(
         f"[{tag}] 检索台变身「吐出档案的检索台」",
         node_name(page, '[data-id="compiled-item-ra-terminal"]') == "吐出档案的检索台",
         node_name(page, '[data-id="compiled-item-ra-terminal"]'),
     )
-    click(page, '[data-id="compiled-item-ra-file-ngu"]')  # 读档案(压轴线索来源)
+    click(page, '[data-id="compiled-item-ra-file-ngu"]')  # 读档案
     click(page, '[data-id="compiled-item-ra-panel"]')  # n7 频率
     wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 频率面板弹出", 5000)
     keypad_digits(page, "1046")  # 播放量前四位
@@ -138,13 +145,13 @@ def run_a(page, tag):
     wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 检索台弹出(文字)", 5000)
     check(f"[{tag}] 第二次查询走文字输入框", page.locator("#keypadText").is_visible())
     keypad_text(page, "压轴")
-    wait_visible(page, '[data-id="compiled-item-ra-board"]', f"[{tag}] 底板被振动震出(主动弹出)")
+    wait_visible(page, '[data-id="compiled-item-ra-board"]', f"[{tag}] 底板被振动震出(auto)")
     check(
-        f"[{tag}] 检索台变身「嗡嗡作响的检索台」(振动因果)",
+        f"[{tag}] 检索台变身「嗡嗡作响的检索台」",
         node_name(page, '[data-id="compiled-item-ra-terminal"]') == "嗡嗡作响的检索台",
         node_name(page, '[data-id="compiled-item-ra-terminal"]'),
     )
-    click(page, '[data-id="compiled-item-ra-base"]')  # 回访底座:备忘是被动发现(回访语法)
+    click(page, '[data-id="compiled-item-ra-base"]')  # 回访底座:备忘(回访语法)
     wait_visible(page, '[data-id="compiled-item-ra-memo"]', f"[{tag}] 底座旁发现台长备忘(回访)")
     click(page, '[data-id="compiled-item-ra-board"]')  # n9 knock 1/3
     click(page, '[data-id="compiled-item-ra-board"]')  # 2/3
@@ -158,9 +165,9 @@ def run_a(page, tag):
         node_name(page, '[data-id="compiled-item-ra-board"]') == "撬开的暗格",
         node_name(page, '[data-id="compiled-item-ra-board"]'),
     )
-    click(page, '[data-id="compiled-item-ra-board"]')  # 再点暗格:光碟飞出(P70 锚定显形)
+    click(page, '[data-id="compiled-item-ra-board"]')  # 再点暗格:光碟飞出
     wait_visible(page, '[data-id="compiled-item-ra-disc"]', f"[{tag}] 压轴光碟显形")
-    time.sleep(1.2)  # 飞入动画落定再拖
+    time.sleep(1.2)
     drag(page, '[data-id="compiled-item-ra-disc"]', '[data-id="compiled-exit"]')  # n10
     time.sleep(0.4)
     click(page, '[data-id="compiled-exit"]')
@@ -170,38 +177,62 @@ def run_a(page, tag):
 
 
 def run_b(page, tag):
-    """B 语义文字"""
-    click(page, '[data-id="compiled-container-tb-clip"]')  # t1 开素材夹
-    wait_visible(page, '[data-id="compiled-item-tb-card-obs"]', f"[{tag}] 开夹见三张卡+规则卡")
-    click(page, '[data-id="compiled-item-tb-card-obs"]')  # t2
-    click(page, '[data-id="compiled-item-tb-manual"]')  # t3
-    click(page, '[data-id="compiled-item-tb-gate"]')  # t4 开库门文字屏
+    """B 电与光族:角度接线→灯光显形→语义锁"""
+    click(page, '[data-id="compiled-container-tb-clip"]')  # w1 开素材夹
+    wait_visible(page, '[data-id="compiled-item-tb-card-obs"]', f"[{tag}] 开夹见卡与皱便签")
+    click(page, '[data-id="compiled-item-tb-note-folded"]')  # w2 读皱便签
+    click(page, '[data-id="compiled-item-tb-panelbase"]')  # w3 看端子盘
+    click(page, '[data-id="compiled-item-tb-lamp"]')  # w4 接线
+    wait_visible(page, "#angleModal:not(.hidden)", f"[{tag}] 台灯表盘弹出", 5000)
+    modal_txt = page.evaluate("() => document.getElementById('angleModal').innerText")
+    check(
+        f"[{tag}] 表盘显示红线/蓝线/黄线(不显示目标角度)",
+        ("红线" in modal_txt) and ("蓝线" in modal_txt) and ("黄线" in modal_txt) and ("目标" not in modal_txt),
+    )
+    dial(page, 0, 0)  # 全拨错
+    dial(page, 1, 0)
+    dial(page, 2, 0)
+    time.sleep(0.4)
+    s = snap(page)
+    check(f"[{tag}] 全拨错灯不亮", s and "beat-w4" not in s.get("clues", []))
+    dial(page, 0, 90)  # 红 3 点
+    dial(page, 1, 210)  # 蓝 7 点
+    dial(page, 2, 330)  # 黄 11 点
+    time.sleep(0.5)
+    s = snap(page)
+    check(f"[{tag}] 按钟面接对线灯亮", s and "beat-w4" in s.get("clues", []))
+    check(
+        f"[{tag}] 台灯变身「亮起的台灯」",
+        node_name(page, '[data-id="compiled-item-tb-lamp"]') == "亮起的台灯",
+        node_name(page, '[data-id="compiled-item-tb-lamp"]'),
+    )
+    wait_visible(page, '[data-id="compiled-item-tb-note-wall1"]', f"[{tag}] 灯下便签显形(auto 灯光显形)")
+    wait_visible(page, '[data-id="compiled-item-tb-note-wall2"]', f"[{tag}] 第二张便签显形")
+    click(page, '[data-id="compiled-item-tb-note-wall1"]')  # w5 口令规则
+    click(page, '[data-id="compiled-item-tb-note-wall2"]')  # w6 算法标语
+    click(page, '[data-id="compiled-item-tb-gate"]')  # w7 库门
     wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 库门文字屏弹出", 5000)
-    vis = page.locator("#keypadText").is_visible()
-    check(f"[{tag}] 文字输入框可见(textMode)", vis)
-    keypad_text(page, "sharpen your thinking")  # 错误答案(整句)必须被拒
+    keypad_text(page, "sharpen your thinking")  # 整句必须被拒
     s = snap(page)
-    check(f"[{tag}] 整句标语被拒(须去掉第一个词)", s and "beat-t4" not in s.get("clues", []))
-    keypad_text(page, "Your  Thinking")  # 大小写/空格归一化也必须通过
+    check(f"[{tag}] 整句标语被拒(须去掉第一个词)", s and "beat-w7" not in s.get("clues", []))
+    keypad_text(page, "Your  Thinking")  # 归一化通过
     s = snap(page)
-    check(f"[{tag}] 库门口令通过(归一化比较)", s and "beat-t4" in s.get("clues", []))
-    click(page, '[data-id="compiled-item-tb-card-algo"]')  # t5
-    click(page, '[data-id="compiled-item-tb-shelf"]')  # t6 书架标签屏
+    check(f"[{tag}] 库门口令通过", s and "beat-w7" in s.get("clues", []))
+    wait_visible(page, '[data-id="compiled-item-tb-ticket"]', f"[{tag}] 藏书票滑出(auto)")
+    click(page, '[data-id="compiled-item-tb-shelf"]')  # w8 书架标签
     wait_visible(page, "#keypadModal:not(.hidden)", f"[{tag}] 书架标签屏弹出", 5000)
-    keypad_text(page, "一键运行")  # 错误答案必须被拒
+    keypad_text(page, "一键运行")  # 错误标签必须被拒
     s = snap(page)
-    check(f"[{tag}] 错误标签被拒", s and "beat-t6" not in s.get("clues", []))
+    check(f"[{tag}] 错误标签被拒", s and "beat-w8" not in s.get("clues", []))
     keypad_text(page, "动画图解")
-    click(page, '[data-id="root"]')  # 环顾
-    wait_visible(page, '[data-id="compiled-item-tb-note"]', f"[{tag}] 藏书票显形")
-    time.sleep(1.2)  # 飞入动画落定再拖
-    drag(page, '[data-id="compiled-item-tb-note"]', '[data-id="compiled-item-tb-desk"]')  # t7
+    time.sleep(1.2)  # 藏书票飞入落定
+    drag(page, '[data-id="compiled-item-tb-ticket"]', '[data-id="compiled-item-tb-desk"]')  # w9
     check(
         f"[{tag}] 书桌变身「建成的笔记库」",
         node_name(page, '[data-id="compiled-item-tb-desk"]') == "建成的笔记库",
         node_name(page, '[data-id="compiled-item-tb-desk"]'),
     )
-    drag(page, '[data-id="compiled-item-tb-desk"]', '[data-id="compiled-exit"]')  # t8
+    drag(page, '[data-id="compiled-item-tb-desk"]', '[data-id="compiled-exit"]')  # w10
     time.sleep(0.4)
     click(page, '[data-id="compiled-exit"]')
     time.sleep(0.6)
@@ -210,35 +241,66 @@ def run_b(page, tag):
 
 
 def run_c(page, tag):
-    """C 排序 sequence"""
+    """C 借阅族:容器弹书→顺序扫描(链式组合)→NPC 现身/对话/交易→盖章交单"""
     click(page, '[data-id="compiled-item-rc-door"]')  # c1 推门
-    click(page, '[data-id="root"]')  # 环顾:门后显形的物件飞入
-    time.sleep(1.6)  # 等入口卡避让复检(1500ms)落定,规则卡不再被盖
-    wait_visible(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 推门见规则卡/书堆/提货单")
-    gone(page, '[data-id="compiled-item-rc-stamp"]', f"[{tag}] 借阅章未排架不显形")
-    click(page, '[data-id="compiled-item-rc-manual"]')  # c2
-    click(page, '[data-id="compiled-item-rc-book-js"]')  # c3
-    click(page, '[data-id="compiled-item-rc-book-web"]')  # c4
-    click(page, '[data-id="compiled-item-rc-book-web"]')  # 顺序错误:先点②书,整组应重来
-    click(page, '[data-id="compiled-item-rc-book-js"]')  # ①
-    click(page, '[data-id="compiled-item-rc-book-web"]')  # ②
+    click(page, '[data-id="root"]')  # 环顾
+    wait_visible(page, '[data-id="compiled-item-rc-manual"]', f"[{tag}] 推门见手册/书架/扫描台/提货单")
+    gone(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 值班员未现身")
+    gone(page, '[data-id="compiled-item-rc-book1"]', f"[{tag}] 书未翻出(容器内)")
+    click(page, '[data-id="compiled-item-rc-manual"]')  # c2 读手册
+    click(page, '[data-id="compiled-container-rc-shelfa"]')  # c3 翻上层
+    wait_visible(page, '[data-id="compiled-item-rc-book1"]', f"[{tag}] 上层滑出两本绿标书")
+    click(page, '[data-id="compiled-container-rc-shelfb"]')  # c4 翻下层
+    wait_visible(page, '[data-id="compiled-item-rc-book2"]', f"[{tag}] 下层滑出绿标+红标")
+    click(page, '[data-id="compiled-item-rc-book1"]')  # c5 看 Z-02
+    click(page, '[data-id="compiled-item-rc-book2"]')  # c6 看 Z-05
+    click(page, '[data-id="compiled-item-rc-book3"]')  # c7 看 Z-09
+    time.sleep(1.2)  # 书飞入落定
+    drag(page, '[data-id="compiled-item-rc-book4"]', '[data-id="compiled-item-rc-scanner"]')  # 红标书乱扫
     s = snap(page)
-    check(f"[{tag}] 排架完成(含错误顺序重开)", s and "beat-c5" in s.get("clues", []), f"clues={s and s.get('clues')}")
+    check(f"[{tag}] 红标书扫描无受理", s and "beat-c8" not in s.get("clues", []))
+    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # 乱序:先扫 Z-05
+    s = snap(page)
     check(
-        f"[{tag}] 排架台变身「排好架的一对书」",
-        node_name(page, '[data-id="compiled-item-rc-shelf"]') == "排好架的一对书",
-        node_name(page, '[data-id="compiled-item-rc-shelf"]'),
+        f"[{tag}] 乱序扫描被拒(索书号次序 enforce)",
+        s and "beat-c8" not in s.get("clues", []) and "beat-c9" not in s.get("clues", []),
     )
-    click(page, '[data-id="compiled-item-rc-shelf"]')  # 再点变化的节点:借阅章从排架台里飞出(锚定显形)
-    wait_visible(page, '[data-id="compiled-item-rc-stamp"]', f"[{tag}] 借阅章弹出")
-    time.sleep(1.2)  # 飞入动画落定再拖
-    drag(page, '[data-id="compiled-item-rc-stamp"]', '[data-id="compiled-item-rc-ticket"]')  # c6
+    drag(page, '[data-id="compiled-item-rc-book1"]', '[data-id="compiled-item-rc-scanner"]')  # c8 Z-02
+    check(
+        f"[{tag}] 扫描台受理 1/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 1/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]'),
+    )
+    drag(page, '[data-id="compiled-item-rc-book2"]', '[data-id="compiled-item-rc-scanner"]')  # c9 Z-05
+    check(
+        f"[{tag}] 扫描台受理 2/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 2/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]'),
+    )
+    drag(page, '[data-id="compiled-item-rc-book3"]', '[data-id="compiled-item-rc-scanner"]')  # c10 Z-09
+    check(
+        f"[{tag}] 扫描台受理 3/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]') == "扫描台 · 已受理 3/3",
+        node_name(page, '[data-id="compiled-item-rc-scanner"]'),
+    )
+    wait_visible(page, '[data-id="compiled-item-rc-npc"]', f"[{tag}] 铃响后值班员现身(auto 巧合事件)")
+    click(page, '[data-id="compiled-item-rc-npc"]')  # c11 对话
+    time.sleep(1.2)
+    drag(page, '[data-id="compiled-item-rc-kettle"]', '[data-id="compiled-item-rc-npc"]')  # c12 交易
+    check(
+        f"[{tag}] 值班员变身「捧着热茶的值班员」",
+        node_name(page, '[data-id="compiled-item-rc-npc"]') == "捧着热茶的值班员",
+        node_name(page, '[data-id="compiled-item-rc-npc"]'),
+    )
+    wait_visible(page, '[data-id="compiled-item-rc-stamp"]', f"[{tag}] 借阅章递出(auto)")
+    time.sleep(1.2)
+    drag(page, '[data-id="compiled-item-rc-stamp"]', '[data-id="compiled-item-rc-ticket"]')  # c13
     check(
         f"[{tag}] 提货单变身「盖章的提货单」",
         node_name(page, '[data-id="compiled-item-rc-ticket"]') == "盖章的提货单",
         node_name(page, '[data-id="compiled-item-rc-ticket"]'),
     )
-    drag(page, '[data-id="compiled-item-rc-ticket"]', '[data-id="compiled-exit"]')  # c7
+    drag(page, '[data-id="compiled-item-rc-ticket"]', '[data-id="compiled-exit"]')  # c14
     time.sleep(0.4)
     click(page, '[data-id="compiled-exit"]')
     time.sleep(0.6)

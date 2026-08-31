@@ -735,6 +735,7 @@
               url: source.url,
               compiledHidden: isHidden,
               compiledAuto: item.auto === true,
+              compiledArriveText: item.arriveText || '',
               detail: mystery,
             };
             if (ibid)
@@ -766,7 +767,10 @@
           detail: c.desc || '「' + (c.name || '容器') + '」——打开看看里面有什么。',
         });
       });
-      level.items.slice(0, 12).forEach(function (item, index) {
+      /* 物件编译上限 18(2026-08-31:旧值 12 曾把第 13+ 个物件整个裁掉——C 关 14 物件,
+         借阅章/提货单无声消失。摆板后位置由 roomLayoutBoard 分区管理,原 3×4 网格坐标
+         公式只是初值,不再约束容量) */
+      level.items.slice(0, 18).forEach(function (item, index) {
         const source = draft.items.find((x) => x.id === item.id) || {};
         const isHidden = item.hidden === true;
         /* 信息前置+三层详情(同 scenes 分支):facts 行承载谜面引用的事实 */
@@ -795,6 +799,7 @@
           url: source.url,
           compiledHidden: isHidden,
           compiledAuto: item.auto === true,
+          compiledArriveText: item.arriveText || '',
           detail: mystery,
         };
         if (ibid)
@@ -1979,7 +1984,11 @@
         node.revealed = true;
         node.spawned = true;
         if (was) node.justArrived = true;
-        autoMsgs.push('「' + (node.name || id) + '」' + (place ? '从' + place : '') + '弹了出来');
+        /* arriveText:NPC/人物类到场的专属文案(『弹了出来』只适合物件,不适合写人) */
+        autoMsgs.push(
+          node.compiledArriveText ||
+            '「' + (node.name || id) + '」' + (place ? '从' + place : '') + '弹了出来',
+        );
         return;
       }
       node.revealReady = true;
