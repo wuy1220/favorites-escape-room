@@ -219,6 +219,37 @@ with sync_playwright() as p:
           "step_calls=%d wall=%.1fs" % (step_design_calls["n"], wall2))
     check("多供应商赛马:耗时 %.1fs < 10s" % wall2, wall2 < 10)
     page2.close()
+    # ===== 单供应商退化(2026-08-30):无 glm 配置时只跑一路 step,不再双同源排队 =====
+    page3 = b.new_page()
+    page3.route("**/api/llm-config**", lambda route: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps({})))
+    step_calls3 = {"n": 0}
+
+    def step_invalid3(route):
+        step_calls3["n"] += 1
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"choices": [{"message": {"content": json.dumps({"title": "坏设计"})}}]}))
+
+    page3.route("**/api/step**", step_invalid3)
+    page3.route("**/fetch-meta**", lambda route: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps({"results": {}})))
+    page3.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
+    page3.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    page3.wait_for_timeout(500)
+    page3.set_input_files("#homeFile", FIXTURE)
+    page3.wait_for_timeout(300)
+    page3.click("#homeGenerate")
+    # 单路 3 轮 × 2 次整体重试 = 6 次调用后退回固定模板挂载
+    page3.wait_for_function(
+        """() => { const t = document.getElementById('gameToolbar');
+             return t && !t.hasAttribute('hidden'); }""",
+        timeout=60000,
+    )
+    lane_rows = page3.evaluate("() => document.querySelectorAll('#wbLanes .wb-lane').length")
+    check("单供应商:只开一路(step)", lane_rows == 1, f"lane_rows={lane_rows}")
+    check("单供应商:6 次调用后退回固定模板挂载", step_calls3["n"] == 6,
+          f"step_calls={step_calls3['n']}")
+    page3.close()
     b.close()
 
 print(f"\n===== verify_design_race: {sum(results)}/{len(results)} 通过 =====")

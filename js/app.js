@@ -1029,29 +1029,19 @@
           duplicates,
           stats: { input: items.length, unique: enriched.length, duplicates: duplicates.length },
         };
-        /* v8 多路赛马(2026-08-28):laneCount 路并行设计,每路独立带修复轮(compile 结构校验 +
-           solveLevel 求解门禁),取最先产出可解谜题的一路;赢者确定后经 externalSignal 掐掉
-           其余各路的在途调用。最坏配额与旧串行 3 轮相同(3×3),期望延迟 = 最快一路。
-           配置:designLanes(默认 3,钳位 1-4;设 1 即旧串行行为)。全部失败退回固定模板。 */
-        const laneCount = Math.max(
-          1,
-          Math.min(4, Number(window.__FAVORITES_ROOM_CONFIG__?.designLanes) || 3),
-        );
-        /* 多供应商赛马(2026-08-28):备用路线(glm)由 /api/llm-config 提供,
-           路线轮转 [step, glm, step, ...],取最先产出可解谜题的一路。 */
-        /* 双供应商并行赛马(2026-08-29):glm(快,~1-2.5min)+step advisor(质量兜底)。
-           每供应商各一路——同供应商并发会被平台排队(glm×2 实测反而更慢)。
-           整体失败自动重试一轮(对抗限流),两轮全败退回固定模板。 */
+        /* 赛马路由(2026-08-30 单供应商退化):配置了 GLM(/api/llm-config 下发)时
+           双供应商并行——glm(快,~1-2.5min)+ step advisor(质量兜底),每供应商
+           各一路(同供应商并发会被平台排队,glm×2 实测反而更慢),整体失败自动
+           重试一轮,两轮全败退回固定模板。没有 glm 配置(使用者只有一把 step key)
+           时只跑**单路** step——旧实现退化成 [step, step] 双同源路:同 key 并发被
+           平台排队,赛马塌回串行还双倍消耗限流配额。 */
         const glmLane = window.__GLM_LANE__ || null;
         const laneDefs = glmLane
           ? [
               { overrides: null, label: 'step' },
               { overrides: glmLane, label: 'glm' },
             ]
-          : [
-              { overrides: null, label: 'step' },
-              { overrides: null, label: 'step' },
-            ];
+          : [{ overrides: null, label: 'step' }];
         setStatus(
           '设计进行中:' + laneDefs.map((l) => l.label).join(' + ') + '……',
           'busy',
@@ -1060,7 +1050,11 @@
         const laneSignals = [];
         wbState.laneSignals = laneSignals;
         wbLanesInit(laneDefs);
-        wbLog('设计竞速开始:' + laneDefs.map((l) => l.label).join(' + ') + ' 并行,取最先通过求解验证的一路。');
+        wbLog(
+          '设计竞速开始:' +
+            laneDefs.map((l) => l.label).join(' + ') +
+            (laneDefs.length > 1 ? ' 并行,取最先通过求解验证的一路。' : ' 单路设计,失败自动重试。'),
+        );
         const raceT0 = Date.now();
         const raceClock = setInterval(function () {
           if (raceState.won) return;

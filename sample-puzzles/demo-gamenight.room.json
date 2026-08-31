@@ -1,7 +1,6 @@
 {
  "records": [],
  "controlledIds": [
-  "ra-cabinet",
   "ra-tape",
   "ra-disc",
   "ra-machine",
@@ -9,15 +8,6 @@
   "ra-panel"
  ],
  "items": [
-  {
-   "id": "ra-cabinet",
-   "title": "怀旧游戏柜",
-   "domain": "demo",
-   "dateAdded": "",
-   "url": "",
-   "urlPath": "",
-   "description": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开它"
-  },
   {
    "id": "ra-tape",
    "title": "卡带 A · Never Gonna Give You Up",
@@ -71,7 +61,6 @@
   "objective": "打开怀旧柜取出卡带与光碟,读懂卡带上的播放数据,把卡带装进点唱机,再按播放量的前四位调准频率面板,最后把光碟匣装上,完成末班点播。",
   "targetMinutes": 10,
   "selectedItemIds": [
-   "ra-cabinet",
    "ra-tape",
    "ra-disc",
    "ra-machine",
@@ -82,20 +71,11 @@
    {
     "id": "ra-cabinet",
     "name": "怀旧游戏柜",
-    "desc": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开玻璃柜——再点一次,取出里面的东西。",
+    "desc": "玻璃柜里躺着你的卡带和一张 MMD 光碟。",
     "hidden": false
    }
   ],
   "items": [
-   {
-    "id": "ra-cabinet",
-    "role": "clue",
-    "roleLabel": "线索",
-    "title": "怀旧游戏柜",
-    "sceneName": "怀旧游戏柜",
-    "reason": "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开它。",
-    "hidden": false
-   },
    {
     "id": "ra-tape",
     "role": "clue",

@@ -145,13 +145,21 @@
     $('keyEnter').onclick = function () {
       keypadCommit();
     };
+    const kt = document.getElementById('keypadText');
+    if (kt)
+      kt.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          keypadCommit();
+        }
+      });
   }
   function keypadPress(d) {
     if (!keypadCtx) return;
-    if (keypadCtx.buf.length >= keypadCtx.digits) return;
+    if (!keypadCtx.textMode && keypadCtx.buf.length >= keypadCtx.digits) return;
     keypadCtx.buf.push(d);
     keypadRender();
-    if (keypadCtx.buf.length === keypadCtx.digits) keypadCommit();
+    if (!keypadCtx.textMode && keypadCtx.buf.length === keypadCtx.digits) keypadCommit();
   }
   function keypadRender() {
     const c = keypadCtx,
@@ -180,14 +188,20 @@
   function keypadCommit() {
     const c = keypadCtx;
     if (!c) return;
-    const got = c.buf.join('');
-    if (got.length < c.digits) {
+    /* 文字语义锁:答案取自文本输入框(数字锁仍走按键缓冲) */
+    const got = c.textMode && $('keypadText') ? $('keypadText').value : c.buf.join('');
+    if (!c.textMode && got.length < c.digits) {
       $('stage').classList.remove('shake');
       void $('stage').offsetWidth;
       $('stage').classList.add('shake');
       return;
     }
-    if (got === c.expected) {
+    const norm = (x) =>
+      String(x || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ');
+    if (c.textMode ? norm(got) === norm(c.expected) : got === c.expected) {
       $('keypadModal').classList.add('hidden');
       keypadCtx = null;
       if (c.onSuccess) c.onSuccess();
@@ -203,14 +217,23 @@
   }
   function openKeypad(opts) {
     ensureKeypad();
+    const expectStr = String(opts.expected || '');
+    const textMode = /[^0-9]/.test(expectStr); /* 语义锁:答案是文字(歌名/格式/术语) */
     keypadCtx = {
       digits: opts.digits || 3,
       colors: opts.colors || [],
-      expected: String(opts.expected || ''),
+      expected: expectStr,
+      textMode,
       onSuccess: opts.onSuccess,
       onFail: opts.onFail,
       buf: [],
     };
+    const textInput = $('keypadText');
+    if (textInput) {
+      textInput.value = '';
+      textInput.style.display = textMode ? '' : 'none';
+      if (textMode) textInput.focus();
+    }
     const card = $('keypadModal');
     const kicker = card.querySelector('.kicker'),
       h2 = card.querySelector('h2'),
@@ -783,9 +806,12 @@
           return; /* 容器子件:位置由容器分区网格管理,不重复锚定 */
         const rs = revealSourceAll[n.compiledItemId];
         if (!rs) return;
-        const src = nodeById[rs.src] || nodeById['compiled-item-' + rs.src];
+        /* 解析优先级(2026-08-31):同名容器节点 > 同名物件节点 > 原始 id——
+           显形源是容器(如『打开怀旧柜』)时,内容物应挂到容器上 */
+        const src = nodeById['compiled-container-' + rs.src] || nodeById[rs.src]
+          || nodeById['compiled-item-' + rs.src];
         if (!src || src.id === n.id) return;
-        n.revealFromId = src.id; /* 飞入动画起点(照亮/显形时从源物件飞向槽位) */
+        n.revealFromId = src.id;
         if (rs.via !== 'resultOn') return; /* use 来源:物件落在自己的房间槽位,不挂到源物件上 */
         const k = sibCount[src.id] || 0;
         sibCount[src.id] = k + 1;
@@ -1548,6 +1574,32 @@
       });
       const first = !n.opened;
       n.opened = true;
+      /* 容器自身的检视 beat 随开柜完成(2026-08-31):『打开怀旧柜』这类以容器为
+         目标的 inspect 步,此前只在物件分支匹配——容器节点永远走不到,其 reveals
+         的内容物 revealReady 永远不成立,开柜也不显形(教程关 demo 实测) */
+      const selfInspect = (compiled.rules.inspects || []).find(function (r) {
+        return (
+          beatReady(r.need) &&
+          !state.clues.has(r.clue) &&
+          r.ids.some(function (id) {
+            /* 容器节点 id 带 compiled-container- 前缀:裸 id 与全 id 都参与匹配 */
+            const full = String(n.id);
+            return nodeKeys(n).includes(String(id)) || full === 'compiled-container-' + String(id) || full === String(id);
+          })
+        );
+      });
+      if (selfInspect) {
+        state.clues.add(selfInspect.clue);
+        if (selfInspect.product) {
+          const tn = levelNode(n.id);
+          if (tn) {
+            const before = tn.name;
+            morphNode(tn, selfInspect);
+            if (tn.name !== before) log('「' + before + '」变成了「' + tn.name + '」。', 'good');
+          }
+        }
+        triggerReveals(selfInspect.need);
+      }
       const found = [];
       state.nodes
         .filter((m) => m.compiledItem && m.parent === n.id)

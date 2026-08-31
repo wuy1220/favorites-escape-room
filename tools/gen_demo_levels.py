@@ -34,12 +34,11 @@ A.update({
     "premise": "2024 年 11 月的深夜,你在游戏堆里过了一整晚。今晚,你想把那段 Never Gonna Give You Up 点播给整座城市的失眠者。点播台的老机器还亮着灯——它只认数据:播放量、硬币数,一个都不能错。",
     "objective": "打开怀旧柜取出卡带与光碟,读懂卡带上的播放数据,把卡带装进点唱机,再按播放量的前四位调准频率面板,最后把光碟匣装上,完成末班点播。",
     "targetMinutes": 10,
-    "selectedItemIds": ["ra-cabinet", "ra-tape", "ra-disc", "ra-machine", "ra-poster", "ra-panel"],
+    "selectedItemIds": ["ra-tape", "ra-disc", "ra-machine", "ra-poster", "ra-panel"],
     "containers": [
         {"id": "ra-cabinet", "name": "怀旧游戏柜", "desc": "玻璃柜里躺着你的卡带和一张 MMD 光碟。", "hidden": False},
     ],
     "items": [
-        item("ra-cabinet", "clue", "怀旧游戏柜", "玻璃柜里躺着卡带和一张 MMD 光碟。点击打开它。"),
         item("ra-tape", "clue", "卡带 A · Never Gonna Give You Up",
              "【事实·数据条】标签印着:视频播放量 104610374、投硬币枚数 1260911。这就是点播台要的点火数据。",
              hidden=True, container="ra-cabinet"),
