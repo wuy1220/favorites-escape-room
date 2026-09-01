@@ -13,119 +13,6 @@
     return m ? m[1] + ' ' + m[2] : iso ? String(iso).slice(0, 16).replace('T', ' ') : '';
   };
 
-  /* ---------- 把 level.beats 编译成 clue 规则 ---------- */
-  function compileRules(level) {
-    const rules = {
-      combines: [],
-      sequences: [],
-      inspects: [],
-      delivers: [],
-      passwords: [],
-      angles: [],
-      morses: [],
-      knocks: [],
-      beatCount: 0,
-      reveals: {},
-      beatMeta: {},
-    };
-    (level.beats || []).forEach(function (beat, index) {
-      const ids = (beat.uses || []).map(String);
-      rules.beatCount++;
-      rules.beatMeta[beat.id] = {
-        title: beat.title || '步骤 ' + (index + 1),
-        requires: (beat.requires || []).map(String),
-      };
-      if (beat.reveals && beat.reveals.length) rules.reveals[beat.id] = beat.reveals;
-      if (beat.action === 'combine' && ids.length >= 2) {
-        /* 组合:uses[1] 是被加工的目标(原作中它变身成产物,如 排水管→棍子);product 是产物名 */
-        rules.combines.push({
-          pair: [ids[0], ids[1]],
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '组合 ' + (index + 1),
-          resultOn: beat.resultOn || ids[1],
-          product: String(beat.product || ''),
-          consume: Array.isArray(beat.consume) ? beat.consume.slice() : [],
-        });
-      } else if (beat.action === 'sequence' && ids.length >= 2) {
-        rules.sequences.push({
-          order: ids,
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '顺序 ' + (index + 1),
-          resultOn: beat.resultOn || ids[ids.length - 1],
-          product: String(beat.product || ''),
-        });
-      } else if (beat.action === 'deliver' && ids.length >= 1) {
-        rules.delivers.push({
-          item: ids[0],
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '交付 ' + (index + 1),
-        });
-      } else if ((beat.action === 'inspect' || beat.action === 'revisit') && ids.length >= 1) {
-        rules.inspects.push({
-          ids: ids,
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '观察 ' + (index + 1),
-          /* 检视产物(2026-08-31):inspect 的 product 让物件原位变身并广播更名,
-             与组合的变身反馈对齐(『台灯』变成了『亮着的台灯』) */
-          resultOn: ids[0],
-          product: String(beat.product || ''),
-        });
-      } else if (beat.action === 'password' && ids.length >= 1) {
-        /* 密码盘:uses[0] 是被点击的密码盘物件;expected 为正确密码;colors 给每位上色标签(如颜色密码) */
-        rules.passwords.push({
-          item: ids[0],
-          expected: String(beat.expected || ''),
-          colors: Array.isArray(beat.colors) ? beat.colors : [],
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '密码 ' + (index + 1),
-          resultOn: ids[0],
-          product: String(beat.product || ''),
-        });
-      } else if (beat.action === 'knock' && ids.length >= 1) {
-        /* 连按计数机关:同一物件连敲 count 次完成,原作暗格/铁窗的等价物 */
-        rules.knocks.push({
-          item: ids[0],
-          count: Math.max(1, Number(beat.count) || 3),
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '敲击 ' + (index + 1),
-          resultOn: beat.resultOn || ids[0],
-          product: String(beat.product || ''),
-        });
-      } else if (beat.action === 'angle' && ids.length >= 1) {
-        /* 角度旋钮:uses[0] 是旋钮物件;angles 各旋钮目标角度;precision 每档角度 */
-        rules.angles.push({
-          item: ids[0],
-          angles: Array.isArray(beat.angles) ? beat.angles : [],
-          precision: Number(beat.precision) || 30,
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '角度 ' + (index + 1),
-          resultOn: ids[0],
-          product: String(beat.product || ''),
-          labels: Array.isArray(beat.labels) ? beat.labels.slice() : [],
-        });
-      } else if (beat.action === 'morse' && ids.length >= 1) {
-        /* 摩斯码:uses[0] 是电报机物件;code 为目标点划序列 */
-        rules.morses.push({
-          item: ids[0],
-          code: String(beat.code || ''),
-          need: beat.id,
-          clue: 'beat-' + beat.id,
-          title: beat.title || '摩斯 ' + (index + 1),
-          resultOn: ids[0],
-          product: String(beat.product || ''),
-        });
-      }
-    });
-    /* deliver 没有 uses 时,接受任意已完成结果 */
-    return rules;
-  }
 
   /* ---------- 通用密码盘(复用 keypadModal,支持颜色标签密码盘) ---------- */
   let keypadCtx = null;
@@ -904,7 +791,9 @@
     ensureRevisitButton();
     compiled = {
       level,
-      rules: compileRules(level),
+      rules: (window.__favoriteRoomPipeline || {}).compileRules
+        ? window.__favoriteRoomPipeline.compileRules(level)
+        : (window.__favoriteRoomEngineRulesFallback ? window.__favoriteRoomEngineRulesFallback(level) : {}),
       step: 0,
       beatIndex: 0,
       started: false,

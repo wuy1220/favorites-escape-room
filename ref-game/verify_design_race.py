@@ -128,6 +128,8 @@ with sync_playwright() as p:
         status=200, content_type="application/json", body=json.dumps({"results": {}})))
     page.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
     page.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    # 2026-09-01:成功文案可能被同步挂载流程立即覆盖(从未绘制)——改听 #homeStatus 历史
+    page.evaluate("() => { window.__statusLog = []; const el = document.getElementById('homeStatus'); new MutationObserver(() => window.__statusLog.push(el.textContent)).observe(el, { childList: true, characterData: true, subtree: true }); }")
 
     # 导入(清洗 stub 全 keep)→ 全局清洗 → 回落"全部通过收藏"
     page.set_input_files("#homeFile", FIXTURE)
@@ -138,12 +140,11 @@ with sync_playwright() as p:
     t0 = time.time()
     page.click("#homeGenerate")
     win_status = page.wait_for_function(
-        """() => {
-          const t = document.getElementById('homeStatus').textContent;
-          return /通过设计\\+求解验证/.test(t) ? { text: t } : null;
-        }""",
-        timeout=60000,
-    ).json_value()["text"]
+        "() => (window.__statusLog || []).some((t) => /通过设计/.test(t))", timeout=60000
+    )
+    win_status = page.evaluate(
+        "() => (window.__statusLog || []).find((t) => /通过设计/.test(t)) || ''"
+    )
     wall = time.time() - t0
     check("最快可解一路获胜", "通过设计+求解验证" in win_status, win_status[:60])
     check("设计调用总数受控(中止生效,≤5)", counts["design"] <= 5, f"design={counts['design']}")
@@ -201,18 +202,18 @@ with sync_playwright() as p:
     page2.route("**/api/step**", step_invalid_stub)
     page2.goto("http://127.0.0.1:8128/", wait_until="domcontentloaded")
     page2.wait_for_function("() => !!window.__favoriteRoomPipeline", timeout=15000)
+    page2.evaluate("() => { window.__statusLog = []; const el = document.getElementById('homeStatus'); new MutationObserver(() => window.__statusLog.push(el.textContent)).observe(el, { childList: true, characterData: true, subtree: true }); }")
     page2.wait_for_timeout(500)
     t0 = time.time()
     page2.set_input_files("#homeFile", FIXTURE)
     page2.wait_for_timeout(300)
     page2.click("#homeGenerate")
     win_status2 = page2.wait_for_function(
-        """() => {
-          const t = document.getElementById('homeStatus').textContent;
-          return /通过设计\+求解验证/.test(t) ? { text: t } : null;
-        }""",
-        timeout=30000,
-    ).json_value()["text"]
+        "() => (window.__statusLog || []).some((t) => /\(glm\)/.test(t))", timeout=30000
+    )
+    win_status2 = page2.evaluate(
+        "() => (window.__statusLog || []).find((t) => /\(glm\)/.test(t)) || ''"
+    )
     wall2 = time.time() - t0
     check("多供应商赛马:glm 路获胜", "(glm)" in win_status2, win_status2[:60])
     check("多供应商赛马:step 设计调用受控(≤6)", step_design_calls["n"] <= 6,
