@@ -734,6 +734,143 @@
     }
     return false;
   }
+  /* ---------------- 门禁清单(GATE_MANIFEST,2026-09-01)----------------
+     「教学-考纲」同源:每条机器检查配一句注入 prompt 的铁律文案 + 校验器源码锚点。
+     新增门禁时在这里加一条——prompt 段落自动生成,verify_gate_manifest.py 会
+     逐条断言「prompt 里有话 + 校验器里有锚」,再也不会出现「模型不知道的门」。 */
+  const GATE_MANIFEST = [
+    { id: 'P67', line: '答案分布:锁的答案只许出现在**别的物件**的 reason 里;锁自身/premise/objective/hints 一律零答案——机器逐字扫描,把答案写在锁自己的铭牌上是最常见的打回原因。', anchor: 'P67 答案分布铁律' },
+    { id: 'P62', line: 'sourceFacts 接地:每个 sourceFacts 的值必须能在该素材的 desc/标题/路径/域名/日期里原样找到——编造或改写页面事实会被逐字比对拒绝。', anchor: '接地检查(P46/P62)' },
+    { id: 'P4', line: '答案泄漏:机关答案不得原样出现在 premise/objective/hints 里。', anchor: '泄漏检查(P4/审查 11.2)' },
+    { id: 'P55', line: '机关摆放:password/angle/morse 的目标物件不得同时是任何 inspect/revisit 步骤的目标——否则观察步永远无法完成。', anchor: 'v7.1 静态 lint' },
+    { id: 'P40', line: '空间密度:每个房间至少 1 件 hidden 素材并有「容器显形」链,全关 reveals ≥2,至少 1 件物件被两个步骤使用(回访)。', anchor: '空间密度硬门槛' },
+    { id: 'P46', line: '机构/信息分工:每个房间至少 1 件 prop-* 机关道具(全关 ≤5),机关道具 reason 只写自身物性;素材化身只做信息载体。', anchor: '机关道具配额' },
+    { id: 'P42', line: '终局收束:交付的依赖闭包必须横跨至少 2 个房间——两间屋的事实要拼合才能通关。', anchor: '房间全亮后的收束检查' },
+    { id: 'P74', line: '敲击可发现性:knock 手法的文案禁止出现动作/次数指令(如「连敲三下」),可发现性只写物件质感;全关 knock 不超过 1 次。', anchor: 'P74:敲击可发现性' },
+  ];
+  function gatePromptSection() {
+    return (
+      '5. 答案与文案铁律(每条都有对应的机器检查,违反即整版打回):\n' +
+      GATE_MANIFEST.map(function (g) { return '- ' + g.line; }).join('\n')
+    );
+  }
+
+  /* ---------- 共享领域层(2026-09-01,P1.4):规则归一化的唯一来源 ----------
+     引擎运行时(compiledUse)与求解器(solveLevel)都消费同一份 compileRules 产物,
+     消除「result 解析/规则语义」在两处各自维护的漂移风险。原实现自 engine.js 原样上移。 */
+  function compileRules(level) {
+    const rules = {
+      combines: [],
+      sequences: [],
+      inspects: [],
+      delivers: [],
+      passwords: [],
+      angles: [],
+      morses: [],
+      knocks: [],
+      beatCount: 0,
+      reveals: {},
+      beatMeta: {},
+    };
+    (level.beats || []).forEach(function (beat, index) {
+      const ids = (beat.uses || []).map(String);
+      rules.beatCount++;
+      rules.beatMeta[beat.id] = {
+        title: beat.title || '步骤 ' + (index + 1),
+        requires: (beat.requires || []).map(String),
+      };
+      if (beat.reveals && beat.reveals.length) rules.reveals[beat.id] = beat.reveals;
+      if (beat.action === 'combine' && ids.length >= 2) {
+        /* 组合:uses[1] 是被加工的目标(原作中它变身成产物,如 排水管→棍子);product 是产物名 */
+        rules.combines.push({
+          pair: [ids[0], ids[1]],
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '组合 ' + (index + 1),
+          resultOn: beat.resultOn || ids[1],
+          product: String(beat.product || ''),
+          consume: Array.isArray(beat.consume) ? beat.consume.slice() : [],
+        });
+      } else if (beat.action === 'sequence' && ids.length >= 2) {
+        rules.sequences.push({
+          order: ids,
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '顺序 ' + (index + 1),
+          resultOn: beat.resultOn || ids[ids.length - 1],
+          product: String(beat.product || ''),
+        });
+      } else if (beat.action === 'deliver' && ids.length >= 1) {
+        rules.delivers.push({
+          item: ids[0],
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '交付 ' + (index + 1),
+        });
+      } else if ((beat.action === 'inspect' || beat.action === 'revisit') && ids.length >= 1) {
+        rules.inspects.push({
+          ids: ids,
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '观察 ' + (index + 1),
+          /* 检视产物(2026-08-31):inspect 的 product 让物件原位变身并广播更名,
+             与组合的变身反馈对齐(『台灯』变成了『亮着的台灯』) */
+          resultOn: ids[0],
+          product: String(beat.product || ''),
+        });
+      } else if (beat.action === 'password' && ids.length >= 1) {
+        /* 密码盘:uses[0] 是被点击的密码盘物件;expected 为正确密码;colors 给每位上色标签(如颜色密码) */
+        rules.passwords.push({
+          item: ids[0],
+          expected: String(beat.expected || ''),
+          colors: Array.isArray(beat.colors) ? beat.colors : [],
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '密码 ' + (index + 1),
+          resultOn: ids[0],
+          product: String(beat.product || ''),
+        });
+      } else if (beat.action === 'knock' && ids.length >= 1) {
+        /* 连按计数机关:同一物件连敲 count 次完成,原作暗格/铁窗的等价物 */
+        rules.knocks.push({
+          item: ids[0],
+          count: Math.max(1, Number(beat.count) || 3),
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '敲击 ' + (index + 1),
+          resultOn: beat.resultOn || ids[0],
+          product: String(beat.product || ''),
+        });
+      } else if (beat.action === 'angle' && ids.length >= 1) {
+        /* 角度旋钮:uses[0] 是旋钮物件;angles 各旋钮目标角度;precision 每档角度 */
+        rules.angles.push({
+          item: ids[0],
+          angles: Array.isArray(beat.angles) ? beat.angles : [],
+          precision: Number(beat.precision) || 30,
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '角度 ' + (index + 1),
+          resultOn: ids[0],
+          product: String(beat.product || ''),
+          labels: Array.isArray(beat.labels) ? beat.labels.slice() : [],
+        });
+      } else if (beat.action === 'morse' && ids.length >= 1) {
+        /* 摩斯码:uses[0] 是电报机物件;code 为目标点划序列 */
+        rules.morses.push({
+          item: ids[0],
+          code: String(beat.code || ''),
+          need: beat.id,
+          clue: 'beat-' + beat.id,
+          title: beat.title || '摩斯 ' + (index + 1),
+          resultOn: ids[0],
+          product: String(beat.product || ''),
+        });
+      }
+    });
+    /* deliver 没有 uses 时,接受任意已完成结果 */
+    return rules;
+  }
+
   function compileLevel(draft, design) {
     /* 2026-08-23 重写:LLM 设计优先。编译器只做校验/补全,不再用本地模板覆盖 LLM 的关卡设计。
        v2:支持 scenes 结构(场景分幕)。LLM 返回 scenes 时归一化为 items+beats+scenes;
@@ -2840,6 +2977,29 @@
           ...b,
         }));
         if (beats.length < 3) return { solvable: false, detail: 'beats 不足 3 步' };
+
+        /* 共享领域层(2026-09-01):规则归一化交给 compileRules——result 解析、
+           reveals、requires 与引擎运行时消费同一份产物,不再各自维护 */
+        const rules = compileRules(level);
+        const resultOnByNeed = {};
+        ['combines', 'sequences', 'inspects', 'delivers', 'passwords', 'angles', 'morses', 'knocks'].forEach(
+          function (k) {
+            (rules[k] || []).forEach(function (r) {
+              if (r.resultOn) resultOnByNeed[r.need] = String(r.resultOn);
+            });
+          },
+        );
+        const resolveResult = function (u) {
+          let s = String(u),
+            d = 0;
+          while (s.startsWith('result:') && d < 8) {
+            const m = resultOnByNeed[s.slice(7)];
+            if (!m) return s.slice(7);
+            s = m;
+            d++;
+          }
+          return s;
+        };
         /* 容器可达性(2026-08-31):藏在容器里的物件,只要容器本身可见、或容器/物件
             会被某个 beat 显形,玩家开启容器即可取得——求解器按可达处理,
             否则『点开容器』这类无显形 beat 的交互会被误判成永久不可用 */
@@ -2849,9 +3009,10 @@
             c,
           ]),
         );
-        const revealedByBeat = new Set();
-        (beats || []).forEach((b) =>
-          (b.reveals || []).forEach((id) => revealedByBeat.add(String(id))),
+        const revealedByBeat = new Set(
+          Object.values(rules.reveals)
+            .flat()
+            .map(String),
         );
         const st = new Map(
           ((level && Array.isArray(level.items) ? level.items : []) || []).map((it) => {
@@ -2886,20 +3047,7 @@
         const byId = new Map(beats.map((b) => [String(b.id), b]));
         /* v7.1 静态 lint:机关目标与观察目标重叠 → 玩家点击会被"随时可弹"的机关面板拦截,观察步永远完不成 */
         const isLockAction = (a) => a === 'password' || a === 'angle' || a === 'morse';
-        const resolv0 = function (u) {
-          let s = String(u),
-            d = 0;
-          while (s.startsWith('result:') && d < 8) {
-            const pb = byId.get(s.slice(7));
-            if (!pb) return s.slice(7);
-            const uses = pb.uses || [];
-            const m = pb.resultOn || uses[uses.length - 1];
-            if (!m) return s.slice(7);
-            s = String(m);
-            d++;
-          }
-          return s;
-        };
+        const resolv0 = resolveResult;
         const inspectT = new Set();
         beats.forEach(function (b) {
           if (b.action === 'inspect' || b.action === 'revisit')
@@ -2928,20 +3076,7 @@
             };
           }
         }
-        const resolve = function (u) {
-          let s = String(u),
-            d = 0;
-          while (s.startsWith('result:') && d < 8) {
-            const pb = byId.get(s.slice(7));
-            if (!pb) return s.slice(7);
-            const uses = pb.uses || [];
-            const m = pb.resultOn || uses[uses.length - 1];
-            if (!m) return s.slice(7);
-            s = String(m);
-            d++;
-          }
-          return s;
-        };
+        const resolve = resolveResult;
         const free = function (id) {
           const s = st.get(String(id));
           return !!s && s.shown && !s.consumed;
@@ -3024,6 +3159,8 @@
        设计师模仿三样东西:谜题链写法(result:引用/原位变身/consume)、机关推导方式(对照表+规则写在 reason 里)、
        reason 交叉笔法;输出与范例同构的 flat items+beats,compileLevel 直接编译执行。
        校验只保留可计算的不变式(引用完整性/deliver/锁/空 uses),其余交给 solveLevel 执行验证。 ===== */
+    GATE_MANIFEST,
+    compileRules,
     async designWindow(items, theme, windowContext, duplicates, report, repairNote, externalSignal, overrides, materialCount) {
       /* overrides:赛马按路注入供应商配置(endpoint/model/apiKey/thinking/reasoningEffort/
          designTimeout),不传则用默认 step 配置。
@@ -3093,7 +3230,7 @@
         '2. 机关答案的推导方式:参考A的密码 685 = 笔记的摩斯对照表(3 是 ...--,7 是 --...)+日记的生日(3月14日);参考B的 246 = 熊字表+倒序规则。推导依据必须完整写进更早物件的 reason,玩家核对两件物件就能唯一算出答案。绝不允许无推导依据的裸密码/角度/电码。',
         '3. reason 的笔法:印在物件上的谜面,引用其他素材的具体事实(标题词/路径词/日期/域名)制造可验证的交叉;不写设计说明,不复述素材介绍,不写"它知道答案"这类修辞黑话。',
         '4. 手法菜单(任选 2-3 种构成机制族,同一手法全关只用一次):\n① 显影:combine(工具,目标)让目标原位变身露出信息;信息必须被物理遮蔽(油垢/胶带/撕碎),工具在更早步骤可得。\n② 检索多问:同一 lock 物件挂多把 password(全关 password 最多 2 把,引擎按完成顺序逐个弹出);前一份档案的 reason 自然提及下一个检索词,证据链两跳以上。\n③ 敲击:beat 写 action 为 knock、uses 为该物件、count 为 2 到 5(建议 3)——连点 count 次完成;任何文案禁止出现次数与「连敲/连按/多敲」字样(校验器会打回),可发现性只靠物件质感(「空响的底板」);知识物件到来前,物件描述保持惰性。\n④ 主动显形:隐藏素材标 auto:true,且显形它的 beat 写 product 交代因果来源(如检索台变身「嗡嗡作响的检索台」,底板被振动震出)——新物件当场弹出;未标 auto 的维持回访;人物到场用 arrive_text 写到场文案。\n⑤ 顺序扫描:链式 combine(书A,机器)requires 上一步→(书B,机器)→…次序被物理 enforce;机器连续变身写受理进度(「已受理 1/3」),次序依据写在规则物件里。\n⑥ NPC:一个 role=clue 的 auto 素材当角色,reason 直接写台词(含下一步钩子);combine(信物,NPC)=交易,NPC 原位变身+reveals 奖励。\n⑦ 环境线索:场景 description 与物件 desc 里的「闲笔」必须参与推理(落日→房间朝西),与图纸/文件拼合才出答案;纯氛围不接线=浪费字数。\n⑧ 校验题:password 的 expected 来自页面内容本身(简介里的数字/术语),让玩家对照原收藏即可验证。',
-        '5. 答案与文案铁律(校验器会机器检查,违反即打回):\n- 答案分布:锁的答案只许出现在**别的物件**的 reason 里;锁自身/premise/objective/hints 一律零答案——机器会逐字扫描,把答案写在锁自己的铭牌上是最常见的打回原因。多把锁的答案来自不同物件的不同字段。\n- 页面内容出谜面:元数据(标题/域名/日期)负责接地与引路,页面讲的内容负责谜面本身;禁止编造编号/索书号充数。\n- 交付即叙事收束:deliver 的目标是有情感重量的产物(一封接任书/一份盖章的提货单),不是裸道具;最后一个 reveal 给玩家「后文」。\n- 结构密度:每场景开局可见物件 ≤4(其余藏进容器/hidden),场景之间的收束用产物与巧合事件衔接。',
+        gatePromptSection(),
         '化身名铁律:scene_name 是密室里的实体物件,不是网址或收藏条的复述——禁止"书签栏:XXX""XXX页面"这类写法。看参考关卡怎么命名:『转盘锁』『锯子』『日记本』『解密终端』『铅笔』。素材化身偏**信息载体**:一台老旧检索机、一张打印出来的报文、一盘刻着字样的磁带、一册贴满标签的相簿——名字两到六个字,能一眼看出它是什么器物;机构类的物件(锁具/抽屉/铁柜/火柴/油灯)交给 prop-* 机关道具,不要占素材化身的名额。',
         '其余自由发挥:化身名(scene_name)要具体、可触摸、视觉呼应素材真实内容;premise 贴合素材与时间窗;hints 6-8 条渐进(先观察、再联想、最后行动,绝不直接给答案)。red_herring 化身要有诱惑力但不进任何组合。hidden:true 的素材开局不可见,由**本房间**某个非 deliver 步骤的 reveals 列出后显形(生成在容器旁),之后必须有步骤使用它(reward/干扰型除外);两个房间各藏至少一件。',
         '机关摆放铁律:password/angle/morse 的目标物件,绝不能同时是任何 inspect/revisit 步骤的目标——玩家一点它就会弹出机关面板,观察步永远无法完成。最安全的做法:把锁装在某个 combine 的 result: 产物上(像参考A把摩斯锁装在通电后的电报机上),或装在一件没有任何观察步指向的物件上。',

@@ -7,6 +7,27 @@
 
 # 第一部分 · v7 架构(2026-08-27 深夜,当前生效)
 
+## 最新:2026-09-01 深夜 P1.3+P1.4 落地:门禁清单同源 + 共享领域层
+
+**P1.3 教学-考纲同源(GATE_MANIFEST)**:新增清单(8 条: P67 答案分布/P62 接地/P4 泄漏/
+P55 机关摆放/P40 空间密度/P46 机构信息分工/P42 终局收束/P74 敲击可发现性),每条 =
+铁律文案 + 校验器源码锚点;主路 prompt 的「答案与文案铁律」段由清单自动生成
+(gatePromptSection),并导出 `__favoriteRoomPipeline.GATE_MANIFEST`。新增
+`ref-game/verify_gate_manifest.py`(6/6):逐条断言 prompt 句子在源、校验器锚点在源、
+无手写段落旁路——「教学-考纲分离」这类盲区(P67 烧轮次)从此被测试拦住。
+
+**P1.4 共享领域层**:engine 的 `compileRules` 上移为 pipeline 导出函数(唯一规则源),
+引擎编译改为调用共享版;`solveLevel` 弃用自维护的 result 解析(resolv0/resolve 两份)
+与 revealedByBeat 手工收集,改用规则产物(resultOnByNeed/rules.reveals)。
+回归:prison 42/42、bear 30/30、watchman 20/20、smoke、design race 15/15
+(赛马测试等待条件同步现代化:成功文案可能被同步挂载流程覆盖,改用
+MutationObserver 监听 #homeStatus 历史 + 工具条可见性双断言)。
+
+**附带**:脚本化重构时的两类教训——(a) 跨行 JS 字符串注入会把真实换行带进单引号
+字面量(Invalid token),用 chr(10)/chr(92) 构造;(b) 移动函数时先找齐闭合边界
+(首个「  }」不一定是函数尾)。TDZ 教训:别名赋值语句的位置仍是执行期求值。
+
+
 ## 最新:2026-09-01 门禁盲区修复:prompt 同步 + 接地口径补域名/日期
 
 需求方问:基于演示关更新管线后,是否更倾向产出过不了门禁的关卡。定位结论=「教学与考纲分离」+「接地口径漏洞」:
