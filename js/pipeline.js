@@ -1703,6 +1703,9 @@
         action: 'combine',
         uses: [best.a.id, best.b.id],
         requires: ['inspect-pair'],
+        /* 回退契约(2026-09-01,审查 11.2.9):组合必须有产物,交付引用最终产物而非裸素材 */
+        resultOn: best.b.id,
+        product: '核对过关系的结果',
       },
       {
         id: 'inspect-third',
@@ -1722,7 +1725,7 @@
         id: 'deliver',
         title: '把完成的关系链交给出口',
         action: 'deliver',
-        uses: [fourth ? fourth.id : third.id],
+        uses: ['result:combine-result'],
         requires: ['combine-result'],
       },
     ];
@@ -1890,16 +1893,21 @@
       const cu = canonicalUrl(url),
         metaDesc = meta[cu] || meta[url] || '';
       out.push({
-        id: raw.id || stableId(url, index),
-        title,
-        url,
-        folder: label(raw.folder || raw.path),
+        id: String(raw.id || stableId(url, index)).slice(0, 80),
+        title: title.slice(0, 200),
+        url: url.slice(0, 2048),
+        folder: label(raw.folder || raw.path).slice(0, 300),
         domain: domainOf(url),
         description: label(raw.description || raw.desc || metaDesc || '').slice(0, 300),
         dateAdded: dateValue(raw.dateAdded || raw.add_date || raw.date_added),
         source: 'chrome',
       });
     });
+    /* 输入限额(审查 11.3.4):条目数上限 2000,超出截断并告警 */
+    if (out.length > 2000) {
+      console.warn('[pipeline] 收藏条目 ' + out.length + ' 条超过 2000 上限,已截断');
+      out.length = 2000;
+    }
     return out;
   }
   function parseHtml(raw) {
@@ -2904,12 +2912,16 @@
   const REF_LEVELS = window.__REF_LEVELS__;
 
   window.__favoriteRoomPipeline = {
-    parse: (raw, name) =>
-      String(name || 'bookmarks.html')
+    parse: (raw, name) => {
+      /* 输入限额(2026-09-01,审查 11.3.4):解析前拦文件体积;条目数与字段长度在 normalize 拦 */
+      if (typeof raw === 'string' && raw.length > 30000000)
+        throw new Error('收藏夹文件过大（超过 3000 万字符），请精简后再导入');
+      return String(name || 'bookmarks.html')
         .toLowerCase()
         .endsWith('.json')
         ? parseJson(raw)
-        : parseHtml(raw),
+        : parseHtml(raw);
+    },
     async generate(raw, name, theme, report) {
       const items = this.parse(raw, name);
       if (!items.length) throw new Error('收藏文件中没有可用网页');

@@ -1364,12 +1364,13 @@
           draft = window.__favoriteRoomPipeline.compileFixed(
             cleaned,
             {
-              title: '收藏夹密室 · 固定模板',
-              premise: 'LLM 设计未通过验证，已退回固定结构。',
+              title: '收藏夹密室 · 固定模板【简化模式】',
+              premise: 'LLM 设计未通过验证，已退回固定结构。交付与机关契约保持完整，但谜题深度低于正式生成。',
               theme: '收藏夹密室 · 固定结构兜底',
             },
             theme,
           );
+          draft.level.simplified = true; /* 简化模式契约(审查 11.2.9):显式标记 + 标题可见 */
         }
         /* 持久化非致命:写档失败只提示,不阻断进入游戏。
          v7.2:只有通过求解器的新鲜设计才入缓存(levelResult=null 的记录下次会被重新设计覆盖) */
@@ -1532,6 +1533,8 @@
         (await dbAll('verdicts')).forEach((v) => (verdictMap[v.id] = v));
         let cleaned = window.__favoriteRoomPipeline.applyVerdicts(items, verdictMap);
         const fresh = cleaned.records.filter((r) => !r.verdict && !r.safetyFlag);
+        /* 清洗覆盖率(2026-09-01,审查 11.2.8):明示 模型已复核 / 仅本地或存量规则 两条口径 */
+        let coverage = { model: 0, modelOk: true };
         /* desc 富化不在导入路径(2026-08-30 需求方工作流):生成时对随机选定的
            素材批回访(见 generate),导入只做清洗,保持导入快速就绪 */
         if (fresh.length) {
@@ -1545,10 +1548,18 @@
               ...cleaned,
               records: cleaned.records.map((r) => byUrl[r.canonicalUrl] || r),
             };
+            coverage.model = fresh.length;
           } catch (ce) {
+            coverage.modelOk = false;
             setStatus('增量清洗失败（' + (ce.message || ce) + '），先用本地标记继续。', 'error');
           }
         }
+        const coverageText =
+          '清洗覆盖:模型已复核 ' +
+          coverage.model +
+          ' 条 · 仅本地/存量规则 ' +
+          (cleaned.records.length - coverage.model) +
+          ' 条。';
         try {
           for (const v of window.__favoriteRoomPipeline.buildVerdicts(cleaned.records))
             await dbPut('verdicts', v);
@@ -1626,16 +1637,18 @@
               cleaned.records.length +
               ' 条（通过 ' +
               approved.length +
-              '）。发现 ' +
+              '）。' +
+              coverageText +
+              '发现 ' +
               pendingWindows.length +
-              ' 个时间片，选一个做成密室。',
+              ' 个时间片，可多选后生成。',
             '',
           );
         } else {
           /* 没有可成窗的时间戳:退回全量模式(仅通过条目) */
           $('homeGenerate').disabled = false;
           setStatus(
-            '时间戳不足以切分时间片，将使用全部通过收藏（' + approved.length + ' 条）。',
+            '时间戳不足以切分时间片，将使用全部通过收藏（' + approved.length + ' 条）。' + coverageText,
             '',
           );
         }
