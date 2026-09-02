@@ -1123,6 +1123,9 @@
          同抽样复用设计(快),换抽样必走新设计(有变化)。 */
       const cacheKey = [
         'tw',
+        /* 结构化缓存版本(2026-09-01,审查 11.3.3):清洗规则版本进键——
+           CLEAN_VERSION 变化即失效,避免旧清洗口径的关卡被复用 */
+        window.__favoriteRoomPipeline.CLEAN_VERSION || 'clean-v0',
         wins.length ? String(Math.min.apply(null, wins.map((w) => w.from))) : 'all',
         wins.length ? String(Math.max.apply(null, wins.map((w) => w.to))) : '',
         sourceHash.slice(0, 16),

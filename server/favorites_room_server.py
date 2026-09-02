@@ -1,5 +1,8 @@
 import ipaddress
+import collections
 import json
+import threading
+import time
 import os
 import re
 import socket
@@ -21,6 +24,24 @@ STEP_TIMEOUT = 300
 GLM_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 GLM_TIMEOUT = 600
 MAX_BODY = 20 * 1024 * 1024  # 请求体上限(review.md:统一限制,超限 413)
+
+# ---- 11.1.4 余项(2026-09-01):并发闸门与频率限制(仅作用于 LLM/抓取代理) ----
+_LLM_GATE = threading.BoundedSemaphore(8)
+_RATE_LOCK = threading.Lock()
+_RATE_HITS = collections.deque()
+RATE_LIMIT = 120      # 每窗口最多请求数
+RATE_WINDOW = 60.0    # 窗口秒数
+
+
+def _rate_ok():
+    now = time.time()
+    with _RATE_LOCK:
+        while _RATE_HITS and now - _RATE_HITS[0] > RATE_WINDOW:
+            _RATE_HITS.popleft()
+        if len(_RATE_HITS) >= RATE_LIMIT:
+            return False
+        _RATE_HITS.append(now)
+        return True
 # 2026-08-28 安全改造:密钥不再内嵌前端,由本服务持有(环境变量优先,其次同目录
 # STEP_API_KEY.local 文件,该文件已 gitignore)。前端无密钥时,上游 Authorization
 # 由此处注入;前端显式携带的 key(直连第三方供应商场景)原样透传。
@@ -468,6 +489,21 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(payload)
 
     def do_POST(self):
+        if self.path in ("/api/step", "/api/glm", "/fetch-meta"):
+            if not _rate_ok():
+                self._reply_json({"error": {"message": "too many requests"}}, 429)
+                return
+            if not _LLM_GATE.acquire(blocking=False):
+                self._reply_json({"error": {"message": "server busy, retry shortly"}}, 429)
+                return
+            try:
+                self._do_post_gated()
+            finally:
+                _LLM_GATE.release()
+            return
+        self._do_post_gated()
+
+    def _do_post_gated(self):
         if self.path == "/fetch-meta":
             self.handle_fetch_meta()
             return

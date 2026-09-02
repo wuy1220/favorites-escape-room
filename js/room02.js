@@ -1586,12 +1586,24 @@ document.querySelectorAll('[data-ending]').forEach(
     (b.onclick = () => {
       $('endingModal').classList.add('hidden');
       const t = b.dataset.ending;
+      /* 11.2.10 文案诚实化(2026-09-01):三个选项只承诺当前真实行为——
+         继续=回到画布,归档=回标题并存档,重新开始=重置本关。不再暗示未实现的后续流程 */
       const text =
         t === 'continue'
-          ? '你把机器留下,下一步任务已经写在外壳里。'
+          ? '你回到画布——房间里还有没看完的地方。'
           : t === 'archive'
-            ? '你把机器关掉,但保留了完整的构造记录。'
-            : '你把这间房的规则封装成了下一间房的种子。';
+            ? '冒险结束。标题界面的存档里保留着这间房。'
+            : '本关已重置,可以从头再玩一遍。';
+      if (t === 'transform') {
+        /* 11.2.10 落地(2026-09-01):「重玩本关」真实执行产品层重置——
+           保留存档记录、重建运行态回到本关开头(与「重置本关」按钮同一契约) */
+        const home = window.__favoriteRoomHome;
+        if (home && home.resetCurrentLevel) {
+          $('roomState').textContent = '出口之后';
+          home.resetCurrentLevel();
+          return;
+        }
+      }
       log(text, 'good');
       $('roomState').textContent = t === 'archive' ? '已归档' : '出口之后';
       toast(text);

@@ -3172,6 +3172,7 @@
        reason 交叉笔法;输出与范例同构的 flat items+beats,compileLevel 直接编译执行。
        校验只保留可计算的不变式(引用完整性/deliver/锁/空 uses),其余交给 solveLevel 执行验证。 ===== */
     GATE_MANIFEST,
+    CLEAN_VERSION,
     compileRules,
     async designWindow(items, theme, windowContext, duplicates, report, repairNote, externalSignal, overrides, materialCount) {
       /* overrides:赛马按路注入供应商配置(endpoint/model/apiKey/thinking/reasoningEffort/
